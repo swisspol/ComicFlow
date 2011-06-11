@@ -1,0 +1,51 @@
+//  This file is part of the ComicFlow application for iOS.
+//  Copyright (C) 2010-2011 Pierre-Olivier Latour <info@pol-online.net>
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+"INFO_FORMAT" = "%i Comics | %i Series | %.0f MB Database";
+"VERSION_FORMAT" = "ComicFlow Version %@ (%@)";
+
+"ADDRESS_FORMAT" = "Address: %@:%i";
+"ADDRESS_UNAVAILABLE" = "Address: Not Available";
+"PASSWORD_FORMAT" = "Login / Password: guest / %@";
+"PASSWORD_NONE" = "";
+
+"SPINNER_MESSAGE" = "Please Wait…";
+
+"LOG_TITLE" = "Log Contents";
+
+"MARK_READ" = "Mark Read";
+"MARK_NEW" = "Mark New";
+"MARK_ALL_READ" = "Mark All Read";
+"MARK_ALL_NEW" = "Mark All New";
+
+"LABEL_FORMAT" = "Page %i of %i";
+
+"FORCE_UPDATE_TITLE" = "Are you sure?";
+"FORCE_UPDATE_MESSAGE" = "Regenerating the library will clear all bookmarks and re-import all comics and series.";
+"FORCE_UPDATE_CANCEL" = "Cancel";
+"FORCE_UPDATE_CONTINUE" = "Continue";
+
+"MARK_ALL_READ_TITLE" = "Are you sure you want to mark all comics as read?";
+"MARK_ALL_READ_CANCEL" = "Cancel";
+"MARK_ALL_READ_CONTINUE" = "Continue";
+
+"MARK_ALL_NEW_TITLE" = "Are you sure you want to mark all comics as new?";
+"MARK_ALL_NEW_CANCEL" = "Cancel";
+"MARK_ALL_NEW_CONTINUE" = "Continue";
+
+"INBOX_ALERT_TITLE" = "File Added To Library";
+"INBOX_ALERT_MESSAGE" = "The file \"%@\" will be visible in the library after it has finished updating.";
+"INBOX_ALERT_BUTTON" = "Continue";
