@@ -15,6 +15,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #import <unistd.h>
+#import <QuartzCore/QuartzCore.h>
 
 #import "LibraryViewController.h"
 #import "ComicViewController.h"
