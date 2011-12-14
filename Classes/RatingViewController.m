@@ -26,20 +26,33 @@
 - (IBAction) remindLater:(id)sender {
   [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:kDefaultUserKey_LaunchCount];
   
-  [self.parentViewController dismissModalViewControllerAnimated:YES];
+  if ([self respondsToSelector:@selector(presentingViewController)]) {
+    [self.presentingViewController dismissModalViewControllerAnimated:YES];
+  } else {
+    [self.parentViewController dismissModalViewControllerAnimated:YES];
+  }
 }
 
 - (IBAction) ignore:(id)sender {
   [[NSUserDefaults standardUserDefaults] setInteger:-1 forKey:kDefaultUserKey_LaunchCount];
   
-  [self.parentViewController dismissModalViewControllerAnimated:YES];
+  if ([self respondsToSelector:@selector(presentingViewController)]) {
+    [self.presentingViewController dismissModalViewControllerAnimated:YES];
+  } else {
+    [self.parentViewController dismissModalViewControllerAnimated:YES];
+  }
 }
 
 - (IBAction) rateNow:(id)sender {
   [[NSUserDefaults standardUserDefaults] setInteger:-1 forKey:kDefaultUserKey_LaunchCount];
   
   [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"iTunesURL"]]];
-  [self.parentViewController dismissModalViewControllerAnimated:NO];
+  
+  if ([self respondsToSelector:@selector(presentingViewController)]) {
+    [self.presentingViewController dismissModalViewControllerAnimated:YES];
+  } else {
+    [self.parentViewController dismissModalViewControllerAnimated:YES];
+  }
 }
 
 @end

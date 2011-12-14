@@ -142,7 +142,11 @@
 }
 
 - (BOOL) navigationBar:(UINavigationBar*)navigationBar shouldPopItem:(UINavigationItem*)item {
-  [self.parentViewController dismissModalViewControllerAnimated:YES];
+  if ([self respondsToSelector:@selector(presentingViewController)]) {
+    [self.presentingViewController dismissModalViewControllerAnimated:YES];
+  } else {
+    [self.parentViewController dismissModalViewControllerAnimated:YES];
+  }
   return YES;
 }
 
@@ -206,13 +210,21 @@
 - (void) documentViewDidReachFirstPage:(DocumentView*)documentView {
   [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
   
-  [self.parentViewController dismissModalViewControllerAnimated:YES];
+  if ([self respondsToSelector:@selector(presentingViewController)]) {
+    [self.presentingViewController dismissModalViewControllerAnimated:YES];
+  } else {
+    [self.parentViewController dismissModalViewControllerAnimated:YES];
+  }
 }
 
 - (void) documentViewDidReachLastPage:(DocumentView*)documentView {
   [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
   
-  [self.parentViewController dismissModalViewControllerAnimated:YES];
+  if ([self respondsToSelector:@selector(presentingViewController)]) {
+    [self.presentingViewController dismissModalViewControllerAnimated:YES];
+  } else {
+    [self.parentViewController dismissModalViewControllerAnimated:YES];
+  }
 }
 
 - (void) viewDidLoad {
