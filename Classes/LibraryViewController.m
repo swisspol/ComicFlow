@@ -54,10 +54,10 @@
 #endif
 {
 @private
-  UIView* _newView;
+  UIView* _noteView;
   UIView* _ribbonView;
 }
-@property(nonatomic, assign) UIView* newView;
+@property(nonatomic, assign) UIView* noteView;
 @property(nonatomic, assign) UIView* ribbonView;
 @end
 
@@ -69,7 +69,7 @@
 
 @implementation ThumbnailView
 
-@synthesize newView=_newView, ribbonView=_ribbonView;
+@synthesize noteView=_noteView, ribbonView=_ribbonView;
 
 @end
 
@@ -256,24 +256,24 @@ static void __DisplayQueueCallBack(void* info) {
   ThumbnailView* view = (ThumbnailView*)[_gridView viewForItem:item];
   if (view && !view.hidden) {
     NSInteger status = [(id)item status];
-    [view.newView removeFromSuperview];
+    [view.noteView removeFromSuperview];
     [view.ribbonView removeFromSuperview];
     if (status > 0) {
       UIImageView* subview = [[UIImageView alloc] initWithImage:_ribbonImage];
       subview.frame = CGRectMake(kRibbonImageX, kRibbonImageY, kRibbonImageWidth, kRibbonImageHeight);
       [view addSubview:subview];
       [subview release];
-      view.newView = nil;
+      view.noteView = nil;
       view.ribbonView = subview;
     } else if (status < 0) {
       UIImageView* subview = [[UIImageView alloc] initWithImage:_newImage];
       subview.frame = CGRectMake(kNewImageX, kNewImageY, kNewImageWidth, kNewImageHeight);
       [view addSubview:subview];
       [subview release];
-      view.newView = subview;
+      view.noteView = subview;
       view.ribbonView = nil;
     } else {
-      view.newView = nil;
+      view.noteView = nil;
       view.ribbonView = nil;
     }
   }
@@ -612,7 +612,7 @@ static void __DisplayQueueCallBack(void* info) {
     NSInteger count = [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultUserKey_LaunchCount];
     if (count >= 0) {
       [[NSUserDefaults standardUserDefaults] setInteger:(count + 1) forKey:kDefaultUserKey_LaunchCount];
-      if ((count + 1 >= kLaunchCountBeforeRating) && !self.modalViewController && [[NetReachability sharedNetReachability] isReachable]) {
+      if ((count + 1 >= kLaunchCountBeforeRating) && !self.modalViewController && [[NetReachability sharedNetReachability] state]) {
         [[UIApplication sharedApplication] beginIgnoringInteractionEvents];
         [self performSelector:@selector(_showRatingScreen) withObject:nil afterDelay:kShowRatingDelay];
       } else {
@@ -751,7 +751,7 @@ static void __DisplayQueueCallBack(void* info) {
     subview.frame = CGRectMake(kNewImageX, kNewImageY, kNewImageWidth, kNewImageHeight);
     [view addSubview:subview];
     [subview release];
-    [(ThumbnailView*)view setNewView:subview];
+    [(ThumbnailView*)view setNoteView:subview];
   }
 }
 
@@ -763,8 +763,8 @@ static void __DisplayQueueCallBack(void* info) {
   [(ThumbnailView*)view setImage:nil];
 #endif
   
-  [[(ThumbnailView*)view newView] removeFromSuperview];
-  [(ThumbnailView*)view setNewView:nil];
+  [[(ThumbnailView*)view noteView] removeFromSuperview];
+  [(ThumbnailView*)view setNoteView:nil];
   [[(ThumbnailView*)view ribbonView] removeFromSuperview];
   [(ThumbnailView*)view setRibbonView:nil];
 }
