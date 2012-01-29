@@ -578,7 +578,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./Cooliris-ToolKit/Scripts/PatchInfoPlist.sh\n\nBUNDLE_VERSION=`defaults read \"${CONFIGURATION_BUILD_DIR}/${FULL_PRODUCT_NAME}/Info\" \"CFBundleVersion\"`\necho \"Original bundle version: ${BUNDLE_VERSION}\"\n\nBUNDLE_VERSION=$[50000+${BUNDLE_VERSION}]\necho \"New bundle version: ${BUNDLE_VERSION}\"\n\ndefaults write \"${CONFIGURATION_BUILD_DIR}/${FULL_PRODUCT_NAME}/Info\" \"CFBundleVersion\" \"${BUNDLE_VERSION}\"\n";
+			shellScript = "./Cooliris-ToolKit/Scripts/PatchInfoPlist.sh\n\nBUNDLE_VERSION=`defaults read \"${CONFIGURATION_BUILD_DIR}/${FULL_PRODUCT_NAME}/Info\" \"CFBundleVersion\"`\necho \"Original bundle version: ${BUNDLE_VERSION}\"\n\nBUNDLE_VERSION=$[100000+${BUNDLE_VERSION}]\necho \"New bundle version: ${BUNDLE_VERSION}\"\n\ndefaults write \"${CONFIGURATION_BUILD_DIR}/${FULL_PRODUCT_NAME}/Info\" \"CFBundleVersion\" \"${BUNDLE_VERSION}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
