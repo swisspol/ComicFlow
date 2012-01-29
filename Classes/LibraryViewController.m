@@ -499,7 +499,7 @@ static void __DisplayQueueCallBack(void* info) {
   ComicViewController* viewController = [[ComicViewController alloc] initWithComic:comic];
   if (viewController) {
     [CATransaction begin];
-    [[AppDelegate sharedInstance] showSpinnerWithMessage:NSLocalizedString(@"SPINNER_MESSAGE", nil) animated:YES];
+    [[AppDelegate sharedInstance] showSpinnerWithMessage:NSLocalizedString(@"SPINNER_MESSAGE", nil) fullScreen:NO animated:YES];
     [CATransaction commit];
     
     viewController.modalPresentationStyle = UIModalPresentationFullScreen;
