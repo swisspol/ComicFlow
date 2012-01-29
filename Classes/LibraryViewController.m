@@ -572,6 +572,16 @@ static void __DisplayQueueCallBack(void* info) {
     [_gridView layoutSubviews];
     [self _setCurrentCollection:_currentCollection];
   }
+  
+  if (_launched == NO) {
+    _launchView = [[UIImageView alloc] initWithFrame:self.view.bounds];
+    _launchView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    UIImage* image = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Default-Portrait" ofType:@"png"]];
+    _launchView.image = image;
+    [image release];
+    [self.view addSubview:_launchView];
+    _launched = YES;
+  }
 }
 
 - (void) _showRatingScreen {
@@ -585,39 +595,37 @@ static void __DisplayQueueCallBack(void* info) {
 }
 
 - (void) _animationDidStop:(NSString*)animationID finished:(NSNumber*)finished context:(void*)context {
-  [_launchView removeFromSuperview];
-  [_launchView release];
-  _launchView = nil;
+  [(UIView*)context removeFromSuperview];
+  [(UIView*)context release];
 }
 
 - (void) _viewDidReallyAppear {
-  if (_launchView) {
-    if (_currentComic) {
-      Comic* comic = [[_currentComic retain] autorelease];
-      [_currentComic release];
-      _currentComic = nil;
-      
-      [self _presentComic:comic];
-    }
+  if (_currentComic) {
+    Comic* comic = [[_currentComic retain] autorelease];
+    [_currentComic release];
+    _currentComic = nil;
     
-    [CATransaction flush];
-    
-    [UIView beginAnimations:nil context:NULL];
-    [UIView setAnimationDelegate:self];
-    [UIView setAnimationDidStopSelector:@selector(_animationDidStop:finished:context:)];
-    [UIView setAnimationDuration:0.5];
-    _launchView.alpha = 0.0;
-    [UIView commitAnimations];
-    
-    NSInteger count = [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultUserKey_LaunchCount];
-    if (count >= 0) {
-      [[NSUserDefaults standardUserDefaults] setInteger:(count + 1) forKey:kDefaultUserKey_LaunchCount];
-      if ((count + 1 >= kLaunchCountBeforeRating) && !self.modalViewController && [[NetReachability sharedNetReachability] state]) {
-        [[UIApplication sharedApplication] beginIgnoringInteractionEvents];
-        [self performSelector:@selector(_showRatingScreen) withObject:nil afterDelay:kShowRatingDelay];
-      } else {
-        LOG_VERBOSE(@"Launch count is now %i", [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultUserKey_LaunchCount]);
-      }
+    [self _presentComic:comic];
+  }
+  
+  [CATransaction flush];
+  
+  [UIView beginAnimations:nil context:_launchView];
+  [UIView setAnimationDelegate:self];
+  [UIView setAnimationDidStopSelector:@selector(_animationDidStop:finished:context:)];
+  [UIView setAnimationDuration:0.5];
+  _launchView.alpha = 0.0;
+  [UIView commitAnimations];
+  _launchView = nil;
+  
+  NSInteger count = [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultUserKey_LaunchCount];
+  if (count >= 0) {
+    [[NSUserDefaults standardUserDefaults] setInteger:(count + 1) forKey:kDefaultUserKey_LaunchCount];
+    if ((count + 1 >= kLaunchCountBeforeRating) && !self.modalViewController && [[NetReachability sharedNetReachability] state]) {
+      [[UIApplication sharedApplication] beginIgnoringInteractionEvents];
+      [self performSelector:@selector(_showRatingScreen) withObject:nil afterDelay:kShowRatingDelay];
+    } else {
+      LOG_VERBOSE(@"Launch count is now %i", [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultUserKey_LaunchCount]);
     }
   }
 }
@@ -625,15 +633,8 @@ static void __DisplayQueueCallBack(void* info) {
 - (void) viewDidAppear:(BOOL)animated {
   [super viewDidAppear:animated];
   
-  if (_launched == NO) {
-    _launchView = [[UIImageView alloc] initWithFrame:self.view.bounds];
-    _launchView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    UIImage* image = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Default-Portrait" ofType:@"png"]];
-    _launchView.image = image;
-    [image release];
-    [self.view addSubview:_launchView];
-    [self performSelector:@selector(_viewDidReallyAppear) withObject:nil afterDelay:0.0];
-    _launched = YES;
+  if (_launchView) {
+    [self performSelector:@selector(_viewDidReallyAppear) withObject:nil afterDelay:0.0];  // Work around -didRotateFromInterfaceOrientation called after -viewDidAppear on iOS 4.x
   }
   
   [self becomeFirstResponder];
