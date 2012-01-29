@@ -15,6 +15,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #import <QuartzCore/QuartzCore.h>
+#import <sys/xattr.h>
 
 #import "AppDelegate.h"
 #import "Library.h"
@@ -75,6 +76,14 @@
   
   // Set TaskQueue concurrency
   [TaskQueue setDefaultConcurrency:2];
+  
+  // Prevent backup of Documents directory as it contains only "offline data" (iOS 5.0.1 and later)
+  NSString* documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
+  u_int8_t value = 1;
+  int result = setxattr([documentsPath fileSystemRepresentation], "com.apple.MobileBackup", &value, sizeof(value), 0, 0);
+  if (result) {
+    LOG_ERROR(@"Failed setting do-not-backup attribute on \"%@\": %s (%i)", documentsPath, strerror(result), result);
+  }
   
   // Initialize updater
   [[LibraryUpdater sharedUpdater] setDelegate:(LibraryViewController*)self.viewController];
