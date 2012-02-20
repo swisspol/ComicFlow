@@ -189,6 +189,7 @@
 		E240F00F125340B300B95E4A /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/LibraryViewController.xib; sourceTree = "<group>"; };
 		E247C0AF1293996500CEB396 /* Collection-Screen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Collection-Screen.png"; sourceTree = "<group>"; };
 		E247C19A1293A79D00CEB396 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		E25373D314F2C6A3009E3A74 /* Distribution.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Distribution.xcconfig; sourceTree = "<group>"; };
 		E26649571230D4A500BC13C1 /* ApplicationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationDelegate.h; sourceTree = "<group>"; };
 		E26649581230D4A500BC13C1 /* ApplicationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApplicationDelegate.m; sourceTree = "<group>"; };
 		E267036C1228D7C0009C4EBB /* NavigationControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationControl.h; sourceTree = "<group>"; };
@@ -408,6 +409,7 @@
 			children = (
 				E22932A2121E260F00484F9F /* Base.xcconfig */,
 				E22932A3121E260F00484F9F /* Debug.xcconfig */,
+				E25373D314F2C6A3009E3A74 /* Distribution.xcconfig */,
 				E22932A4121E260F00484F9F /* Release.xcconfig */,
 			);
 			path = "Xcode-Configurations";
@@ -726,6 +728,34 @@
 			};
 			name = Release;
 		};
+		E25373CD14F2C68F009E3A74 /* Distribution */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E25373D314F2C6A3009E3A74 /* Distribution.xcconfig */;
+			buildSettings = {
+				"ARCHS[sdk=iphoneos*]" = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Distribution;
+		};
+		E25373CE14F2C68F009E3A74 /* Distribution */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CURRENT_PROJECT_VERSION = 1.0.5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Prefix.pch;
+				HEADER_SEARCH_PATHS = (
+					"Cooliris-ToolKit/DAVServer",
+					"Cooliris-ToolKit/MiniZip",
+					"Cooliris-ToolKit/UnRAR",
+				);
+				INFOPLIST_FILE = Info.plist;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = ComicFlow;
+			};
+			name = Distribution;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -734,6 +764,7 @@
 			buildConfigurations = (
 				1D6058940D05DD3E006BFB54 /* Debug */,
 				1D6058950D05DD3E006BFB54 /* Release */,
+				E25373CE14F2C68F009E3A74 /* Distribution */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -743,6 +774,7 @@
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,
 				C01FCF5008A954540054247B /* Release */,
+				E25373CD14F2C68F009E3A74 /* Distribution */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
