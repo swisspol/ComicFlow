@@ -24,20 +24,14 @@
 		E20593CF121E51F300A271CC /* HTTPURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = E20593CE121E51F300A271CC /* HTTPURLConnection.m */; };
 		E2059499121E66A300A271CC /* Library.m in Sources */ = {isa = PBXBuildFile; fileRef = E2059498121E66A300A271CC /* Library.m */; };
 		E2059555121E723000A271CC /* ImageUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = E2059554121E723000A271CC /* ImageUtilities.m */; };
-		E20595E0121E7CB500A271CC /* FileSystemView.m in Sources */ = {isa = PBXBuildFile; fileRef = E20595DF121E7CB500A271CC /* FileSystemView.m */; };
 		E205992A121EE21400A271CC /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2059928121EE21400A271CC /* MainWindow.xib */; };
 		E205992D121EE24E00A271CC /* Collection.png in Resources */ = {isa = PBXBuildFile; fileRef = E205992B121EE24E00A271CC /* Collection.png */; };
 		E205992E121EE24E00A271CC /* Comic.png in Resources */ = {isa = PBXBuildFile; fileRef = E205992C121EE24E00A271CC /* Comic.png */; };
 		E2059D67121F7D7C00A271CC /* ComicViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E2059D65121F7D7C00A271CC /* ComicViewController.m */; };
 		E2059D74121F7E0E00A271CC /* LibraryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E2059D73121F7E0E00A271CC /* LibraryViewController.m */; };
 		E205A102121FB0E100A271CC /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E205A101121FB0E100A271CC /* QuartzCore.framework */; };
-		E20893A112FA120C001F1D2F /* RatingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E20893A012FA120C001F1D2F /* RatingViewController.m */; };
-		E20893A412FA1263001F1D2F /* RatingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E20893A212FA1263001F1D2F /* RatingViewController.xib */; };
-		E20893A712FA126C001F1D2F /* Rating-Background.png in Resources */ = {isa = PBXBuildFile; fileRef = E20893A512FA126C001F1D2F /* Rating-Background.png */; };
-		E20893A812FA126C001F1D2F /* Rating-Button.png in Resources */ = {isa = PBXBuildFile; fileRef = E20893A612FA126C001F1D2F /* Rating-Button.png */; };
 		E20893DB12FA163F001F1D2F /* NetReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = E20893DA12FA163F001F1D2F /* NetReachability.m */; };
 		E20893E112FA1657001F1D2F /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E20893E012FA1657001F1D2F /* SystemConfiguration.framework */; };
-		E209CC941220278600B1077B /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = E209CC931220278600B1077B /* Icon-72.png */; };
 		E209D0651220F83E00B1077B /* Action.png in Resources */ = {isa = PBXBuildFile; fileRef = E209D0641220F83E00B1077B /* Action.png */; };
 		E209D0C71221090200B1077B /* Button.png in Resources */ = {isa = PBXBuildFile; fileRef = E209D0C61221090200B1077B /* Button.png */; };
 		E209D54912218C3400B1077B /* GridView.m in Sources */ = {isa = PBXBuildFile; fileRef = E209D54812218C3400B1077B /* GridView.m */; };
@@ -52,6 +46,19 @@
 		E25AAA4513A3FC5100CCCF0A /* libDAVServer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E25AA9F713A3FBDD00CCCF0A /* libDAVServer.a */; };
 		E25AAA4613A3FC5100CCCF0A /* libMiniZip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E25AA9FF13A3FBE700CCCF0A /* libMiniZip.a */; };
 		E25AAA4713A3FC5200CCCF0A /* libUnRAR.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E25AAA0713A3FBEF00CCCF0A /* libUnRAR.a */; };
+		E26610E415320AAC0045E707 /* Background-Collection@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E26610E215320AAC0045E707 /* Background-Collection@2x.png */; };
+		E26610E515320AAC0045E707 /* Background-Library@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E26610E315320AAC0045E707 /* Background-Library@2x.png */; };
+		E26610FB15320B8A0045E707 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = E26610F915320B8A0045E707 /* Icon.png */; };
+		E26610FC15320B8A0045E707 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E26610FA15320B8A0045E707 /* Icon@2x.png */; };
+		E266110615320E700045E707 /* New@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E266110415320E700045E707 /* New@2x.png */; };
+		E266110715320E700045E707 /* Ribbon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E266110515320E700045E707 /* Ribbon@2x.png */; };
+		E266110B1532125B0045E707 /* Default-Landscape@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E26611091532125B0045E707 /* Default-Landscape@2x.png */; };
+		E266110C1532125B0045E707 /* Default-Portrait@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E266110A1532125B0045E707 /* Default-Portrait@2x.png */; };
+		E2661112153213730045E707 /* Comic-Screen@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E2661110153213730045E707 /* Comic-Screen@2x.png */; };
+		E2661113153213730045E707 /* Comic@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E2661111153213730045E707 /* Comic@2x.png */; };
+		E2661117153214090045E707 /* Collection-Screen@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E2661115153214090045E707 /* Collection-Screen@2x.png */; };
+		E2661118153214090045E707 /* Collection@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E2661116153214090045E707 /* Collection@2x.png */; };
+		E266111B153217690045E707 /* Button@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E266111A153217690045E707 /* Button@2x.png */; };
 		E26649591230D4A500BC13C1 /* ApplicationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E26649581230D4A500BC13C1 /* ApplicationDelegate.m */; };
 		E26703701228D7C0009C4EBB /* NavigationControl.m in Sources */ = {isa = PBXBuildFile; fileRef = E267036D1228D7C0009C4EBB /* NavigationControl.m */; };
 		E26703711228D7C0009C4EBB /* OverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = E267036F1228D7C0009C4EBB /* OverlayView.m */; };
@@ -148,8 +155,6 @@
 		E2059498121E66A300A271CC /* Library.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Library.m; sourceTree = "<group>"; };
 		E2059553121E723000A271CC /* ImageUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageUtilities.h; sourceTree = "<group>"; };
 		E2059554121E723000A271CC /* ImageUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageUtilities.m; sourceTree = "<group>"; };
-		E20595DE121E7CB500A271CC /* FileSystemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemView.h; sourceTree = "<group>"; };
-		E20595DF121E7CB500A271CC /* FileSystemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemView.m; sourceTree = "<group>"; };
 		E2059928121EE21400A271CC /* MainWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
 		E205992B121EE24E00A271CC /* Collection.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Collection.png; sourceTree = "<group>"; };
 		E205992C121EE24E00A271CC /* Comic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Comic.png; sourceTree = "<group>"; };
@@ -161,15 +166,9 @@
 		E205A2F6121FB6F500A271CC /* DAVServer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DAVServer.xcodeproj; path = "Cooliris-ToolKit/DAVServer/DAVServer.xcodeproj"; sourceTree = "<group>"; };
 		E205A2FF121FB6FD00A271CC /* MiniZip.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MiniZip.xcodeproj; path = "Cooliris-ToolKit/MiniZip/MiniZip.xcodeproj"; sourceTree = "<group>"; };
 		E205A308121FB70400A271CC /* UnRAR.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UnRAR.xcodeproj; path = "Cooliris-ToolKit/UnRAR/UnRAR.xcodeproj"; sourceTree = "<group>"; };
-		E208939F12FA120C001F1D2F /* RatingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RatingViewController.h; sourceTree = "<group>"; };
-		E20893A012FA120C001F1D2F /* RatingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RatingViewController.m; sourceTree = "<group>"; };
-		E20893A312FA1263001F1D2F /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/RatingViewController.xib; sourceTree = "<group>"; };
-		E20893A512FA126C001F1D2F /* Rating-Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Rating-Background.png"; sourceTree = "<group>"; };
-		E20893A612FA126C001F1D2F /* Rating-Button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Rating-Button.png"; sourceTree = "<group>"; };
 		E20893D912FA163F001F1D2F /* NetReachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetReachability.h; sourceTree = "<group>"; };
 		E20893DA12FA163F001F1D2F /* NetReachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetReachability.m; sourceTree = "<group>"; };
 		E20893E012FA1657001F1D2F /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		E209CC931220278600B1077B /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
 		E209D0641220F83E00B1077B /* Action.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Action.png; sourceTree = "<group>"; };
 		E209D0C61221090200B1077B /* Button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Button.png; sourceTree = "<group>"; };
 		E209D2111221154300B1077B /* Defaults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Defaults.h; sourceTree = "<group>"; };
@@ -190,6 +189,19 @@
 		E247C0AF1293996500CEB396 /* Collection-Screen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Collection-Screen.png"; sourceTree = "<group>"; };
 		E247C19A1293A79D00CEB396 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		E25373D314F2C6A3009E3A74 /* Distribution.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Distribution.xcconfig; sourceTree = "<group>"; };
+		E26610E215320AAC0045E707 /* Background-Collection@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Background-Collection@2x.png"; sourceTree = "<group>"; };
+		E26610E315320AAC0045E707 /* Background-Library@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Background-Library@2x.png"; sourceTree = "<group>"; };
+		E26610F915320B8A0045E707 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		E26610FA15320B8A0045E707 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
+		E266110415320E700045E707 /* New@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "New@2x.png"; sourceTree = "<group>"; };
+		E266110515320E700045E707 /* Ribbon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Ribbon@2x.png"; sourceTree = "<group>"; };
+		E26611091532125B0045E707 /* Default-Landscape@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Landscape@2x.png"; sourceTree = "<group>"; };
+		E266110A1532125B0045E707 /* Default-Portrait@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Portrait@2x.png"; sourceTree = "<group>"; };
+		E2661110153213730045E707 /* Comic-Screen@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Comic-Screen@2x.png"; sourceTree = "<group>"; };
+		E2661111153213730045E707 /* Comic@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Comic@2x.png"; sourceTree = "<group>"; };
+		E2661115153214090045E707 /* Collection-Screen@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Collection-Screen@2x.png"; sourceTree = "<group>"; };
+		E2661116153214090045E707 /* Collection@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Collection@2x.png"; sourceTree = "<group>"; };
+		E266111A153217690045E707 /* Button@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Button@2x.png"; sourceTree = "<group>"; };
 		E26649571230D4A500BC13C1 /* ApplicationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationDelegate.h; sourceTree = "<group>"; };
 		E26649581230D4A500BC13C1 /* ApplicationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApplicationDelegate.m; sourceTree = "<group>"; };
 		E267036C1228D7C0009C4EBB /* NavigationControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationControl.h; sourceTree = "<group>"; };
@@ -258,8 +270,6 @@
 				E2059498121E66A300A271CC /* Library.m */,
 				E2059D72121F7E0E00A271CC /* LibraryViewController.h */,
 				E2059D73121F7E0E00A271CC /* LibraryViewController.m */,
-				E208939F12FA120C001F1D2F /* RatingViewController.h */,
-				E20893A012FA120C001F1D2F /* RatingViewController.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -331,23 +341,32 @@
 			children = (
 				E209D0641220F83E00B1077B /* Action.png */,
 				E2ACCE40129D6FF4001362E0 /* Background-Collection.png */,
+				E26610E215320AAC0045E707 /* Background-Collection@2x.png */,
 				E2ACCE41129D6FF4001362E0 /* Background-Library.png */,
+				E26610E315320AAC0045E707 /* Background-Library@2x.png */,
 				E209D0C61221090200B1077B /* Button.png */,
+				E266111A153217690045E707 /* Button@2x.png */,
 				E247C0AF1293996500CEB396 /* Collection-Screen.png */,
+				E2661115153214090045E707 /* Collection-Screen@2x.png */,
 				E205992B121EE24E00A271CC /* Collection.png */,
+				E2661116153214090045E707 /* Collection@2x.png */,
 				E2240675129275BC007E5296 /* Comic-Screen.png */,
+				E2661110153213730045E707 /* Comic-Screen@2x.png */,
 				E205992C121EE24E00A271CC /* Comic.png */,
+				E2661111153213730045E707 /* Comic@2x.png */,
 				E240F00C125340B300B95E4A /* ComicViewController.xib */,
 				E28CF46112237F790076FB21 /* Default-Landscape.png */,
+				E26611091532125B0045E707 /* Default-Landscape@2x.png */,
 				E28CF46212237F790076FB21 /* Default-Portrait.png */,
+				E266110A1532125B0045E707 /* Default-Portrait@2x.png */,
 				E240F00512533FEC00B95E4A /* Localizable.strings */,
-				E209CC931220278600B1077B /* Icon-72.png */,
+				E26610F915320B8A0045E707 /* Icon.png */,
+				E26610FA15320B8A0045E707 /* Icon@2x.png */,
 				E240F00E125340B300B95E4A /* LibraryViewController.xib */,
 				E2059928121EE21400A271CC /* MainWindow.xib */,
 				E28CF8091223BFD40076FB21 /* New.png */,
-				E20893A212FA1263001F1D2F /* RatingViewController.xib */,
-				E20893A512FA126C001F1D2F /* Rating-Background.png */,
-				E20893A612FA126C001F1D2F /* Rating-Button.png */,
+				E266110415320E700045E707 /* New@2x.png */,
+				E266110515320E700045E707 /* Ribbon@2x.png */,
 				E28CF6DF1223A0BC0076FB21 /* Ribbon.png */,
 			);
 			path = Resources;
@@ -378,8 +397,6 @@
 				E20593AB121E4E2D00A271CC /* Extensions_Foundation.m */,
 				E2BC918E1223FDFA008FB376 /* Extensions_UIKit.h */,
 				E2BC918F1223FDFA008FB376 /* Extensions_UIKit.m */,
-				E20595DE121E7CB500A271CC /* FileSystemView.h */,
-				E20595DF121E7CB500A271CC /* FileSystemView.m */,
 				E209D54712218C3400B1077B /* GridView.h */,
 				E209D54812218C3400B1077B /* GridView.m */,
 				E20593CD121E51F300A271CC /* HTTPURLConnection.h */,
@@ -536,7 +553,6 @@
 				E205992A121EE21400A271CC /* MainWindow.xib in Resources */,
 				E205992D121EE24E00A271CC /* Collection.png in Resources */,
 				E205992E121EE24E00A271CC /* Comic.png in Resources */,
-				E209CC941220278600B1077B /* Icon-72.png in Resources */,
 				E209D0651220F83E00B1077B /* Action.png in Resources */,
 				E209D0C71221090200B1077B /* Button.png in Resources */,
 				E2CAA9E4122295F800A4D85A /* DocumentView-Shadow-Left.png in Resources */,
@@ -559,9 +575,19 @@
 				E247C0B01293996500CEB396 /* Collection-Screen.png in Resources */,
 				E2ACCE42129D6FF4001362E0 /* Background-Collection.png in Resources */,
 				E2ACCE43129D6FF4001362E0 /* Background-Library.png in Resources */,
-				E20893A412FA1263001F1D2F /* RatingViewController.xib in Resources */,
-				E20893A712FA126C001F1D2F /* Rating-Background.png in Resources */,
-				E20893A812FA126C001F1D2F /* Rating-Button.png in Resources */,
+				E26610E415320AAC0045E707 /* Background-Collection@2x.png in Resources */,
+				E26610E515320AAC0045E707 /* Background-Library@2x.png in Resources */,
+				E26610FB15320B8A0045E707 /* Icon.png in Resources */,
+				E26610FC15320B8A0045E707 /* Icon@2x.png in Resources */,
+				E266110615320E700045E707 /* New@2x.png in Resources */,
+				E266110715320E700045E707 /* Ribbon@2x.png in Resources */,
+				E266110B1532125B0045E707 /* Default-Landscape@2x.png in Resources */,
+				E266110C1532125B0045E707 /* Default-Portrait@2x.png in Resources */,
+				E2661112153213730045E707 /* Comic-Screen@2x.png in Resources */,
+				E2661113153213730045E707 /* Comic@2x.png in Resources */,
+				E2661117153214090045E707 /* Collection-Screen@2x.png in Resources */,
+				E2661118153214090045E707 /* Collection@2x.png in Resources */,
+				E266111B153217690045E707 /* Button@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -599,7 +625,6 @@
 				E20593CF121E51F300A271CC /* HTTPURLConnection.m in Sources */,
 				E2059499121E66A300A271CC /* Library.m in Sources */,
 				E2059555121E723000A271CC /* ImageUtilities.m in Sources */,
-				E20595E0121E7CB500A271CC /* FileSystemView.m in Sources */,
 				E2059D67121F7D7C00A271CC /* ComicViewController.m in Sources */,
 				E2059D74121F7E0E00A271CC /* LibraryViewController.m in Sources */,
 				E209D54912218C3400B1077B /* GridView.m in Sources */,
@@ -611,7 +636,6 @@
 				E26649591230D4A500BC13C1 /* ApplicationDelegate.m in Sources */,
 				E2FE180C128ADD67005B17EC /* Database.m in Sources */,
 				2CF616F61293D8A6008FD89E /* ZoomView.m in Sources */,
-				E20893A112FA120C001F1D2F /* RatingViewController.m in Sources */,
 				E20893DB12FA163F001F1D2F /* NetReachability.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -637,14 +661,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		E20893A212FA1263001F1D2F /* RatingViewController.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				E20893A312FA1263001F1D2F /* English */,
-			);
-			name = RatingViewController.xib;
-			sourceTree = "<group>";
-		};
 		E240F00512533FEC00B95E4A /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -675,7 +691,7 @@
 		1D6058940D05DD3E006BFB54 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 1.0.5;
+				CURRENT_PROJECT_VERSION = 1.0.6;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Prefix.pch;
 				HEADER_SEARCH_PATHS = (
@@ -692,7 +708,7 @@
 		1D6058950D05DD3E006BFB54 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 1.0.5;
+				CURRENT_PROJECT_VERSION = 1.0.6;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Prefix.pch;
 				HEADER_SEARCH_PATHS = (
@@ -742,7 +758,7 @@
 		E25373CE14F2C68F009E3A74 /* Distribution */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 1.0.5;
+				CURRENT_PROJECT_VERSION = 1.0.6;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Prefix.pch;
 				HEADER_SEARCH_PATHS = (

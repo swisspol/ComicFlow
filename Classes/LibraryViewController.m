@@ -19,7 +19,6 @@
 
 #import "LibraryViewController.h"
 #import "ComicViewController.h"
-#import "RatingViewController.h"
 #import "AppDelegate.h"
 #import "Defaults.h"
 #import "Extensions_Foundation.h"
@@ -46,6 +45,8 @@
 
 #define kLaunchCountBeforeRating 10
 #define kShowRatingDelay 1.0
+
+#define kStatusBarHeight 20.0
 
 #if __DISPLAY_THUMBNAILS_IN_BACKGROUND__
 @interface ThumbnailView : UIView
@@ -584,13 +585,25 @@ static void __DisplayQueueCallBack(void* info) {
   }
 }
 
-- (void) _showRatingScreen {
-  UIViewController* controller = [[RatingViewController alloc] init];
-  controller.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-  controller.modalPresentationStyle = UIModalPresentationFormSheet;  // The view will be resized to 540x620 (radr://8096902)
-  [self presentModalViewController:controller animated:YES];
-  [controller release];
+- (void) _rateNow:(id)argument {
+  [[NSUserDefaults standardUserDefaults] setInteger:-1 forKey:kDefaultUserKey_LaunchCount];
   
+  [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"iTunesURL"]]];
+}
+
+- (void) _rateLater:(id)argument {
+  [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:kDefaultUserKey_LaunchCount];
+}
+
+- (void) _showRatingScreen {
+  [(ApplicationDelegate*)[[UIApplication sharedApplication] delegate] showAlertWithTitle:NSLocalizedString(@"RATE_ALERT_TITLE", nil)
+                                                                                 message:NSLocalizedString(@"RATE_ALERT_MESSAGE", nil)
+                                                                           confirmButton:NSLocalizedString(@"RATE_ALERT_CONFIRM", nil)
+                                                                            cancelButton:NSLocalizedString(@"RATE_ALERT_CANCEL", nil)
+                                                                                delegate:self
+                                                                         confirmSelector:@selector(_rateNow:)
+                                                                          cancelSelector:@selector(_rateLater:)
+                                                                                argument:nil];
   [[UIApplication sharedApplication] endIgnoringInteractionEvents];
 }
 
@@ -606,6 +619,8 @@ static void __DisplayQueueCallBack(void* info) {
     _currentComic = nil;
     
     [self _presentComic:comic];
+  } else {
+    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
   }
   
   [CATransaction flush];
@@ -615,6 +630,10 @@ static void __DisplayQueueCallBack(void* info) {
   [UIView setAnimationDidStopSelector:@selector(_animationDidStop:finished:context:)];
   [UIView setAnimationDuration:0.5];
   _launchView.alpha = 0.0;
+  CGRect frame = self.view.frame;
+  frame.origin.y = kStatusBarHeight;
+  frame.size.height -= kStatusBarHeight;
+  self.view.frame = frame;
   [UIView commitAnimations];
   _launchView = nil;
   

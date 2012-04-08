@@ -49,3 +49,8 @@
 "INBOX_ALERT_TITLE" = "File Added To Library";
 "INBOX_ALERT_MESSAGE" = "The file \"%@\" will be visible in the library after it has finished updating.";
 "INBOX_ALERT_BUTTON" = "Continue";
+
+"RATE_ALERT_TITLE" = "Are you enjoying ComicFlow?";
+"RATE_ALERT_MESSAGE" = "Please rate this free app it in the App Store.";
+"RATE_ALERT_CONFIRM" = "Rate Now";
+"RATE_ALERT_CANCEL" = "Remind Me Later";

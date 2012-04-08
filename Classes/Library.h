@@ -83,6 +83,7 @@
 @interface LibraryUpdater : NSObject {
 @private
   id<LibraryUpdaterDelegate> _delegate;
+  CGFloat _screenScale;
   CGImageRef _comicBackgroundImageRef;
   CGImageRef _comicScreenImageRef;
   CGImageRef _collectionBackgroundImageRef;

@@ -151,13 +151,14 @@
 }
 
 - (void) documentView:(DocumentView*)documentView willShowPageView:(UIView*)view {
+  CGFloat maxPageSize = kMaxPageSize * [[UIScreen mainScreen] scale];
   CGImageRef imageRef = NULL;
   if (_type == kComicType_PDF) {
     CGPDFDocumentRef document = CGPDFDocumentCreateWithURL((CFURLRef)[NSURL fileURLWithPath:_path]);  // Don't keep CGPDFDocument around as it caches pages content heavily
     if (document) {
       CGPDFPageRef page = CGPDFDocumentGetPage(document, view.tag);
       if (page) {
-        imageRef = CreateRenderedPDFPage(page, CGSizeMake(kMaxPageSize, kMaxPageSize), kImageScalingMode_AspectFit,
+        imageRef = CreateRenderedPDFPage(page, CGSizeMake(maxPageSize, maxPageSize), kImageScalingMode_AspectFit,
                                          [[UIColor whiteColor] CGColor]);
         LOG_VERBOSE(@"Loading page %i of %ix%i pixels resized to %ix%i pixels", view.tag,
                     (int)CGPDFPageGetBoxRect(page, kCGPDFMediaBox).size.width, (int)CGPDFPageGetBoxRect(page, kCGPDFMediaBox).size.height,
@@ -173,8 +174,8 @@
         UIImage* image = [[UIImage alloc] initWithData:data];
         if (image) {
           imageRef = [image CGImage];
-          if ((CGImageGetWidth(imageRef) > kMaxPageSize) || (CGImageGetHeight(imageRef) > kMaxPageSize)) {
-            imageRef = CreateScaledImage(imageRef, CGSizeMake(kMaxPageSize, kMaxPageSize), kImageScalingMode_AspectFit,
+          if ((CGImageGetWidth(imageRef) > maxPageSize) || (CGImageGetHeight(imageRef) > maxPageSize)) {
+            imageRef = CreateScaledImage(imageRef, CGSizeMake(maxPageSize, maxPageSize), kImageScalingMode_AspectFit,
                                          [[UIColor blackColor] CGColor]);
           } else {
             CGImageRetain(imageRef);

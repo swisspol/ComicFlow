@@ -214,6 +214,7 @@ typedef enum {
 
 - (id) init {
   if ((self = [super init])) {
+    _screenScale = [[UIScreen mainScreen] scale];
     _comicBackgroundImageRef = CGImageRetain([[UIImage imageWithContentsOfFile:
                                              [[NSBundle mainBundle] pathForResource:@"Comic" ofType:@"png"]] CGImage]);
     CHECK(_comicBackgroundImageRef);
@@ -288,10 +289,14 @@ typedef enum {
 
 // Called from TaskQueue thread
 - (NSData*) _thumbnailDataForComicWithCoverImage:(CGImageRef)imageRef {
+  size_t contextWidth = _screenScale * kLibraryThumbnailWidth;
+  size_t contextHeight = _screenScale * kLibraryThumbnailHeight;
+  
   CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
-  CGContextRef context = CGBitmapContextCreate(NULL, kLibraryThumbnailWidth, kLibraryThumbnailHeight, 8, 0, colorspace,
+  CGContextRef context = CGBitmapContextCreate(NULL, contextWidth, contextHeight, 8, 0, colorspace,
                                                kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
-  CGContextClearRect(context, CGRectMake(0, 0, kLibraryThumbnailWidth, kLibraryThumbnailHeight));
+  CGContextClearRect(context, CGRectMake(0, 0, contextWidth, contextHeight));
+  CGContextScaleCTM(context, _screenScale, _screenScale);
   
   CGContextSetBlendMode(context, kCGBlendModeCopy);
   CGContextDrawImage(context, CGRectMake(0, 0, kLibraryThumbnailWidth, kLibraryThumbnailHeight), _comicBackgroundImageRef);
@@ -314,10 +319,14 @@ typedef enum {
 
 // Called from TaskQueue thread
 - (NSData*) _thumbnailDataForCollectionWithCoverImage:(CGImageRef)imageRef name:(NSString*)name {
+  size_t contextWidth = _screenScale * kLibraryThumbnailWidth;
+  size_t contextHeight = _screenScale * kLibraryThumbnailHeight;
+  
   CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
-  CGContextRef context = CGBitmapContextCreate(NULL, kLibraryThumbnailWidth, kLibraryThumbnailHeight, 8, 0, colorspace,
+  CGContextRef context = CGBitmapContextCreate(NULL, contextWidth, contextHeight, 8, 0, colorspace,
                                                kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
-  CGContextClearRect(context, CGRectMake(0, 0, kLibraryThumbnailWidth, kLibraryThumbnailHeight));
+  CGContextClearRect(context, CGRectMake(0, 0, contextWidth, contextHeight));
+  CGContextScaleCTM(context, _screenScale, _screenScale);
   
   CGContextSetBlendMode(context, kCGBlendModeCopy);
   CGContextDrawImage(context, CGRectMake(0, 0, kLibraryThumbnailWidth, kLibraryThumbnailHeight), _collectionBackgroundImageRef);
