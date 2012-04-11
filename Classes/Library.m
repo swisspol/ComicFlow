@@ -407,7 +407,9 @@ typedef enum {
   return data;
 }
 
-static CGImageRef _CopyCoverImageFromComic(NSString* path, ArchiveType type, CGSize size) {
+- (CGImageRef) _copyCoverImageFromComicAtPath:(NSString*)path withArchiveType:(ArchiveType)type forSize:(CGSize)size {
+  size.width *= _screenScale;
+  size.height *= _screenScale;
   CGImageRef imageRef = NULL;
   if (type == kArchiveType_PDF) {
     CGPDFDocumentRef document = CGPDFDocumentCreateWithURL((CFURLRef)[NSURL fileURLWithPath:path]);
@@ -498,7 +500,7 @@ static CGImageRef _CopyCoverImageFromComic(NSString* path, ArchiveType type, CGS
     [[NSFileManager defaultManager] setExtendedAttributeData:_fakeData withName:kLibraryExtendedAttribute forFileAtPath:path];
     
     // Process comic
-    CGImageRef imageRef = _CopyCoverImageFromComic(path, type, CGSizeMake(kComicCoverWidth, kComicCoverHeight));
+    CGImageRef imageRef = [self _copyCoverImageFromComicAtPath:path withArchiveType:type forSize:CGSizeMake(kComicCoverWidth, kComicCoverHeight)];
     if (imageRef) {
       NSData* data = [self _thumbnailDataForComicWithCoverImage:imageRef];
       if (data) {
@@ -742,7 +744,7 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
                                 force:force];
             if (collection && !imageRef) {
               LOG_VERBOSE(@"Using comic \"%@\" to generate thumbnail for collection \"%@\"", file, directory);
-              imageRef = _CopyCoverImageFromComic(path, type, CGSizeMake(kCollectionCoverWidth, kCollectionCoverHeight));
+              imageRef = [self _copyCoverImageFromComicAtPath:path withArchiveType:type forSize:CGSizeMake(kCollectionCoverWidth, kCollectionCoverHeight)];
             }
           } else {
             LOG_INFO(@"Ignoring unknown type comic \"%@\"", file);

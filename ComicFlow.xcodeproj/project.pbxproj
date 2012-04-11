@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1B5CC97F15361EBA004A83FA /* Action@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1B5CC97E15361EBA004A83FA /* Action@2x.png */; };
 		1D3623260D0F684500981E51 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* AppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
@@ -129,6 +130,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1B5CC97E15361EBA004A83FA /* Action@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Action@2x.png"; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -340,6 +342,7 @@
 			isa = PBXGroup;
 			children = (
 				E209D0641220F83E00B1077B /* Action.png */,
+				1B5CC97E15361EBA004A83FA /* Action@2x.png */,
 				E2ACCE40129D6FF4001362E0 /* Background-Collection.png */,
 				E26610E215320AAC0045E707 /* Background-Collection@2x.png */,
 				E2ACCE41129D6FF4001362E0 /* Background-Library.png */,
@@ -588,6 +591,7 @@
 				E2661117153214090045E707 /* Collection-Screen@2x.png in Resources */,
 				E2661118153214090045E707 /* Collection@2x.png in Resources */,
 				E266111B153217690045E707 /* Button@2x.png in Resources */,
+				1B5CC97F15361EBA004A83FA /* Action@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
