@@ -470,7 +470,7 @@ static void __DisplayQueueCallBack(void* info) {
 - (void) _setCurrentCollection:(Collection*)collection {
   UIImage* backgroundImage = [UIImage imageNamed:(collection ? @"Background-Collection.png" : @"Background-Library.png")];
   _window.layer.contents = (id)[backgroundImage CGImage];
-  _window.layer.contentsScale = [[UIScreen mainScreen] scale];
+  _window.layer.contentsScale = backgroundImage.scale;
   
   NSMutableArray* barItems = [[NSMutableArray alloc] initWithArray:_navigationBar.items];
   if (barItems.count == 2) {
