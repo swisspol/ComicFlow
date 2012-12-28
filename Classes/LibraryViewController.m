@@ -17,6 +17,8 @@
 #import <unistd.h>
 #import <QuartzCore/QuartzCore.h>
 
+#import "Flurry.h"
+
 #import "LibraryViewController.h"
 #import "ComicViewController.h"
 #import "AppDelegate.h"
@@ -586,16 +588,19 @@ static void __DisplayQueueCallBack(void* info) {
 }
 
 - (void) _rateNow:(id)argument {
+  [Flurry logEvent:@"rating.now" withParameters:nil];
   [[NSUserDefaults standardUserDefaults] setInteger:-1 forKey:kDefaultUserKey_LaunchCount];
   
   [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"iTunesURL"]]];
 }
 
 - (void) _rateLater:(id)argument {
+  [Flurry logEvent:@"rating.later" withParameters:nil];
   [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:kDefaultUserKey_LaunchCount];
 }
 
 - (void) _showRatingScreen {
+  [Flurry logEvent:@"rating.prompt" withParameters:nil];
   [(ApplicationDelegate*)[[UIApplication sharedApplication] delegate] showAlertWithTitle:NSLocalizedString(@"RATE_ALERT_TITLE", nil)
                                                                                  message:NSLocalizedString(@"RATE_ALERT_MESSAGE", nil)
                                                                            confirmButton:NSLocalizedString(@"RATE_ALERT_CONFIRM", nil)

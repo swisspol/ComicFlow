@@ -19,6 +19,8 @@
 #import <unistd.h>
 #endif
 
+#import "Flurry.h"
+
 #import "ComicViewController.h"
 #import "ZoomView.h"
 #import "MiniZip.h"
@@ -353,6 +355,8 @@
 
 - (void) documentViewDidChangePage:(DocumentView*)documentView {
   _navigationControl.currentPage = _documentView.selectedPageIndex;
+  
+  [Flurry logPageView];
 }
 
 - (UIView*) navigationControlOverlayViewForCurrentPage:(NavigationControl*)control {

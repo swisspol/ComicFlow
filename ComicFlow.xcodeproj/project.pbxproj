@@ -958,7 +958,10 @@
 					USE_FILE32API,
 					RARDLL,
 				);
+				HEADER_SEARCH_PATHS = Flurry;
 				INFOPLIST_FILE = Info.plist;
+				LIBRARY_SEARCH_PATHS = Flurry;
+				OTHER_LDFLAGS = "-lFlurry";
 				PRODUCT_NAME = ComicFlow;
 			};
 			name = Debug;
@@ -973,7 +976,10 @@
 					USE_FILE32API,
 					RARDLL,
 				);
+				HEADER_SEARCH_PATHS = Flurry;
 				INFOPLIST_FILE = Info.plist;
+				LIBRARY_SEARCH_PATHS = Flurry;
+				OTHER_LDFLAGS = "-lFlurry";
 				PRODUCT_NAME = ComicFlow;
 			};
 			name = Release;
@@ -1018,7 +1024,10 @@
 					USE_FILE32API,
 					RARDLL,
 				);
+				HEADER_SEARCH_PATHS = Flurry;
 				INFOPLIST_FILE = Info.plist;
+				LIBRARY_SEARCH_PATHS = Flurry;
+				OTHER_LDFLAGS = "-lFlurry";
 				PRODUCT_NAME = ComicFlow;
 			};
 			name = Distribution;

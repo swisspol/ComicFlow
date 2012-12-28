@@ -17,6 +17,8 @@
 #import <QuartzCore/QuartzCore.h>
 #import <sys/xattr.h>
 
+#import "Flurry.h"
+
 #import "AppDelegate.h"
 #import "Library.h"
 #import "LibraryViewController.h"
@@ -72,6 +74,10 @@
 
 - (BOOL) application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions {
   [super application:application didFinishLaunchingWithOptions:launchOptions];
+  
+  // Start Flurry analytics
+  [Flurry setAppVersion:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
+  [Flurry startSession:@"2ZSSCCWQY2Z36J78MTTZ"];
   
   // Prevent backup of Documents directory as it contains only "offline data" (iOS 5.0.1 and later)
   NSString* documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
