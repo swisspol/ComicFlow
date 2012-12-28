@@ -203,6 +203,20 @@ typedef enum {
   return [self executeRawSQLStatements:statement];
 }
 
+- (NSString*) pathForComic:(Comic*)comic {
+  NSString* path = [LibraryConnection libraryRootPath];
+  if (comic.collection) {
+    Collection* collection = [self fetchObjectOfClass:[Collection class] withSQLRowID:comic.collection];
+    path = [path stringByAppendingPathComponent:collection.name];
+  }
+  return [path stringByAppendingPathComponent:comic.name];
+}
+
+- (NSString*) pathForCollection:(Collection*)collection {
+  NSString* path = [LibraryConnection libraryRootPath];
+  return [path stringByAppendingPathComponent:collection.name];
+}
+
 @end
 
 @implementation LibraryUpdater

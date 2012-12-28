@@ -88,14 +88,7 @@
   DCHECK(comic.sqlRowID);
   if ((self = [super init])) {
     _comic = [comic retain];
-    
-    NSString* path = [LibraryConnection libraryRootPath];
-    if (comic.collection) {
-      Collection* collection = [[LibraryConnection mainConnection] fetchObjectOfClass:[Collection class]
-                                                                         withSQLRowID:_comic.collection];
-      path = [path stringByAppendingPathComponent:collection.name];
-    }
-    _path = [[path stringByAppendingPathComponent:_comic.name] copy];
+    _path = [[[LibraryConnection mainConnection] pathForComic:_comic] copy];
     
     if ([[NSFileManager defaultManager] fileExistsAtPath:_path]) {
       NSString* extension = [_path pathExtension];
@@ -115,7 +108,7 @@
       }
     }
     if (!_contents) {
-      LOG_ERROR(@"Failed loading comic at \"%@\"", path);
+      LOG_ERROR(@"Failed loading comic at \"%@\"", _path);
       [self release];
       return nil;
     }

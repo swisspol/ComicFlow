@@ -26,8 +26,10 @@
 
 "MARK_READ" = "Mark Read";
 "MARK_NEW" = "Mark New";
+"DELETE" = "Delete";
 "MARK_ALL_READ" = "Mark All Read";
 "MARK_ALL_NEW" = "Mark All New";
+"DELETE_ALL" = "Delete All";
 
 "LABEL_FORMAT" = "Page %i of %i";
 

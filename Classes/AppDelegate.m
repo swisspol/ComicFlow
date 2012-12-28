@@ -26,7 +26,7 @@
 #import "Extensions_Foundation.h"
 #import "Logging.h"
 
-#define kUpdateDelay 5.0  // Seconds
+#define kUpdateDelay 1.0  // Seconds
 
 @implementation AppDelegate
 
@@ -64,12 +64,16 @@
   CHECK([LibraryConnection mainConnection]);
 }
 
-- (void) _update:(NSTimer*)timer {
+- (void) _updateTimer:(NSTimer*)timer {
   if ([[LibraryUpdater sharedUpdater] isUpdating]) {
     [_updateTimer setFireDate:[NSDate dateWithTimeIntervalSinceNow:kUpdateDelay]];
   } else {
     [[LibraryUpdater sharedUpdater] update:NO];
   }
+}
+
+- (void) updateLibrary {
+  [self _updateTimer:nil];
 }
 
 - (BOOL) application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions {
@@ -104,7 +108,7 @@
   _updateTimer = [[NSTimer alloc] initWithFireDate:[NSDate distantFuture]
                                           interval:HUGE_VAL
                                             target:self
-                                          selector:@selector(_update:)
+                                          selector:@selector(_updateTimer:)
                                           userInfo:nil
                                            repeats:YES];
   [[NSRunLoop currentRunLoop] addTimer:_updateTimer forMode:NSRunLoopCommonModes];

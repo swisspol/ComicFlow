@@ -76,6 +76,8 @@
 - (NSArray*) fetchAllCollectionsByName;
 - (BOOL) updateStatus:(int)status forComicsInCollection:(Collection*)collection;
 - (BOOL) updateStatusForAllComics:(int)status;
+- (NSString*) pathForComic:(Comic*)comic;
+- (NSString*) pathForCollection:(Collection*)collection;
 @end
 
 @interface LibraryUpdater : NSObject {

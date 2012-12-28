@@ -24,4 +24,5 @@
 @property(nonatomic, readonly) WebServer* webServer;
 - (void) enableWebServer;
 - (void) disableWebServer;
+- (void) updateLibrary;
 @end

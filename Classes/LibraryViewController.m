@@ -296,6 +296,8 @@ static void __DisplayQueueCallBack(void* info) {
     }
     [_selectedItem release];
     _selectedItem = nil;
+  } else {
+    DNOT_REACHED();
   }
 }
 
@@ -305,6 +307,30 @@ static void __DisplayQueueCallBack(void* info) {
 
 - (void) _setNew:(id)sender {
   [self _setStatus:-1];
+}
+
+- (void) _delete:(id)sender {
+  if (_selectedItem) {
+    if ([_selectedItem isKindOfClass:[Comic class]]) {
+      NSError* error = nil;
+      if ([[NSFileManager defaultManager] removeItemAtPath:[[LibraryConnection mainConnection] pathForComic:(Comic*)_selectedItem] error:&error]) {
+        [(AppDelegate*)[AppDelegate sharedInstance] updateLibrary];
+      } else {
+        LOG_ERROR(@"Failed deleting comic \"%@\": %@", [(Comic*)_selectedItem name], error);
+      }
+    } else {
+      NSError* error = nil;
+      if ([[NSFileManager defaultManager] removeItemAtPath:[[LibraryConnection mainConnection] pathForCollection:(Collection*)_selectedItem] error:&error]) {
+        [(AppDelegate*)[AppDelegate sharedInstance] updateLibrary];
+      } else {
+        LOG_ERROR(@"Failed deleting comic \"%@\": %@", [(Collection*)_selectedItem name], error);
+      }
+    }
+    [_selectedItem release];
+    _selectedItem = nil;
+  } else {
+    DNOT_REACHED();
+  }
 }
 
 - (void) _press:(UILongPressGestureRecognizer*)recognizer {
@@ -325,6 +351,11 @@ static void __DisplayQueueCallBack(void* info) {
           [items addObject:item];
           [item release];
         }
+        if (1) {
+          UIMenuItem* item = [[UIMenuItem alloc] initWithTitle:NSLocalizedString(@"DELETE", nil) action:@selector(_delete:)];
+          [items addObject:item];
+          [item release];
+        }
       } else {
         if (status != 0) {
           UIMenuItem* item = [[UIMenuItem alloc] initWithTitle:NSLocalizedString(@"MARK_ALL_READ", nil) action:@selector(_setRead:)];
@@ -333,6 +364,11 @@ static void __DisplayQueueCallBack(void* info) {
         }
         if (status >= 0) {
           UIMenuItem* item = [[UIMenuItem alloc] initWithTitle:NSLocalizedString(@"MARK_ALL_NEW", nil) action:@selector(_setNew:)];
+          [items addObject:item];
+          [item release];
+        }
+        if (1) {
+          UIMenuItem* item = [[UIMenuItem alloc] initWithTitle:NSLocalizedString(@"DELETE_ALL", nil) action:@selector(_delete:)];
           [items addObject:item];
           [item release];
         }
