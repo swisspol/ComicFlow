@@ -14,6 +14,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#define kDefaultKey_ScreenDimmed @"screenDimmed"
 #define kDefaultKey_ServerEnabled @"serverEnabled"
 
 #define kDefaultKey_RootTimestamp @"rootTimestamp"

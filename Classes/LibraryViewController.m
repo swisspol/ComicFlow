@@ -79,7 +79,7 @@
 @synthesize gridView=_gridView, navigationBar=_navigationBar, segmentedControl=_segmentedControl, menuView=_menuView,
             progressView=_progressView, markReadButton=_markReadButton, markNewButton=_markNewButton, updateButton=_updateButton,
             forceUpdateButton=_forceUpdateButton, serverSwitch=_serverSwitch, addressLabel=_addressLabel,
-            infoLabel=_infoLabel, versionLabel=_versionLabel;
+            infoLabel=_infoLabel, versionLabel=_versionLabel, dimmingSwitch=_dimmingSwitch;
 
 - (void) _updateStatistics {
   NSDictionary* attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:[LibraryConnection libraryDatabasePath]
@@ -420,6 +420,7 @@ static void __DisplayQueueCallBack(void* info) {
   _markNewButton.enabled = !updating;
   _updateButton.enabled = !updating;
   _forceUpdateButton.enabled = !updating;
+  _dimmingSwitch.on = [(AppDelegate*)[AppDelegate sharedInstance] isScreenDimmed];
 }
 
 - (void) viewDidUnload {
@@ -442,6 +443,7 @@ static void __DisplayQueueCallBack(void* info) {
   self.addressLabel = nil;
   self.infoLabel = nil;
   self.versionLabel = nil;
+  self.dimmingSwitch = nil;
   
   [_menuController release];
   _menuController = nil;
@@ -648,11 +650,6 @@ static void __DisplayQueueCallBack(void* info) {
   [[UIApplication sharedApplication] endIgnoringInteractionEvents];
 }
 
-- (void) _animationDidStop:(NSString*)animationID finished:(NSNumber*)finished context:(void*)context {
-  [(UIView*)context removeFromSuperview];
-  [(UIView*)context release];
-}
-
 - (void) _viewDidReallyAppear {
   if (_currentComic) {
     Comic* comic = [[_currentComic retain] autorelease];
@@ -666,13 +663,14 @@ static void __DisplayQueueCallBack(void* info) {
   
   [CATransaction flush];
   
-  [UIView beginAnimations:nil context:_launchView];
-  [UIView setAnimationDelegate:self];
-  [UIView setAnimationDidStopSelector:@selector(_animationDidStop:finished:context:)];
-  [UIView setAnimationDuration:0.5];
-  _launchView.alpha = 0.0;
-  self.view.frame = [[UIScreen mainScreen] applicationFrame];
-  [UIView commitAnimations];
+  UIView* launchView = _launchView;
+  [UIView animateWithDuration:0.5 animations:^{
+    launchView.alpha = 0.0;
+    self.view.frame = [[UIScreen mainScreen] applicationFrame];
+  } completion:^(BOOL finished) {
+    [launchView removeFromSuperview];
+    [launchView release];
+  }];
   _launchView = nil;
   
   NSInteger count = [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultUserKey_LaunchCount];
@@ -943,6 +941,10 @@ static void __ArrayApplierFunction(const void* value, void* context) {
 - (IBAction) showLog:(id)sender {
   [_menuController dismissPopoverAnimated:YES];
   [[AppDelegate sharedInstance] showLogViewControllerWithTitle:NSLocalizedString(@"LOG_TITLE", nil)];
+}
+
+- (IBAction) toggleDimming:(id)sender {
+  [(AppDelegate*)[AppDelegate sharedInstance] setScreenDimmed:_dimmingSwitch.on];
 }
 
 @end

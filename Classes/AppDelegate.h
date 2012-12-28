@@ -20,8 +20,10 @@
 @interface AppDelegate : ApplicationDelegate {
   NSTimer* _updateTimer;
   WebServer* _webServer;
+  UIWindow* _dimmingWindow;
 }
 @property(nonatomic, readonly) WebServer* webServer;
+@property(nonatomic, getter=isScreenDimmed) BOOL screenDimmed;
 - (void) enableWebServer;
 - (void) disableWebServer;
 - (void) updateLibrary;

@@ -34,8 +34,9 @@
   UILabel* _addressLabel;
   UILabel* _infoLabel;
   UILabel* _versionLabel;
-  UIWindow* _window;
+  UISwitch* _dimmingSwitch;
   
+  UIWindow* _window;
   BOOL _launched;
   UIImage* _collectionImage;
   UIImage* _newImage;
@@ -71,6 +72,7 @@
 @property(nonatomic, retain) IBOutlet UILabel* addressLabel;
 @property(nonatomic, retain) IBOutlet UILabel* infoLabel;
 @property(nonatomic, retain) IBOutlet UILabel* versionLabel;
+@property(nonatomic, retain) IBOutlet UISwitch* dimmingSwitch;
 - (id) initWithWindow:(UIWindow*)window;
 - (void) saveState;
 @end
@@ -83,4 +85,5 @@
 - (IBAction) markAllRead:(id)sender;
 - (IBAction) markAllNew:(id)sender;
 - (IBAction) showLog:(id)sender;
+- (IBAction) toggleDimming:(id)sender;
 @end

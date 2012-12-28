@@ -27,6 +27,7 @@
 #import "Logging.h"
 
 #define kUpdateDelay 1.0  // Seconds
+#define kScreenDimmingOpacity 0.5
 
 @implementation AppDelegate
 
@@ -35,6 +36,7 @@
 + (void) initialize {
   // Setup initial user defaults
   NSMutableDictionary* defaults = [[NSMutableDictionary alloc] init];
+  [defaults setObject:[NSNumber numberWithBool:NO] forKey:kDefaultKey_ScreenDimmed];
   [defaults setObject:[NSNumber numberWithBool:NO] forKey:kDefaultKey_ServerEnabled];
   [defaults setObject:[NSNumber numberWithDouble:0.0] forKey:kDefaultKey_RootTimestamp];
   [defaults setObject:[NSNumber numberWithInteger:0] forKey:kDefaultKey_RootScrolling];
@@ -49,17 +51,6 @@
 }
 
 - (void) awakeFromNib {
-  // Reset library if necessary
-  if ([[NSUserDefaults standardUserDefaults] boolForKey:@"resetLibrary"]) {
-    LOG_INFO(@"Resetting library");
-    [[NSFileManager defaultManager] removeItemAtPath:[LibraryConnection libraryApplicationDataPath] error:NULL];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kDefaultKey_RootTimestamp];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kDefaultKey_RootScrolling];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kDefaultKey_CurrentCollection];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kDefaultKey_CurrentComic];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kDefaultKey_SortingMode];
-  }
-  
   // Initialize library
   CHECK([LibraryConnection mainConnection]);
 }
@@ -124,6 +115,17 @@
   self.window.rootViewController = self.viewController;
   [self.window makeKeyAndVisible];
   
+  // Initialize dimming window
+  _dimmingWindow = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+  _dimmingWindow.userInteractionEnabled = NO;
+  _dimmingWindow.windowLevel = UIWindowLevelStatusBar;
+  _dimmingWindow.backgroundColor = [UIColor blackColor];
+  _dimmingWindow.alpha = 0.0;
+  _dimmingWindow.hidden = YES;
+  if ([[NSUserDefaults standardUserDefaults] boolForKey:kDefaultKey_ScreenDimmed]) {
+    [self setScreenDimmed:YES];
+  }
+  
   return YES;
 }
 
@@ -177,6 +179,24 @@
     
     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:kDefaultKey_ServerEnabled];
   }
+}
+
+- (BOOL) isScreenDimmed {
+  return [[NSUserDefaults standardUserDefaults] boolForKey:kDefaultKey_ScreenDimmed];
+}
+
+- (void) setScreenDimmed:(BOOL)flag {
+  if (flag) {
+    _dimmingWindow.hidden = NO;
+  }
+  [UIView animateWithDuration:(1.0 / 3.0) animations:^{
+    _dimmingWindow.alpha = flag ? kScreenDimmingOpacity : 0.0;
+  } completion:^(BOOL finished) {
+    if (!flag) {
+      _dimmingWindow.hidden = YES;
+    }
+  }];
+  [[NSUserDefaults standardUserDefaults] setBool:flag forKey:kDefaultKey_ScreenDimmed];
 }
 
 @end
