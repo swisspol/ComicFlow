@@ -15,10 +15,10 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 "INFO_FORMAT" = "%i Comics | %i Series | %.0f MB Database";
-"VERSION_FORMAT" = "ComicFlow Version %@ (%@)";
+"VERSION_FORMAT" = "ComicFlow Version %@";
 
-"ADDRESS_FORMAT" = "Address: %@:%i";
-"ADDRESS_UNAVAILABLE" = "Address: Not Available";
+"ADDRESS_FORMAT" = "Visit http://%@:%i/";
+"ADDRESS_UNAVAILABLE" = "Enable to import comics from your Mac or PC";
 
 "SPINNER_MESSAGE" = "Please Wait…";
 

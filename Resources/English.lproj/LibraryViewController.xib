@@ -284,7 +284,7 @@
 					<object class="IBUISwitch" id="814749600">
 						<reference key="NSNextResponder" ref="923557759"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{157, 313}, {94, 27}}</string>
+						<string key="NSFrame">{{162, 313}, {94, 27}}</string>
 						<reference key="NSSuperview" ref="923557759"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="864973716"/>
@@ -296,7 +296,7 @@
 					<object class="IBUILabel" id="840007586">
 						<reference key="NSNextResponder" ref="923557759"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{35, 316}, {114, 21}}</string>
+						<string key="NSFrame">{{56, 316}, {98, 21}}</string>
 						<reference key="NSSuperview" ref="923557759"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="814749600"/>
@@ -330,7 +330,7 @@
 					<object class="IBUILabel" id="864973716">
 						<reference key="NSNextResponder" ref="923557759"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{35, 346}, {250, 22}}</string>
+						<string key="NSFrame">{{25, 346}, {270, 22}}</string>
 						<reference key="NSSuperview" ref="923557759"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="545511369"/>
@@ -908,7 +908,7 @@
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-					<object class="NSArray">
+					<object class="NSMutableArray">
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="IBUserGuide">
 							<reference key="view" ref="923557759"/>
@@ -918,11 +918,6 @@
 						<object class="IBUserGuide">
 							<reference key="view" ref="923557759"/>
 							<double key="location">308</double>
-							<int key="affinity">0</int>
-						</object>
-						<object class="IBUserGuide">
-							<reference key="view" ref="923557759"/>
-							<double key="location">160</double>
 							<int key="affinity">0</int>
 						</object>
 					</object>

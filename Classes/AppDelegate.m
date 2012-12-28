@@ -35,7 +35,7 @@
 + (void) initialize {
   // Setup initial user defaults
   NSMutableDictionary* defaults = [[NSMutableDictionary alloc] init];
-  [defaults setObject:[NSNumber numberWithBool:YES] forKey:kDefaultKey_ServerEnabled];
+  [defaults setObject:[NSNumber numberWithBool:NO] forKey:kDefaultKey_ServerEnabled];
   [defaults setObject:[NSNumber numberWithDouble:0.0] forKey:kDefaultKey_RootTimestamp];
   [defaults setObject:[NSNumber numberWithInteger:0] forKey:kDefaultKey_RootScrolling];
   [defaults setObject:[NSNumber numberWithInteger:0] forKey:kDefaultKey_CurrentCollection];
