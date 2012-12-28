@@ -87,12 +87,17 @@
     LOG_ERROR(@"Failed setting do-not-backup attribute on \"%@\": %s (%i)", documentsPath, strerror(result), result);
   }
   
+  // Create root view controller
+  self.viewController = [[[LibraryViewController alloc] initWithWindow:self.window] autorelease];
+  
   // Initialize updater
   [[LibraryUpdater sharedUpdater] setDelegate:(LibraryViewController*)self.viewController];
   
-  // Start web server if necessary
-  if ([[NSUserDefaults standardUserDefaults] boolForKey:kDefaultKey_ServerEnabled]) {
-    [self enableWebServer];
+  // Update library immediately
+  if ([[LibraryConnection mainConnection] countObjectsOfClass:[Comic class]] == 0) {
+    [[LibraryUpdater sharedUpdater] update:YES];
+  } else {
+    [[LibraryUpdater sharedUpdater] update:NO];
   }
   
   // Initialize update timer
@@ -104,15 +109,10 @@
                                            repeats:YES];
   [[NSRunLoop currentRunLoop] addTimer:_updateTimer forMode:NSRunLoopCommonModes];
   
-  // Update library immediately
-  if ([[LibraryConnection mainConnection] countObjectsOfClass:[Comic class]] == 0) {
-    [[LibraryUpdater sharedUpdater] update:YES];
-  } else {
-    [[LibraryUpdater sharedUpdater] update:NO];
+  // Start web server if necessary
+  if ([[NSUserDefaults standardUserDefaults] boolForKey:kDefaultKey_ServerEnabled]) {
+    [self enableWebServer];
   }
-  
-  // Create root view controller
-  self.viewController = [[[LibraryViewController alloc] initWithWindow:self.window] autorelease];
   
   // Show window
   self.window.backgroundColor = nil;
