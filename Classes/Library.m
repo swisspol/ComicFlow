@@ -49,7 +49,7 @@ typedef enum {
 } ArchiveType;
 
 @interface LibraryUpdater (Updating)
-- (id) _updateLibrary:(TaskAction*)task;
+- (id) _updateLibrary:(BOOL)force;
 @end
 
 #if __STORE_THUMBNAILS_IN_DATABASE__
@@ -207,7 +207,7 @@ typedef enum {
 
 @implementation LibraryUpdater
 
-@synthesize delegate=_delegate;
+@synthesize delegate=_delegate, updating=_updating;
 
 + (LibraryUpdater*) sharedUpdater {
   static LibraryUpdater* updater = nil;
@@ -239,26 +239,8 @@ typedef enum {
   return self;
 }
 
-- (BOOL) isUpdating {
-  return _updateTask ? YES : NO;
-}
-
-- (void) _didCompleteUpdating:(TaskAction*)task {
-  [[NSUserDefaults standardUserDefaults] synchronize];
-  
-  [_updateTask release];
-  _updateTask = nil;
-  
-  if (task.cancelled) {
-    [_delegate libraryUpdaterDidCancel:self];
-  } else {
-    [_delegate libraryUpdaterDidFinish:self];
-  }
-  LOG_VERBOSE(@"Done updating library");
-}
-
-- (void) startUpdating:(BOOL)force {
-  if (_updateTask == nil) {
+- (void) update:(BOOL)force {
+  if (_updating == NO) {
     LOG_VERBOSE(force ? @"Force updating library" : @"Updating library");
     [_delegate libraryUpdaterWillStart:self];
     
@@ -273,18 +255,21 @@ typedef enum {
       LOG_INFO(@"Reset library in %.1f seconds", CFAbsoluteTimeGetCurrent() - time);
     }
     
-    _updateTask = [[TaskAction alloc] initWithTarget:self selector:@selector(_updateLibrary:)];
-    _updateTask.delegate = self;
-    _updateTask.didFinishSelector = @selector(_didCompleteUpdating:);
-    _updateTask.didCancelSelector = @selector(_didCompleteUpdating:);
-    _updateTask.userInfo = force ? [NSNull null] : nil;
-    [[TaskQueue sharedTaskQueue] scheduleTaskForExecution:_updateTask];
-  }
-}
-
-- (void) cancelUpdating {
-  if (_updateTask) {
-    [[TaskQueue sharedTaskQueue] cancelTaskExecution:_updateTask];
+    _updating = YES;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+      NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+      
+      [self _updateLibrary:force];
+      
+      dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        [_delegate libraryUpdaterDidFinish:self];
+        _updating = NO;
+        LOG_VERBOSE(@"Done updating library");
+      });
+      
+      [pool release];
+    });
   }
 }
 
@@ -292,7 +277,7 @@ typedef enum {
 
 @implementation LibraryUpdater (Updating)
 
-// Called from TaskQueue thread
+// Called from GCD thread
 - (NSData*) _thumbnailDataForComicWithCoverImage:(CGImageRef)imageRef {
   size_t contextWidth = _screenScale * kLibraryThumbnailWidth;
   size_t contextHeight = _screenScale * kLibraryThumbnailHeight;
@@ -322,7 +307,7 @@ typedef enum {
   return data;
 }
 
-// Called from TaskQueue thread
+// Called from GCD thread
 - (NSData*) _thumbnailDataForCollectionWithCoverImage:(CGImageRef)imageRef name:(NSString*)name {
   size_t contextWidth = _screenScale * kLibraryThumbnailWidth;
   size_t contextHeight = _screenScale * kLibraryThumbnailHeight;
@@ -466,7 +451,7 @@ typedef enum {
   return imageRef;
 }
 
-// Called from TaskQueue thread
+// Called from GCD thread
 - (void) _updateComicForPath:(NSString*)path
                         type:(ArchiveType)type
                   collection:(Collection*)collection  // May be nil
@@ -586,11 +571,11 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
   }
 }
 
-// Called from TaskQueue thread
-- (id) _updateLibrary:(TaskAction*)task {
-  BOOL force = task.userInfo ? YES : NO;
+// Called from GCD thread
+- (id) _updateLibrary:(BOOL)force {
   LibraryConnection* connection = [[LibraryConnection alloc] initWithDatabaseAtPath:[LibraryConnection libraryDatabasePath]];
   if (connection == nil) {
+    DNOT_REACHED();
     return nil;
   }
   NSString* rootPath = [LibraryConnection libraryRootPath];
@@ -608,7 +593,7 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
   // Build list of all directories and files in root directory
   float maximumProgress = 0.0;
   NSMutableDictionary* directories = [[NSMutableDictionary alloc] init];
-  if (task.cancelled == NO) {
+  {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     for (NSString* path in [[NSFileManager defaultManager] contentsOfDirectoryAtPath:rootPath error:NULL]) {
       if ([path hasPrefix:@"."]) {
@@ -652,13 +637,10 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
   }
   
   // Process directories
-  if (task.cancelled == NO) {
+  {
     float currentProgress = 0.0;
     float lastProgress = 0.0;
     for (NSString* directory in directories) {
-      if (task.cancelled) {
-        break;
-      }
       NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
       NSString* fullPath = [rootPath stringByAppendingPathComponent:directory];
       NSDictionary* attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:fullPath error:NULL];
@@ -709,7 +691,7 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
       }
       // Handle special root collection
       else {
-        if (time != [[NSUserDefaults standardUserDefaults] doubleForKey:kDefaultKey_RootTimestamp]) {
+        if (force || (time != [[NSUserDefaults standardUserDefaults] doubleForKey:kDefaultKey_RootTimestamp])) {
           needsUpdate = YES;
         } else {
           CFDictionaryApplyFunction(zombieComics, _ZombieComicsMarkFunction, (void*)0);
@@ -726,10 +708,6 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
         }
         CGImageRef imageRef = NULL;
         for (NSString* file in files) {
-          if (task.cancelled) {
-            break;
-          }
-          
           ArchiveType type = kArchiveType_Unknown;
           NSString* extension = [file pathExtension];
           if (![extension caseInsensitiveCompare:@"zip"] || ![extension caseInsensitiveCompare:@"cbz"]) {
@@ -758,9 +736,9 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
           currentProgress += 1.0;
           float progress = currentProgress / maximumProgress;
           if (roundf(progress * 250.0) != roundf(lastProgress * 250.0)) {
-            [[TaskQueue sharedTaskQueue] performSelectorOnMainThread:@selector(_updateProgress:)
-                                                        withArgument:[NSNumber numberWithFloat:progress]
-                                                         usingTarget:self];
+            dispatch_async(dispatch_get_main_queue(), ^{
+              [_delegate libraryUpdaterDidContinue:self progress:progress];
+            });
             lastProgress = progress;
           }
         }
@@ -803,9 +781,9 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
         currentProgress += files.count;
         float progress = currentProgress / maximumProgress;
         if (roundf(progress * 250.0) != roundf(lastProgress * 250.0)) {
-          [[TaskQueue sharedTaskQueue] performSelectorOnMainThread:@selector(_updateProgress:)
-                                                      withArgument:[NSNumber numberWithFloat:progress]
-                                                       usingTarget:self];
+          dispatch_async(dispatch_get_main_queue(), ^{
+            [_delegate libraryUpdaterDidContinue:self progress:progress];
+          });
           lastProgress = progress;
         }
       }
@@ -816,20 +794,14 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
   }
   
   // Remove zombies
-  if (task.cancelled == NO) {
-    CFDictionaryApplyFunction(zombieCollections, _ZombieCollectionsRemoveFunction, connection);
-    CFDictionaryApplyFunction(zombieComics, _ZombieComicsRemoveFunction, connection);
-  }
+  CFDictionaryApplyFunction(zombieCollections, _ZombieCollectionsRemoveFunction, connection);
+  CFDictionaryApplyFunction(zombieComics, _ZombieComicsRemoveFunction, connection);
   
   [directories release];
   CFRelease(zombieComics);
   CFRelease(zombieCollections);
   [connection release];
   return [NSNull null];
-}
-
-- (void) _updateProgress:(NSNumber*)progress {
-  [_delegate libraryUpdaterDidContinue:self progress:[progress floatValue]];
 }
 
 @end

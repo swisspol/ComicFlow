@@ -1,0 +1,26 @@
+#include <windows.h>
+#include <commctrl.h>
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION 3, 93, 100, 73
+PRODUCTVERSION 3, 93, 100, 73
+FILEOS VOS__WINDOWS32
+FILETYPE VFT_APP
+{
+  BLOCK "StringFileInfo"
+  {
+    BLOCK "040904E4"
+    {
+      VALUE "CompanyName", "Alexander Roshal\0"
+      VALUE "ProductName", "RAR decompression library\0"
+      VALUE "FileDescription", "RAR decompression library\0"
+      VALUE "FileVersion", "3.93.0\0"
+      VALUE "OriginalFilename", "Unrar.dll\0"
+    }
+  }
+  BLOCK "VarFileInfo"
+  {
+    VALUE "Translation"
+  }
+}
+

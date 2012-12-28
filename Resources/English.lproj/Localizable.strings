@@ -19,8 +19,6 @@
 
 "ADDRESS_FORMAT" = "Address: %@:%i";
 "ADDRESS_UNAVAILABLE" = "Address: Not Available";
-"PASSWORD_FORMAT" = "Login / Password: guest / %@";
-"PASSWORD_NONE" = "";
 
 "SPINNER_MESSAGE" = "Please Wait…";
 

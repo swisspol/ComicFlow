@@ -15,7 +15,6 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #import "Database.h"
-#import "Task.h"
 
 #define kLibraryExtendedAttribute @"comicflow.identifier"
 #define kLibraryThumbnailWidth 135
@@ -27,7 +26,6 @@
 - (void) libraryUpdaterWillStart:(LibraryUpdater*)library;
 - (void) libraryUpdaterDidContinue:(LibraryUpdater*)library progress:(float)progress;
 - (void) libraryUpdaterDidFinish:(LibraryUpdater*)library;
-- (void) libraryUpdaterDidCancel:(LibraryUpdater*)library;
 @end
 
 #if __STORE_THUMBNAILS_IN_DATABASE__
@@ -89,11 +87,10 @@
   CGImageRef _collectionBackgroundImageRef;
   CGImageRef _collectionScreenImageRef;
   NSData* _fakeData;
-  Task* _updateTask;
+  BOOL _updating;
 }
 @property(nonatomic, readonly, getter=isUpdating) BOOL updating;
 @property(nonatomic, assign) id<LibraryUpdaterDelegate> delegate;
 + (LibraryUpdater*) sharedUpdater;
-- (void) startUpdating:(BOOL)force;
-- (void) cancelUpdating;
+- (void) update:(BOOL)force;  // Does nothing if already updating
 @end

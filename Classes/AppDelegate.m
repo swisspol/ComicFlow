@@ -28,7 +28,7 @@
 
 @implementation AppDelegate
 
-@synthesize davServer=_davServer;
+@synthesize webServer=_webServer;
 
 + (void) initialize {
   // Setup initial user defaults
@@ -66,16 +66,12 @@
   if ([[LibraryUpdater sharedUpdater] isUpdating]) {
     [_updateTimer setFireDate:[NSDate dateWithTimeIntervalSinceNow:kUpdateDelay]];
   } else {
-    [[LibraryUpdater sharedUpdater] startUpdating:NO];
+    [[LibraryUpdater sharedUpdater] update:NO];
   }
 }
 
 - (BOOL) application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions {
   [super application:application didFinishLaunchingWithOptions:launchOptions];
-  _backgroundTask = UIBackgroundTaskInvalid;
-  
-  // Set TaskQueue concurrency
-  [TaskQueue setDefaultConcurrency:2];
   
   // Prevent backup of Documents directory as it contains only "offline data" (iOS 5.0.1 and later)
   NSString* documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
@@ -88,9 +84,9 @@
   // Initialize updater
   [[LibraryUpdater sharedUpdater] setDelegate:(LibraryViewController*)self.viewController];
   
-  // Start WebDAV server if necessary
+  // Start web server if necessary
   if ([[NSUserDefaults standardUserDefaults] boolForKey:kDefaultKey_ServerEnabled]) {
-    [self enableDAVServer];
+    [self enableWebServer];
   }
   
   // Initialize update timer
@@ -104,18 +100,18 @@
   
   // Update library immediately
   if ([[LibraryConnection mainConnection] countObjectsOfClass:[Comic class]] == 0) {
-    [[LibraryUpdater sharedUpdater] startUpdating:YES];
+    [[LibraryUpdater sharedUpdater] update:YES];
   } else {
-    [[LibraryUpdater sharedUpdater] startUpdating:NO];
+    [[LibraryUpdater sharedUpdater] update:NO];
   }
   
-  // Prepare window
-  self.window.backgroundColor = nil;
-  self.window.layer.contentsGravity = kCAGravityCenter;
-  [(LibraryViewController*)self.viewController setWindow:self.window];
+  // Create root view controller
+  self.viewController = [[[LibraryViewController alloc] initWithWindow:self.window] autorelease];
   
   // Show window
-  [self.window addSubview:self.viewController.view];
+  self.window.backgroundColor = nil;
+  self.window.layer.contentsGravity = kCAGravityCenter;
+  self.window.rootViewController = self.viewController;
   [self.window makeKeyAndVisible];
   
   return YES;
@@ -131,7 +127,6 @@
     NSString* destinationPath = [[LibraryConnection libraryRootPath] stringByAppendingPathComponent:file];
     if ([[NSFileManager defaultManager] moveItemAtPath:[url path] toPath:destinationPath error:NULL]) {
       [_updateTimer setFireDate:[NSDate dateWithTimeIntervalSinceNow:kUpdateDelay]];
-      _needsUpdate = NO;
       [[AppDelegate sharedInstance] showAlertWithTitle:NSLocalizedString(@"INBOX_ALERT_TITLE", nil)
                                                message:[NSString stringWithFormat:NSLocalizedString(@"INBOX_ALERT_MESSAGE", nil), file]
                                                 button:NSLocalizedString(@"INBOX_ALERT_BUTTON", nil)];
@@ -141,46 +136,9 @@
   return NO;
 }
 
-- (void) applicationDidEnterBackground:(UIApplication*)application {
-  // Prevent WebDAV Server to accept new connections but keep current ones alive
-  [_davServer stop:YES];
-  
-  // If there are any WebDAV connections alive, start background task
-  if (_davServer.numberOfConnections) {
-    _backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-      [[UIApplication sharedApplication] endBackgroundTask:_backgroundTask];
-      _backgroundTask = UIBackgroundTaskInvalid;
-      LOG_VERBOSE(@"Background task expired");
-    }];
-    LOG_VERBOSE(@"Background task started");
-  }
-  
-  [super applicationDidEnterBackground:application];
-}
-
-- (void) applicationWillEnterForeground:(UIApplication*)application {
-  [super applicationWillEnterForeground:application];
-  
-  // End background task if any
-  if (_backgroundTask != UIBackgroundTaskInvalid) {
-    [[UIApplication sharedApplication] endBackgroundTask:_backgroundTask];
-    _backgroundTask = UIBackgroundTaskInvalid;
-    LOG_VERBOSE(@"Background task stopped");
-  }
-  
-  // Allow WebDAV server to accept new connections again
-  [_davServer start];
-  
-  // Update library if it was updating when entering background or needs updating because of background task
-  if (_needsUpdate) {
-    [_updateTimer setFireDate:[NSDate dateWithTimeIntervalSinceNow:kUpdateDelay]];
-    _needsUpdate = NO;
-  }
-}
-
 - (void) applicationWillTerminate:(UIApplication*)application {
-  // Stop WebDAV server
-  [_davServer stop:NO];
+  // Stop web server
+  [_webServer stop];
   
   [super applicationWillTerminate:application];
 }
@@ -189,63 +147,25 @@
   [(LibraryViewController*)self.viewController saveState];
 }
 
-- (void) enableDAVServer {
-  if (_davServer == nil) {
+- (void) enableWebServer {
+  if (_webServer == nil) {
     NSString* documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
-#ifdef NDEBUG
-    NSString* password = [NSString stringWithFormat:@"%i", 100000 + random() % 899999];
-#else
-    NSString* password = nil;
-#endif
-    _davServer = [[DAVServer alloc] initWithRootDirectory:documentsPath port:8080 password:password];
-    _davServer.delegate = self;
-    [_davServer start];
+    
+    _webServer = [[WebServer alloc] init];
+    [_webServer addHandlerForBasePath:@"/" localPath:documentsPath indexFilename:nil cacheAge:0];
+    [_webServer startWithRunloop:[NSRunLoop mainRunLoop] port:8080 bonjourName:nil];
     
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:kDefaultKey_ServerEnabled];
   }
 }
 
-- (void) disableDAVServer {
-  if (_davServer != nil) {
-    _davServer.delegate = nil;
-    [_davServer stop:NO];
-    [_davServer release];
-    _davServer = nil;
-    
-    if (_needsUpdate) {
-      [_updateTimer setFireDate:[NSDate dateWithTimeIntervalSinceNow:kUpdateDelay]];
-      _needsUpdate = NO;
-    }
-    _hasConnections = NO;
+- (void) disableWebServer {
+  if (_webServer != nil) {
+    [_webServer stop];
+    [_webServer release];
+    _webServer = nil;
     
     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:kDefaultKey_ServerEnabled];
-  }
-}
-
-- (void) davServerDidUpdateNumberOfConnections:(DAVServer*)server {
-  NSUInteger count = _davServer.numberOfConnections;
-  if (count && !_hasConnections) {
-    _hasConnections = YES;
-    LOG_VERBOSE(@"WebDAV Server connected");
-  } else if (!count && _hasConnections) {
-    LOG_VERBOSE(@"WebDAV Server disconnected");
-    if (_backgroundTask != UIBackgroundTaskInvalid) {
-      [[UIApplication sharedApplication] endBackgroundTask:_backgroundTask];
-      _backgroundTask = UIBackgroundTaskInvalid;
-      LOG_VERBOSE(@"Background task stopped");
-    }
-    if (_needsUpdate && ([[UIApplication sharedApplication] applicationState] != UIApplicationStateBackground)) {
-      [_updateTimer setFireDate:[NSDate dateWithTimeIntervalSinceNow:kUpdateDelay]];
-      _needsUpdate = NO;
-    }
-    _hasConnections = NO;
-  }
-}
-
-- (void) davServer:(DAVServer*)server didRespondToMethod:(NSString*)method {
-  if ([method isEqualToString:@"PUT"] || [method isEqualToString:@"DELETE"] || [method isEqualToString:@"MOVE"] ||
-    [method isEqualToString:@"COPY"] || [method isEqualToString:@"MKCOL"]) {
-    _needsUpdate = YES;
   }
 }
 

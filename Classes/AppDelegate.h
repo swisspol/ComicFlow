@@ -15,18 +15,13 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #import "ApplicationDelegate.h"
-#import "DAVServer.h"
+#import "WebServer.h"
 
-@interface AppDelegate : ApplicationDelegate <DAVServerDelegate> {
-  DAVServer* _davServer;
+@interface AppDelegate : ApplicationDelegate {
   NSTimer* _updateTimer;
-  BOOL _hasConnections;
-  BOOL _needsUpdate;
-#ifdef NSFoundationVersionNumber_iOS_4_0
-  UIBackgroundTaskIdentifier _backgroundTask;
-#endif
+  WebServer* _webServer;
 }
-@property(nonatomic, readonly) DAVServer* davServer;
-- (void) enableDAVServer;
-- (void) disableDAVServer;
+@property(nonatomic, readonly) WebServer* webServer;
+- (void) enableWebServer;
+- (void) disableWebServer;
 @end

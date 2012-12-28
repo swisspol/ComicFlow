@@ -46,8 +46,6 @@
 #define kLaunchCountBeforeRating 10
 #define kShowRatingDelay 1.0
 
-#define kStatusBarHeight 20.0
-
 #if __DISPLAY_THUMBNAILS_IN_BACKGROUND__
 @interface ThumbnailView : UIView
 #else
@@ -79,7 +77,7 @@
 @synthesize gridView=_gridView, navigationBar=_navigationBar, segmentedControl=_segmentedControl, menuView=_menuView,
             progressView=_progressView, markReadButton=_markReadButton, markNewButton=_markNewButton, updateButton=_updateButton,
             forceUpdateButton=_forceUpdateButton, serverSwitch=_serverSwitch, addressLabel=_addressLabel,
-            passwordLabel=_passwordLabel, infoLabel=_infoLabel, versionLabel=_versionLabel, window=_window;
+            infoLabel=_infoLabel, versionLabel=_versionLabel;
 
 - (void) _updateStatistics {
   NSDictionary* attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:[LibraryConnection libraryDatabasePath]
@@ -91,21 +89,16 @@
 }
 
 - (void) _updateServer {
-  DAVServer* server = [(AppDelegate*)[AppDelegate sharedInstance] davServer];
+  WebServer* server = [(AppDelegate*)[AppDelegate sharedInstance] webServer];
   _serverSwitch.on = server ? YES : NO;
   if (server) {
     NSString* ipAddress = [[UIDevice currentDevice] currentWiFiAddress];
     _addressLabel.text = ipAddress ? [NSString stringWithFormat:NSLocalizedString(@"ADDRESS_FORMAT", nil), ipAddress, server.port]
                                    : NSLocalizedString(@"ADDRESS_UNAVAILABLE", nil);
     _addressLabel.textColor = [UIColor darkGrayColor];
-    _passwordLabel.text = server.password ? [NSString stringWithFormat:NSLocalizedString(@"PASSWORD_FORMAT", nil), server.password]
-                                          : NSLocalizedString(@"PASSWORD_NONE", nil);
-    _passwordLabel.textColor = [UIColor darkGrayColor];
   } else {
     _addressLabel.text = NSLocalizedString(@"ADDRESS_UNAVAILABLE", nil);
     _addressLabel.textColor = [UIColor grayColor];
-    _passwordLabel.text = NSLocalizedString(@"PASSWORD_NONE", nil);
-    _passwordLabel.textColor = [UIColor grayColor];
   }
 }
 
@@ -184,43 +177,48 @@ static void __DisplayQueueCallBack(void* info) {
 
 #endif
 
-- (void) awakeFromNib {
-  _collectionImage = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Collection" ofType:@"png"]];
-  CHECK(_collectionImage);
-  _newImage = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"New" ofType:@"png"]];
-  CHECK(_newImage);
-  _ribbonImage = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Ribbon" ofType:@"png"]];
-  CHECK(_ribbonImage);
-  _comicImage = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Comic" ofType:@"png"]];
-  CHECK(_comicImage);
-  
-  DatabaseSQLRowID collectionID = [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_CurrentCollection];
-  if (collectionID) {
-    _currentCollection = [[[LibraryConnection mainConnection] fetchObjectOfClass:[Collection class] withSQLRowID:collectionID] retain];
-  }
-  DatabaseSQLRowID comicID = [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_CurrentComic];
-  if (comicID) {
-    _currentComic = [[[LibraryConnection mainConnection] fetchObjectOfClass:[Comic class] withSQLRowID:comicID] retain];
-  }
-  
+- (id) initWithWindow:(UIWindow*)window {
+  if ((self = [super init])) {
+    _window = window;
+    
+    _collectionImage = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Collection" ofType:@"png"]];
+    CHECK(_collectionImage);
+    _newImage = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"New" ofType:@"png"]];
+    CHECK(_newImage);
+    _ribbonImage = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Ribbon" ofType:@"png"]];
+    CHECK(_ribbonImage);
+    _comicImage = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Comic" ofType:@"png"]];
+    CHECK(_comicImage);
+    
+    DatabaseSQLRowID collectionID = [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_CurrentCollection];
+    if (collectionID) {
+      _currentCollection = [[[LibraryConnection mainConnection] fetchObjectOfClass:[Collection class] withSQLRowID:collectionID] retain];
+    }
+    DatabaseSQLRowID comicID = [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_CurrentComic];
+    if (comicID) {
+      _currentComic = [[[LibraryConnection mainConnection] fetchObjectOfClass:[Comic class] withSQLRowID:comicID] retain];
+    }
+    
 #if __DISPLAY_THUMBNAILS_IN_BACKGROUND__
 #if __STORE_THUMBNAILS_IN_DATABASE__
-  _displayConnection = [[LibraryConnection alloc] initWithDatabaseAtPath:[LibraryConnection libraryDatabasePath]];
-  CHECK(_displayConnection);
+    _displayConnection = [[LibraryConnection alloc] initWithDatabaseAtPath:[LibraryConnection libraryDatabasePath]];
+    CHECK(_displayConnection);
 #endif
-  pthread_mutexattr_t attributes;
-  pthread_mutexattr_init(&attributes);
-  pthread_mutexattr_settype(&attributes, PTHREAD_MUTEX_RECURSIVE);
-  pthread_mutex_init(&_displayMutex, &attributes);
-  pthread_mutexattr_destroy(&attributes);
-  _displayQueue = CFArrayCreateMutable(kCFAllocatorDefault, 0, &kCFTypeArrayCallBacks);
-  CFRunLoopSourceContext context = {0, self, NULL, NULL, NULL, NULL, NULL, NULL, NULL, __DisplayQueueCallBack};
-  _displaySource = CFRunLoopSourceCreate(kCFAllocatorDefault, 0, &context);
-  [NSThread detachNewThreadSelector:@selector(_displayQueueThread:) toTarget:self withObject:nil];
-  do {
-    usleep(100000);  // Make sure background thread has started
-  } while (_displayRunLoop == NULL);
+    pthread_mutexattr_t attributes;
+    pthread_mutexattr_init(&attributes);
+    pthread_mutexattr_settype(&attributes, PTHREAD_MUTEX_RECURSIVE);
+    pthread_mutex_init(&_displayMutex, &attributes);
+    pthread_mutexattr_destroy(&attributes);
+    _displayQueue = CFArrayCreateMutable(kCFAllocatorDefault, 0, &kCFTypeArrayCallBacks);
+    CFRunLoopSourceContext context = {0, self, NULL, NULL, NULL, NULL, NULL, NULL, NULL, __DisplayQueueCallBack};
+    _displaySource = CFRunLoopSourceCreate(kCFAllocatorDefault, 0, &context);
+    [NSThread detachNewThreadSelector:@selector(_displayQueueThread:) toTarget:self withObject:nil];
+    do {
+      usleep(100000);  // Make sure background thread has started
+    } while (_displayRunLoop == NULL);
 #endif
+  }
+  return self;
 }
 
 - (BOOL) canBecomeFirstResponder {
@@ -404,7 +402,6 @@ static void __DisplayQueueCallBack(void* info) {
   self.forceUpdateButton = nil;
   self.serverSwitch = nil;
   self.addressLabel = nil;
-  self.passwordLabel = nil;
   self.infoLabel = nil;
   self.versionLabel = nil;
   
@@ -552,6 +549,7 @@ static void __DisplayQueueCallBack(void* info) {
 - (void) didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
   [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
   
+  // This code path is only used before iOS 6.0
   if (_launchView && UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
     UIImage* image = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Default-Landscape" ofType:@"png"]];
     _launchView.image = image;
@@ -578,7 +576,8 @@ static void __DisplayQueueCallBack(void* info) {
   if (_launched == NO) {
     _launchView = [[UIImageView alloc] initWithFrame:self.view.bounds];
     _launchView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    UIImage* image = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Default-Portrait" ofType:@"png"]];
+    NSString* path = [[NSBundle mainBundle] pathForResource:(UIInterfaceOrientationIsLandscape(self.interfaceOrientation) ? @"Default-Landscape" : @"Default-Portrait") ofType:@"png"];
+    UIImage* image = [[UIImage alloc] initWithContentsOfFile:path];
     _launchView.image = image;
     [image release];
     [self.view addSubview:_launchView];
@@ -631,10 +630,7 @@ static void __DisplayQueueCallBack(void* info) {
   [UIView setAnimationDidStopSelector:@selector(_animationDidStop:finished:context:)];
   [UIView setAnimationDuration:0.5];
   _launchView.alpha = 0.0;
-  CGRect frame = self.view.frame;
-  frame.origin.y = kStatusBarHeight;
-  frame.size.height -= kStatusBarHeight;
-  self.view.frame = frame;
+  self.view.frame = [[UIScreen mainScreen] applicationFrame];
   [UIView commitAnimations];
   _launchView = nil;
   
@@ -654,7 +650,7 @@ static void __DisplayQueueCallBack(void* info) {
   [super viewDidAppear:animated];
   
   if (_launchView) {
-    [self performSelector:@selector(_viewDidReallyAppear) withObject:nil afterDelay:0.0];  // Work around -didRotateFromInterfaceOrientation called after -viewDidAppear on iOS 4.x
+    [self performSelector:@selector(_viewDidReallyAppear) withObject:nil afterDelay:0.0];  // Work around interface orientation not already set in -viewDidAppear before iOS 6.0 but instead set after -didRotateFromInterfaceOrientation gets called
   }
   
   [self becomeFirstResponder];
@@ -697,10 +693,6 @@ static void __DisplayQueueCallBack(void* info) {
   _markNewButton.enabled = YES;
   _updateButton.enabled = YES;
   _forceUpdateButton.enabled = YES;
-}
-
-- (void) libraryUpdaterDidCancel:(LibraryUpdater*)library {
-  ;
 }
 
 - (UIView*) gridView:(GridView*)gridView viewForItem:(id)item {
@@ -845,12 +837,12 @@ static void __ArrayApplierFunction(const void* value, void* context) {
 }
 
 - (IBAction) update:(id)sender {
-  [[LibraryUpdater sharedUpdater] startUpdating:NO];
+  [[LibraryUpdater sharedUpdater] update:NO];
 }
 
 - (void) _forceUpdate {
   LoggingPurgeHistory(0.0);
-  [[LibraryUpdater sharedUpdater] startUpdating:YES];
+  [[LibraryUpdater sharedUpdater] update:YES];
   [self _updateStatistics];
   [self _setCurrentCollection:nil];
 }
@@ -868,9 +860,9 @@ static void __ArrayApplierFunction(const void* value, void* context) {
 
 - (IBAction) updateServer:(id)sender {
   if (_serverSwitch.on) {
-    [(AppDelegate*)[AppDelegate sharedInstance] enableDAVServer];
+    [(AppDelegate*)[AppDelegate sharedInstance] enableWebServer];
   } else {
-    [(AppDelegate*)[AppDelegate sharedInstance] disableDAVServer];
+    [(AppDelegate*)[AppDelegate sharedInstance] disableWebServer];
   }
   [self _updateServer];
 }

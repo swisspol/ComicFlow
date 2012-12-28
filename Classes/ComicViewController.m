@@ -29,6 +29,7 @@
 #define kMaxPageSize 1500.0
 #define kLeftZoneRatio 0.2
 #define kRightZoneRatio 0.8
+#define kDoubleTapZoomRatio 1.5
 
 @interface ComicPageView : ZoomView {
 @private
@@ -45,6 +46,9 @@
 
 - (id) initWithTapTarget:(id)target action:(SEL)action {
   if ((self = [super init])) {
+    self.displayMode = kZoomViewDisplayMode_Fit;
+    self.doubleTapZoom = kDoubleTapZoomRatio;
+    
     self.alwaysBounceHorizontal = NO;
     self.alwaysBounceVertical = NO;
     

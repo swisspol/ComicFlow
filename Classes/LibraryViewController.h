@@ -32,7 +32,6 @@
   UIButton* _markNewButton;
   UISwitch* _serverSwitch;
   UILabel* _addressLabel;
-  UILabel* _passwordLabel;
   UILabel* _infoLabel;
   UILabel* _versionLabel;
   UIWindow* _window;
@@ -70,10 +69,9 @@
 @property(nonatomic, retain) IBOutlet UIButton* markNewButton;
 @property(nonatomic, retain) IBOutlet UISwitch* serverSwitch;
 @property(nonatomic, retain) IBOutlet UILabel* addressLabel;
-@property(nonatomic, retain) IBOutlet UILabel* passwordLabel;
 @property(nonatomic, retain) IBOutlet UILabel* infoLabel;
 @property(nonatomic, retain) IBOutlet UILabel* versionLabel;
-@property(nonatomic, assign) UIWindow* window;
+- (id) initWithWindow:(UIWindow*)window;
 - (void) saveState;
 @end
 
