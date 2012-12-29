@@ -1,7 +1,6 @@
 YUI({filter:"raw"}).use("uploader", function(Y) {
   if ((Y.Uploader.TYPE == "html5") && !Y.UA.ios) {
     var uploadDone = false;
-    
     var uploader = new Y.Uploader({
       width: "250px",
       height: "35px",
@@ -20,6 +19,7 @@ YUI({filter:"raw"}).use("uploader", function(Y) {
             
       if (uploadDone) {
         fileTable.setHTML("");
+        Y.one("#collection").removeAttribute("disabled");
         Y.one("#uploadFilesButton").removeClass("yui3-button-disabled");
         Y.one("#uploadFilesButton").on("click", function () {
           upload();
@@ -37,6 +37,7 @@ YUI({filter:"raw"}).use("uploader", function(Y) {
     
     uploader.on("uploadstart", function (event) {
       uploader.set("enabled", false);
+      Y.one("#collection").setAttribute("disabled", "disabled");
       Y.one("#uploadFilesButton").addClass("yui3-button-disabled");
       Y.one("#uploadFilesButton").detach("click");
     });
