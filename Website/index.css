@@ -4,7 +4,34 @@ body {
   font-size: 16px;
 }
 
+#header {
+  padding: 10px;
+  width: 578px;
+  background: #C9C9C9;
+  border: 1px solid #BFBFBF;
+  color: white;
+  font-size: 1.5em;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+#collectionName {
+  margin-top: 15px;
+  padding: 5px;
+  width: 588px;
+  background: #42A7C9;
+  border: 1px solid #1198BF;
+  color: white;
+  font-size: 1.0em;
+}
+
+#help {
+  margin-top: 5px;
+  font-size: 0.75em;
+}
+
 #uploaderContainer {
+  margin-top: 15px;
   width: 600px;
 }
 
@@ -16,12 +43,13 @@ body {
   float: right;
 }
 
-#filelist {
-  margin-top: 50px;
+#fileList {
+  margin-top: 15px;
+  width: 600px;
 }
 
-#filenames {
-  width: 600px;
+#fileNames {
+  width: 100%;
 }
 
 #status {
@@ -36,7 +64,11 @@ table {
   border-collapse: collapse;
 }
 
-th {
+th, td {
+  border: 1px solid #98BF11;
+}
+
+thead > tr {
   background: #A7C942;
   padding-top: 5px;
   padding-bottom: 4px;
@@ -44,23 +76,22 @@ th {
   color: white;
 }
 
-td {
+tbody > tr {
   padding: 3px;
   font-size: 0.75em;
 }
 
-th, td {
-  border: 1px solid #98BF11;
-}
-
-tr:nth-child(even) {
+tbody > tr:nth-child(even) {
   background: #EAF2D3;
 }
 
-tr:nth-child(odd) {
+tbody > tr:nth-child(odd) {
   background: #FFFFFF;
 }
 
-.yellowBackground {
-  background: #F2E699;
+tfoot > tr {
+  background: #A7C942;
+  color: white;
+  padding: 3px;
+  font-size: 0.75em;
 }

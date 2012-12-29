@@ -161,31 +161,58 @@
 
 - (void) enableWebServer {
   if (_webServer == nil) {
+    NSSet* allowedFileExtensions = [NSSet setWithObjects:@"pdf", @"zip", @"cbz", @"rar", @"cbr", nil];
+    
     _webServer = [[WebServer alloc] init];
     [_webServer addHandlerForBasePath:@"/" localPath:[[NSBundle mainBundle] pathForResource:@"Website" ofType:nil] indexFilename:@"index.html" cacheAge:0];
     [_webServer addHandlerForMethod:@"POST" path:@"/upload" requestClass:[WebServerMultiPartFormRequest class] processBlock:^WebServerResponse *(WebServerRequest* request) {
       
       // Called from GCD thread
       NSString* html = NSLocalizedString(@"SERVER_STATUS_SUCCESS", nil);
-      WebServerMultiPartFile* file = [[[(WebServerMultiPartFormRequest*)request files] allValues] firstObject];
-      if (file.fileName.length) {
-        NSString* extension = [[file.fileName pathExtension] lowercaseString];
-        if (extension && [[NSSet setWithObjects:@"pdf", @"zip", @"cbz", @"rar", @"cbr", nil] containsObject:extension]) {
+      WebServerMultiPartFile* file = [[(WebServerMultiPartFormRequest*)request files] objectForKey:@"file"];
+      NSString* fileName = file.fileName;
+      NSString* temporaryPath = file.temporaryPath;
+      WebServerMultiPartArgument* collection = [[(WebServerMultiPartFormRequest*)request arguments] objectForKey:@"collection"];
+      NSString* collectionName = [collection string];
+      if (fileName.length && ![fileName hasPrefix:@"."]) {
+        NSString* extension = [[fileName pathExtension] lowercaseString];
+        if (extension && [allowedFileExtensions containsObject:extension]) {
+          
+          NSString* directoryPath = [LibraryConnection libraryRootPath];
+          if (collectionName.length) {
+            for (NSString* directory in [[NSFileManager defaultManager] directoriesInDirectoryAtPath:directoryPath includeInvisible:NO]) {
+              if ([directory caseInsensitiveCompare:collectionName] == NSOrderedSame) {
+                collectionName = directory;
+                break;
+              }
+            }
+            directoryPath = [directoryPath stringByAppendingPathComponent:collectionName];
+            [[NSFileManager defaultManager] createDirectoryAtPath:directoryPath withIntermediateDirectories:NO attributes:nil error:NULL];
+          }
+          
+          for (NSString* file in [[NSFileManager defaultManager] filesInDirectoryAtPath:directoryPath includeInvisible:NO includeSymlinks:NO]) {
+            if ([file caseInsensitiveCompare:fileName] == NSOrderedSame) {
+              fileName = file;
+              break;
+            }
+          }
+          NSString* filePath = [directoryPath stringByAppendingPathComponent:fileName];
+          [[NSFileManager defaultManager] removeItemAtPath:filePath error:NULL];
+          
           NSError* error = nil;
-          NSString* path = [[LibraryConnection libraryRootPath] stringByAppendingPathComponent:file.fileName];
-          [[NSFileManager defaultManager] removeItemAtPath:path error:NULL];
-          if ([[NSFileManager defaultManager] moveItemAtPath:file.temporaryPath toPath:path error:&error]) {
-            LOG_VERBOSE(@"Uploaded comic file \"%@\"", file.fileName);
+          if ([[NSFileManager defaultManager] moveItemAtPath:temporaryPath toPath:filePath error:&error]) {
+            LOG_VERBOSE(@"Uploaded comic file \"%@\"", fileName);
             
             dispatch_async(dispatch_get_main_queue(), ^{
               [_updateTimer setFireDate:[NSDate dateWithTimeIntervalSinceNow:kUpdateDelay]];
             });
           } else {
-            LOG_ERROR(@"Failed adding uploaded comic file \"%@\": %@", file.fileName, error);
+            LOG_ERROR(@"Failed adding uploaded comic file \"%@\": %@", fileName, error);
             html = NSLocalizedString(@"SERVER_STATUS_ERROR", nil);
           }
+          
         } else {
-          LOG_WARNING(@"Ignoring uploaded comic file \"%@\" with unsupported type", file.fileName);
+          LOG_WARNING(@"Ignoring uploaded comic file \"%@\" with unsupported type", fileName);
           html = NSLocalizedString(@"SERVER_STATUS_UNSUPPORTED", nil);
         }
       } else {

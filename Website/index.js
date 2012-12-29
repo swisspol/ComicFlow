@@ -6,7 +6,8 @@ YUI({filter:"raw"}).use("uploader", function(Y) {
       width: "250px",
       height: "35px",
       multipleFiles: true,
-      uploadURL: "upload",
+      simLimit: 1,
+      fileFieldName: "file",
       selectButtonLabel: "Select Files&hellip;"
     });
     uploader.set("dragAndDropArea", "body");
@@ -15,22 +16,22 @@ YUI({filter:"raw"}).use("uploader", function(Y) {
     
     uploader.after("fileselect", function (event) {
       var fileList = event.fileList;
-      var fileTable = Y.one("#filenames tbody");
-      
-      if ((fileList.length > 0) && Y.one("#nofiles")) {
-        Y.one("#nofiles").remove();
-      }
-      
+      var fileTable = Y.one("#fileNames tbody");
+            
       if (uploadDone) {
-        uploadDone = false;
         fileTable.setHTML("");
+        Y.one("#uploadFilesButton").removeClass("yui3-button-disabled");
+        Y.one("#uploadFilesButton").on("click", function () {
+          upload();
+        });
+        uploadDone = false;
       }
       
       Y.each(fileList, function (fileInstance) {
         fileTable.append("<tr id='" + fileInstance.get("id") + "_row" + "'>" +
         "<td class='name'>" + fileInstance.get("name") + "</td>" +
         "<td class='size'>" + Math.round(fileInstance.get("size") / (1024 * 1024) * 10) / 10 + " MB</td>" +
-        "<td class='status'>n/a</td>");
+        "<td class='status'>Pending Upload</td>");
       });
     });
     
@@ -42,7 +43,7 @@ YUI({filter:"raw"}).use("uploader", function(Y) {
     
     uploader.on("uploadprogress", function (event) {
       var fileRow = Y.one("#" + event.file.get("id") + "_row");
-      fileRow.one(".status").setHTML("Uploading&hellip; (" + event.percentLoaded + "%)");
+      fileRow.one(".status").setHTML("Uploading&hellip; (" + Math.round(event.percentLoaded) + "%)");
     });
     
     uploader.on("uploadcomplete", function (event) {
@@ -55,27 +56,31 @@ YUI({filter:"raw"}).use("uploader", function(Y) {
       fileRow.one(".status").setHTML("ERROR (" + event.status + ")");
     });
     
+    function upload() {
+      if (!uploadDone && uploader.get("fileList").length > 0) {
+        var variables = {};
+        var collection = Y.one("#collection").get('value');
+        if (collection) {
+          variables.collection = collection;
+        }
+        uploader.uploadAll("upload", variables);
+      }
+    }
+    
     uploader.on("alluploadscomplete", function (event) {
       uploader.set("enabled", true);
       uploader.set("fileList", []);
-      Y.one("#uploadFilesButton").removeClass("yui3-button-disabled");
-      
-      Y.one("#uploadFilesButton").on("click", function () {
-        if (!uploadDone && uploader.get("fileList").length > 0) {
-          uploader.uploadAll();
-        }
-      });
       uploadDone = true;
     });
     
     Y.one ("#uploadFilesButton").on("click", function () {
       if (!uploadDone && uploader.get("fileList").length > 0) {
-        uploader.uploadAll();
+        upload();
       }
     });
     
   } else {
     Y.one("#uploaderContainer").set("text", "To use the ComicFlow uploader, please use a modern browser that supports HTML5.");
-    Y.one("#filelist").remove();
+    Y.one("#fileList").remove();
   }
 });
