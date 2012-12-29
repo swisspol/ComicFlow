@@ -54,3 +54,8 @@
 "RATE_ALERT_MESSAGE" = "Please rate this free app it in the App Store.";
 "RATE_ALERT_CONFIRM" = "Rate Now";
 "RATE_ALERT_CANCEL" = "Remind Me Later";
+
+"SERVER_STATUS_SUCCESS" = "Successfully Uploaded";
+"SERVER_STATUS_ERROR" = "Internal Error";
+"SERVER_STATUS_INVALID" = "Missing File Name";
+"SERVER_STATUS_UNSUPPORTED" = "Unknown File Type";

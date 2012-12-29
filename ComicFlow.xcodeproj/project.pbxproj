@@ -135,6 +135,7 @@
 		E2ACCE43129D6FF4001362E0 /* Background-Library.png in Resources */ = {isa = PBXBuildFile; fileRef = E2ACCE41129D6FF4001362E0 /* Background-Library.png */; };
 		E2CAA9E4122295F800A4D85A /* DocumentView-Shadow-Left.png in Resources */ = {isa = PBXBuildFile; fileRef = E2CAA9E2122295F800A4D85A /* DocumentView-Shadow-Left.png */; };
 		E2CAA9E5122295F800A4D85A /* DocumentView-Shadow-Right.png in Resources */ = {isa = PBXBuildFile; fileRef = E2CAA9E3122295F800A4D85A /* DocumentView-Shadow-Right.png */; };
+		E2E1B365168E453F008FDA6D /* Website in Resources */ = {isa = PBXBuildFile; fileRef = E2E1B364168E453F008FDA6D /* Website */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -370,6 +371,7 @@
 		E2CAA9E3122295F800A4D85A /* DocumentView-Shadow-Right.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DocumentView-Shadow-Right.png"; sourceTree = "<group>"; };
 		E2CAA9EB1222961400A4D85A /* BasicAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BasicAnimation.h; sourceTree = "<group>"; };
 		E2CAA9EC1222961400A4D85A /* BasicAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BasicAnimation.m; sourceTree = "<group>"; };
+		E2E1B364168E453F008FDA6D /* Website */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Website; sourceTree = "<group>"; };
 		E2FE180A128ADD67005B17EC /* Database.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Database.h; sourceTree = "<group>"; };
 		E2FE180B128ADD67005B17EC /* Database.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Database.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -429,6 +431,7 @@
 				E229344C121E285200484F9F /* Info.plist */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
 				32CA4F630368D1EE00C91783 /* Prefix.pch */,
+				E2E1B364168E453F008FDA6D /* Website */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				E27CFFAA168CA79700021417 /* Minizip-1.1 */,
 				E27CFFB8168CA7A200021417 /* UnRAR-3.9.10 */,
@@ -817,6 +820,7 @@
 				1B236508154FABBA00A13B0D /* OverlayView-Arrow-Right@2x.png in Resources */,
 				1B236509154FABBA00A13B0D /* OverlayView-Arrow-Top@2x.png in Resources */,
 				1B23650A154FABBA00A13B0D /* OverlayView-Contents@2x.png in Resources */,
+				E2E1B365168E453F008FDA6D /* Website in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

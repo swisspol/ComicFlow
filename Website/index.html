@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>ComicFlow Uploader</title>
+  <link rel="stylesheet" href="normalize.css">
+  <link rel="stylesheet" href="index.css">
+  <script src="http://yui.yahooapis.com/3.8.0/build/yui/yui-min.js"></script>
+  <script src="index.js"></script>
+</head>
+<body>
+  
+  <div id="uploaderContainer">
+    <div id="selectFilesButtonContainer">
+    </div>
+    <div id="uploadFilesButtonContainer">
+      <button type="button" id="uploadFilesButton" class="yui3-button" style="width:250px; height:35px;">Upload Files</button>
+    </div>
+  </div>
+  
+  <div id="filelist">
+    <table id="filenames">
+      <thead>
+        <tr><th id="name">File Name</th><th id="size">File Size</th><th id="status">Status</th></tr>
+        <tr id="nofiles"><td colspan="4">Select or drag and drop comic files (PDF, CBZ or CBR) to upload.</td></tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </div>
+
+</body>
+</html>

@@ -161,10 +161,40 @@
 
 - (void) enableWebServer {
   if (_webServer == nil) {
-    NSString* documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
-    
     _webServer = [[WebServer alloc] init];
-    [_webServer addHandlerForBasePath:@"/" localPath:documentsPath indexFilename:nil cacheAge:0];
+    [_webServer addHandlerForBasePath:@"/" localPath:[[NSBundle mainBundle] pathForResource:@"Website" ofType:nil] indexFilename:@"index.html" cacheAge:0];
+    [_webServer addHandlerForMethod:@"POST" path:@"/upload" requestClass:[WebServerMultiPartFormRequest class] processBlock:^WebServerResponse *(WebServerRequest* request) {
+      
+      // Called from GCD thread
+      NSString* html = NSLocalizedString(@"SERVER_STATUS_SUCCESS", nil);
+      WebServerMultiPartFile* file = [[[(WebServerMultiPartFormRequest*)request files] allValues] firstObject];
+      if (file.fileName.length) {
+        NSString* extension = [[file.fileName pathExtension] lowercaseString];
+        if (extension && [[NSSet setWithObjects:@"pdf", @"zip", @"cbz", @"rar", @"cbr", nil] containsObject:extension]) {
+          NSError* error = nil;
+          NSString* path = [[LibraryConnection libraryRootPath] stringByAppendingPathComponent:file.fileName];
+          [[NSFileManager defaultManager] removeItemAtPath:path error:NULL];
+          if ([[NSFileManager defaultManager] moveItemAtPath:file.temporaryPath toPath:path error:&error]) {
+            LOG_VERBOSE(@"Uploaded comic file \"%@\"", file.fileName);
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+              [_updateTimer setFireDate:[NSDate dateWithTimeIntervalSinceNow:kUpdateDelay]];
+            });
+          } else {
+            LOG_ERROR(@"Failed adding uploaded comic file \"%@\": %@", file.fileName, error);
+            html = NSLocalizedString(@"SERVER_STATUS_ERROR", nil);
+          }
+        } else {
+          LOG_WARNING(@"Ignoring uploaded comic file \"%@\" with unsupported type", file.fileName);
+          html = NSLocalizedString(@"SERVER_STATUS_UNSUPPORTED", nil);
+        }
+      } else {
+        LOG_WARNING(@"Ignoring uploaded comic file without name");
+        html = NSLocalizedString(@"SERVER_STATUS_INVALID", nil);
+      }
+      return [WebServerDataResponse responseWithHTML:html];
+      
+    }];
     [_webServer startWithRunloop:[NSRunLoop mainRunLoop] port:8080 bonjourName:nil];
     
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:kDefaultKey_ServerEnabled];

@@ -1,0 +1,66 @@
+body {
+  padding: 10px;
+  font-family: verdana,helvetica,arial,sans-serif;
+  font-size: 16px;
+}
+
+#uploaderContainer {
+  width: 600px;
+}
+
+#selectFilesButtonContainer {
+  float: left;
+}
+
+#uploadFilesButtonContainer {
+  float: right;
+}
+
+#filelist {
+  margin-top: 50px;
+}
+
+#filenames {
+  width: 600px;
+}
+
+#status {
+  width: 200px;
+}
+
+#size {
+  width: 100px;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+th {
+  background: #A7C942;
+  padding-top: 5px;
+  padding-bottom: 4px;
+  font-size: 1.0em;
+  color: white;
+}
+
+td {
+  padding: 3px;
+  font-size: 0.75em;
+}
+
+th, td {
+  border: 1px solid #98BF11;
+}
+
+tr:nth-child(even) {
+  background: #EAF2D3;
+}
+
+tr:nth-child(odd) {
+  background: #FFFFFF;
+}
+
+.yellowBackground {
+  background: #F2E699;
+}
