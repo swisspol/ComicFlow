@@ -20,5 +20,7 @@
 #endif
 #import <QuartzCore/QuartzCore.h>
 
+#define __LOGGING_HEADER__ "Logging.h"
+
 #define __STORE_THUMBNAILS_IN_DATABASE__ 1
 #define __DISPLAY_THUMBNAILS_IN_BACKGROUND__ 1
