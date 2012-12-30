@@ -72,9 +72,9 @@
 		E27C003D168CA7A200021417 /* consio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E27CFFC4168CA7A200021417 /* consio.cpp */; settings = {COMPILER_FLAGS = "-Wno-all"; }; };
 		E27C003E168CA7A200021417 /* crc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E27CFFC6168CA7A200021417 /* crc.cpp */; settings = {COMPILER_FLAGS = "-Wno-all"; }; };
 		E27C003F168CA7A200021417 /* crypt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E27CFFC8168CA7A200021417 /* crypt.cpp */; settings = {COMPILER_FLAGS = "-Wno-all"; }; };
-		E27C0040168CA7A200021417 /* dll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E27CFFCA168CA7A200021417 /* dll.cpp */; settings = {COMPILER_FLAGS = "-Wno-all"; }; };
+		E27C0040168CA7A200021417 /* dll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E27CFFCA168CA7A200021417 /* dll.cpp */; settings = {COMPILER_FLAGS = "-Wno-all -fexceptions"; }; };
 		E27C0043168CA7A200021417 /* encname.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E27CFFCE168CA7A200021417 /* encname.cpp */; settings = {COMPILER_FLAGS = "-Wno-all"; }; };
-		E27C0044168CA7A200021417 /* errhnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E27CFFD0168CA7A200021417 /* errhnd.cpp */; settings = {COMPILER_FLAGS = "-Wno-all"; }; };
+		E27C0044168CA7A200021417 /* errhnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E27CFFD0168CA7A200021417 /* errhnd.cpp */; settings = {COMPILER_FLAGS = "-Wno-all -fexceptions"; }; };
 		E27C0045168CA7A200021417 /* extinfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E27CFFD2168CA7A200021417 /* extinfo.cpp */; settings = {COMPILER_FLAGS = "-Wno-all"; }; };
 		E27C0046168CA7A200021417 /* extract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E27CFFD4168CA7A200021417 /* extract.cpp */; settings = {COMPILER_FLAGS = "-Wno-all"; }; };
 		E27C0047168CA7A200021417 /* filcreat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E27CFFD6168CA7A200021417 /* filcreat.cpp */; settings = {COMPILER_FLAGS = "-Wno-all"; }; };
@@ -973,7 +973,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CURRENT_PROJECT_VERSION = 1.1;
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = (
@@ -992,7 +991,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CURRENT_PROJECT_VERSION = 1.1;
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = (
@@ -1041,7 +1039,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CURRENT_PROJECT_VERSION = 1.1;
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = (
