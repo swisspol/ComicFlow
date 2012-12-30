@@ -91,7 +91,7 @@
 }
 
 - (void) _updateServer {
-  WebServer* server = [(AppDelegate*)[AppDelegate sharedInstance] webServer];
+  GCDWebServer* server = [(AppDelegate*)[AppDelegate sharedInstance] webServer];
   _serverSwitch.on = server ? YES : NO;
   if (server) {
     NSString* ipAddress = [[UIDevice currentDevice] currentWiFiAddress];
@@ -412,8 +412,7 @@ static void __DisplayQueueCallBack(void* info) {
   
   _infoLabel.text = nil;
   _versionLabel.text = [NSString stringWithFormat:NSLocalizedString(@"VERSION_FORMAT", nil),
-                                                  [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"],
-                                                  [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]];
+                                                  [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
   _progressView.progress = 1.0;
   BOOL updating = [[LibraryUpdater sharedUpdater] isUpdating];
   _markReadButton.enabled = !updating;

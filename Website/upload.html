@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>ComicFlow Web Server</title>
+  <link rel="stylesheet" href="normalize.css">
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="upload.css">
+  <script src="http://yui.yahooapis.com/3.8.0/build/yui/yui-min.js"></script>
+  <script src="upload.js"></script>
+</head>
+<body>
+  
+  <div class="header">
+    <strong>ComicFlow Web Server</strong>
+    <table>
+      <tr>
+        <td><a href="index.html"><strong>Get Help</strong></a></td>
+        <td><a href="upload.html"><strong>Upload Comics</strong></a></td>
+        <td><a href="download.html"><strong>Download Comics</strong></a></td>
+      </tr>
+    </table>
+  </div>
+  
+  <div id="collectionName">
+    <div><strong>Series Name:</strong>&nbsp;&nbsp;<input id="collection" type="text" size="32" placeholder="Optional"></div>
+    <div id="help">Enter the name of a comic series to organize uploaded comic files.</div>
+  </div>
+  
+  <table class="list" id="fileList">
+    <thead>
+      <tr><th id="name">File Name</th><th id="size">File Size</th><th id="status">Status</th></tr>
+    </thead>
+    <tbody>
+    </tbody>
+    <tfoot>
+      <tr><td colspan="3">Select or drag and drop comic files here (PDF, ZIP / CBZ or RAR / CBR).</td></tr>
+    </tfoot>
+  </table>
+  
+  <div id="uploaderContainer">
+    <div id="selectFilesButtonContainer">
+    </div>
+    <div id="uploadFilesButtonContainer">
+      <button type="button" id="uploadFilesButton" class="yui3-button" style="width:250px; height:35px;">Upload Comic Files</button>
+    </div>
+  </div>
+  
+  <div class="footer">
+    <span>%footer%</span>
+  </div>
+
+</body>
+</html>

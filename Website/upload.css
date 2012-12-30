@@ -1,0 +1,41 @@
+#collectionName {
+  margin-top: 15px;
+  padding: 5px;
+  width: 588px;
+  background: #42A7C9;
+  border: 1px solid #1198BF;
+  color: white;
+  font-size: 1.0em;
+}
+
+#help {
+  margin-top: 5px;
+  font-size: 0.75em;
+}
+
+#uploaderContainer {
+  margin-top: 15px;
+  width: 600px;
+  margin-bottom: 60px;
+}
+
+#selectFilesButtonContainer {
+  float: left;
+}
+
+#uploadFilesButtonContainer {
+  float: right;
+}
+
+#fileList {
+  margin-top: 15px;
+  width: 600px;
+}
+
+#status {
+  width: 200px;
+}
+
+#size {
+  width: 100px;
+}

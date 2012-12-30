@@ -24,10 +24,87 @@
 #import "LibraryViewController.h"
 #import "Defaults.h"
 #import "Extensions_Foundation.h"
+#import "Extensions_UIKit.h"
 #import "Logging.h"
 
-#define kUpdateDelay 1.0  // Seconds
+#define kUpdateDelay 1.0
+#define kNetworkingLatency 1.0
 #define kScreenDimmingOpacity 0.5
+
+@interface AppDelegate ()
+- (void) serverWillBegin;
+- (void) serverDidEnd;
+@end
+
+@interface WebServerConnection : GCDWebServerConnection
+@end
+
+static NSString* _serverName = nil;
+static dispatch_queue_t _connectionQueue = NULL;
+static NSInteger _connectionCount = 0;
+
+@implementation WebServerConnection
+
+- (void) open {
+  [super open];
+  
+  dispatch_sync(_connectionQueue, ^{
+    DCHECK(_connectionCount >= 0);
+    if (_connectionCount == 0) {
+      dispatch_async(dispatch_get_main_queue(), ^{
+        
+        @autoreleasepool {
+          [(AppDelegate*)[[UIApplication sharedApplication] delegate] serverWillBegin];
+        }
+        
+      });
+    }
+    _connectionCount += 1;
+  });
+}
+
+- (void) close {
+  dispatch_sync(_connectionQueue, ^{
+    DCHECK(_connectionCount > 0);
+    _connectionCount -= 1;
+    if (_connectionCount == 0) {
+      dispatch_async(dispatch_get_main_queue(), ^{
+        
+        @autoreleasepool {
+          [(AppDelegate*)[[UIApplication sharedApplication] delegate] serverDidEnd];
+        }
+        
+      });
+    }
+  });
+  
+  [super close];
+}
+
+@end
+
+@implementation WebServer
+
++ (void) initialize {
+  if (_serverName == nil) {
+    _serverName = [[NSString alloc] initWithFormat:NSLocalizedString(@"SERVER_NAME_FORMAT", nil),
+                                                   [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"],
+                                                   [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]];
+  }
+  if (_connectionQueue == NULL) {
+    _connectionQueue = dispatch_queue_create(NULL, DISPATCH_QUEUE_SERIAL);
+  }
+}
+
++ (Class) connectionClass {
+  return [WebServerConnection class];
+}
+
++ (NSString*) serverName {
+  return _serverName;
+}
+
+@end
 
 @implementation AppDelegate
 
@@ -129,10 +206,7 @@
   return YES;
 }
 
-- (BOOL) application:(UIApplication*)application
-             openURL:(NSURL*)url
-   sourceApplication:(NSString*)sourceApplication
-          annotation:(id)annotation {
+- (BOOL) application:(UIApplication*)application openURL:(NSURL*)url sourceApplication:(NSString*)sourceApplication annotation:(id)annotation {
   LOG_VERBOSE(@"Opening \"%@\"", url);
   if ([url isFileURL]) {
     NSString* file = [[url path] lastPathComponent];
@@ -162,17 +236,88 @@
 - (void) enableWebServer {
   if (_webServer == nil) {
     NSSet* allowedFileExtensions = [NSSet setWithObjects:@"pdf", @"zip", @"cbz", @"rar", @"cbr", nil];
+    NSString* websitePath = [[NSBundle mainBundle] pathForResource:@"Website" ofType:nil];
+    NSString* footer = [NSString stringWithFormat:NSLocalizedString(@"SERVER_FOOTER_FORMAT", nil),
+                                                  [[UIDevice currentDevice] name],
+                                                  [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
+    NSDictionary* baseVariables = [NSDictionary dictionaryWithObjectsAndKeys:footer, @"footer", nil];
     
     _webServer = [[WebServer alloc] init];
-    [_webServer addHandlerForBasePath:@"/" localPath:[[NSBundle mainBundle] pathForResource:@"Website" ofType:nil] indexFilename:@"index.html" cacheAge:0];
-    [_webServer addHandlerForMethod:@"POST" path:@"/upload" requestClass:[WebServerMultiPartFormRequest class] processBlock:^WebServerResponse *(WebServerRequest* request) {
+    [_webServer addHandlerForBasePath:@"/" localPath:websitePath indexFilename:nil cacheAge:3600];
+    [_webServer addHandlerForMethod:@"GET" path:@"/" requestClass:[GCDWebServerRequest class] processBlock:^GCDWebServerResponse *(GCDWebServerRequest* request) {
+      
+      // Called from GCD thread
+      return [GCDWebServerResponse responseWithRedirect:[NSURL URLWithString:@"index.html" relativeToURL:request.URL] permanent:NO];
+      
+    }];
+    [_webServer addHandlerForMethod:@"GET" path:@"/index.html" requestClass:[GCDWebServerRequest class] processBlock:^GCDWebServerResponse *(GCDWebServerRequest* request) {
+      
+      // Called from GCD thread
+      NSMutableDictionary* variables = [NSMutableDictionary dictionaryWithDictionary:baseVariables];
+      return [GCDWebServerDataResponse responseWithHTMLTemplate:[websitePath stringByAppendingPathComponent:request.path] variables:variables];
+      
+    }];
+    [_webServer addHandlerForMethod:@"GET" path:@"/download.html" requestClass:[GCDWebServerRequest class] processBlock:^GCDWebServerResponse *(GCDWebServerRequest* request) {
+      
+      // Called from GCD thread
+      GCDWebServerResponse* response = nil;
+      LibraryConnection* connection = [[LibraryConnection alloc] initWithDatabaseAtPath:[LibraryConnection libraryDatabasePath] readWrite:NO];
+      if (connection) {
+        NSMutableDictionary* variables = [NSMutableDictionary dictionaryWithDictionary:baseVariables];
+        
+        NSMutableString* content = [[NSMutableString alloc] init];
+        NSString* statement = @"SELECT collections.name AS collection, comics.name AS name, comics._id_ AS id FROM comics \
+                                LEFT JOIN collections ON comics.collection=collections._id_ \
+                                ORDER BY collection ASC, name ASC";
+        for (NSDictionary* row in [connection executeRawSQLStatement:statement usingRowClass:[NSMutableDictionary class] primaryKey:nil]) {
+          NSString* collection = [row objectForKey:@"collection"];
+          [content appendFormat:@"<tr><td>%@</td><td><a href=\"download?id=%@\">%@</a></td></tr>", collection ? collection : @"", [row objectForKey:@"id"], [row objectForKey:@"name"]];
+        }
+        [variables setObject:content forKey:@"content"];
+        [content release];
+        
+        response = [GCDWebServerDataResponse responseWithHTMLTemplate:[websitePath stringByAppendingPathComponent:request.path] variables:variables];
+        [connection release];
+      }
+      return response;
+      
+    }];
+    [_webServer addHandlerForMethod:@"GET" path:@"/download" requestClass:[GCDWebServerRequest class] processBlock:^GCDWebServerResponse *(GCDWebServerRequest* request) {
+      
+      // Called from GCD thread
+      GCDWebServerResponse* response = nil;
+      DatabaseSQLRowID rowID = [[request.query objectForKey:@"id"] integerValue];
+      if (rowID) {
+        LibraryConnection* connection = [[LibraryConnection alloc] initWithDatabaseAtPath:[LibraryConnection libraryDatabasePath] readWrite:NO];
+        if (connection) {
+          Comic* comic = [connection fetchObjectOfClass:[Comic class] withSQLRowID:rowID];
+          NSString* path = comic ? [connection pathForComic:comic] : nil;
+          if (path) {
+            response = [GCDWebServerFileResponse responseWithFile:path isAttachment:YES];
+          } else {
+            response = [GCDWebServerResponse responseWithStatusCode:404];
+          }
+          [connection release];
+        }
+      }
+      return response;
+      
+    }];
+    [_webServer addHandlerForMethod:@"GET" path:@"/upload.html" requestClass:[GCDWebServerRequest class] processBlock:^GCDWebServerResponse *(GCDWebServerRequest* request) {
+      
+      // Called from GCD thread
+      NSMutableDictionary* variables = [NSMutableDictionary dictionaryWithDictionary:baseVariables];
+      return [GCDWebServerDataResponse responseWithHTMLTemplate:[websitePath stringByAppendingPathComponent:request.path] variables:variables];
+      
+    }];
+    [_webServer addHandlerForMethod:@"POST" path:@"/upload" requestClass:[GCDWebServerMultiPartFormRequest class] processBlock:^GCDWebServerResponse *(GCDWebServerRequest* request) {
       
       // Called from GCD thread
       NSString* html = NSLocalizedString(@"SERVER_STATUS_SUCCESS", nil);
-      WebServerMultiPartFile* file = [[(WebServerMultiPartFormRequest*)request files] objectForKey:@"file"];
+      GCDWebServerMultiPartFile* file = [[(GCDWebServerMultiPartFormRequest*)request files] objectForKey:@"file"];
       NSString* fileName = file.fileName;
       NSString* temporaryPath = file.temporaryPath;
-      WebServerMultiPartArgument* collection = [[(WebServerMultiPartFormRequest*)request arguments] objectForKey:@"collection"];
+      GCDWebServerMultiPartArgument* collection = [[(GCDWebServerMultiPartFormRequest*)request arguments] objectForKey:@"collection"];
       NSString* collectionName = [collection string];
       if (fileName.length && ![fileName hasPrefix:@"."]) {
         NSString* extension = [[fileName pathExtension] lowercaseString];
@@ -201,10 +346,10 @@
           
           NSError* error = nil;
           if ([[NSFileManager defaultManager] moveItemAtPath:temporaryPath toPath:filePath error:&error]) {
-            LOG_VERBOSE(@"Uploaded comic file \"%@\"", fileName);
+            LOG_VERBOSE(@"Uploaded comic file \"%@\" in collection \"%@\"", fileName, collectionName);
             
             dispatch_async(dispatch_get_main_queue(), ^{
-              [_updateTimer setFireDate:[NSDate dateWithTimeIntervalSinceNow:kUpdateDelay]];
+              _needsUpdate = YES;
             });
           } else {
             LOG_ERROR(@"Failed adding uploaded comic file \"%@\": %@", fileName, error);
@@ -219,13 +364,44 @@
         LOG_WARNING(@"Ignoring uploaded comic file without name");
         html = NSLocalizedString(@"SERVER_STATUS_INVALID", nil);
       }
-      return [WebServerDataResponse responseWithHTML:html];
+      return [GCDWebServerDataResponse responseWithHTML:html];
       
     }];
     [_webServer startWithRunloop:[NSRunLoop mainRunLoop] port:8080 bonjourName:nil];
     
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:kDefaultKey_ServerEnabled];
   }
+}
+
+- (void) serverWillBegin {
+  _serverActive = YES;
+  
+  if (_networking == NO) {
+    [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
+    [[UIApplication sharedApplication] showNetworkActivityIndicator];
+    _networking = YES;
+  }
+}
+
+- (void) _serverDidEnd {
+  if (_serverActive == NO) {
+    if (_networking == YES) {
+      [[UIApplication sharedApplication] hideNetworkActivityIndicator];
+      [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
+      _networking = NO;
+      
+      if (_needsUpdate) {
+        [self _updateTimer:nil];
+        _needsUpdate = NO;
+      }
+    }
+  }
+}
+
+- (void) serverDidEnd {
+  _serverActive = NO;
+  
+  [self performSelector:@selector(_serverDidEnd) withObject:nil afterDelay:kNetworkingLatency];
 }
 
 - (void) disableWebServer {

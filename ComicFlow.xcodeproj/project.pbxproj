@@ -117,9 +117,9 @@
 		E27C00BE168CBBC500021417 /* NetReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = E20893DA12FA163F001F1D2F /* NetReachability.m */; };
 		E27C00BF168CBBC500021417 /* OverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = E267036F1228D7C0009C4EBB /* OverlayView.m */; };
 		E27C00C0168CBBC500021417 /* SmartDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = E229318E121E260F00484F9F /* SmartDescription.m */; };
-		E27C00C1168CBBC500021417 /* WebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = E27C00AA168CBB6600021417 /* WebServer.m */; };
-		E27C00C2168CBBC500021417 /* WebServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E27C00AC168CBB6600021417 /* WebServerRequest.m */; };
-		E27C00C3168CBBC500021417 /* WebServerResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = E27C00AE168CBB6600021417 /* WebServerResponse.m */; };
+		E27C00C1168CBBC500021417 /* GCDWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = E27C00AA168CBB6600021417 /* GCDWebServer.m */; };
+		E27C00C2168CBBC500021417 /* GCDWebServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E27C00AC168CBB6600021417 /* GCDWebServerRequest.m */; };
+		E27C00C3168CBBC500021417 /* GCDWebServerResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = E27C00AE168CBB6600021417 /* GCDWebServerResponse.m */; };
 		E27C00C4168CBBC500021417 /* ZoomView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CF616F51293D8A6008FD89E /* ZoomView.m */; };
 		E27CFFA8168CA75900021417 /* MiniZip.m in Sources */ = {isa = PBXBuildFile; fileRef = E27CFFA5168CA75900021417 /* MiniZip.m */; };
 		E27CFFA9168CA75900021417 /* UnRAR.m in Sources */ = {isa = PBXBuildFile; fileRef = E27CFFA7168CA75900021417 /* UnRAR.m */; };
@@ -150,8 +150,8 @@
 		1B236501154FABBA00A13B0D /* OverlayView-Contents@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "OverlayView-Contents@2x.png"; sourceTree = "<group>"; };
 		1B5CC97E15361EBA004A83FA /* Action@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Action@2x.png"; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		1D3623240D0F684500981E51 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		1D3623250D0F684500981E51 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		1D3623240D0F684500981E51 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AppDelegate.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		1D3623250D0F684500981E51 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AppDelegate.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		1D6058910D05DD3D006BFB54 /* ComicFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ComicFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765A40DF7441C002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -175,7 +175,7 @@
 		E2059D64121F7D7C00A271CC /* ComicViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComicViewController.h; sourceTree = "<group>"; };
 		E2059D65121F7D7C00A271CC /* ComicViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ComicViewController.m; sourceTree = "<group>"; };
 		E2059D72121F7E0E00A271CC /* LibraryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LibraryViewController.h; sourceTree = "<group>"; };
-		E2059D73121F7E0E00A271CC /* LibraryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LibraryViewController.m; sourceTree = "<group>"; };
+		E2059D73121F7E0E00A271CC /* LibraryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = LibraryViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		E205A101121FB0E100A271CC /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		E20893D912FA163F001F1D2F /* NetReachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetReachability.h; sourceTree = "<group>"; };
 		E20893DA12FA163F001F1D2F /* NetReachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetReachability.m; sourceTree = "<group>"; };
@@ -276,12 +276,12 @@
 		E27C0032168CA7A200021417 /* version.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = version.hpp; sourceTree = "<group>"; };
 		E27C0033168CA7A200021417 /* volume.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = volume.cpp; sourceTree = "<group>"; };
 		E27C0034168CA7A200021417 /* volume.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = volume.hpp; sourceTree = "<group>"; };
-		E27C00A9168CBB6600021417 /* WebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebServer.h; sourceTree = "<group>"; };
-		E27C00AA168CBB6600021417 /* WebServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebServer.m; sourceTree = "<group>"; };
-		E27C00AB168CBB6600021417 /* WebServerRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebServerRequest.h; sourceTree = "<group>"; };
-		E27C00AC168CBB6600021417 /* WebServerRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebServerRequest.m; sourceTree = "<group>"; };
-		E27C00AD168CBB6600021417 /* WebServerResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebServerResponse.h; sourceTree = "<group>"; };
-		E27C00AE168CBB6600021417 /* WebServerResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebServerResponse.m; sourceTree = "<group>"; };
+		E27C00A9168CBB6600021417 /* GCDWebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = GCDWebServer.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		E27C00AA168CBB6600021417 /* GCDWebServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = GCDWebServer.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		E27C00AB168CBB6600021417 /* GCDWebServerRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerRequest.h; sourceTree = "<group>"; };
+		E27C00AC168CBB6600021417 /* GCDWebServerRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = GCDWebServerRequest.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		E27C00AD168CBB6600021417 /* GCDWebServerResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerResponse.h; sourceTree = "<group>"; };
+		E27C00AE168CBB6600021417 /* GCDWebServerResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = GCDWebServerResponse.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		E27CFFA4168CA75900021417 /* MiniZip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MiniZip.h; sourceTree = "<group>"; };
 		E27CFFA5168CA75900021417 /* MiniZip.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MiniZip.m; sourceTree = "<group>"; };
 		E27CFFA6168CA75900021417 /* UnRAR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnRAR.h; sourceTree = "<group>"; };
@@ -547,6 +547,12 @@
 				E20593AB121E4E2D00A271CC /* Extensions_Foundation.m */,
 				E2BC918E1223FDFA008FB376 /* Extensions_UIKit.h */,
 				E2BC918F1223FDFA008FB376 /* Extensions_UIKit.m */,
+				E27C00A9168CBB6600021417 /* GCDWebServer.h */,
+				E27C00AA168CBB6600021417 /* GCDWebServer.m */,
+				E27C00AB168CBB6600021417 /* GCDWebServerRequest.h */,
+				E27C00AC168CBB6600021417 /* GCDWebServerRequest.m */,
+				E27C00AD168CBB6600021417 /* GCDWebServerResponse.h */,
+				E27C00AE168CBB6600021417 /* GCDWebServerResponse.m */,
 				E209D54712218C3400B1077B /* GridView.h */,
 				E209D54812218C3400B1077B /* GridView.m */,
 				E2059553121E723000A271CC /* ImageUtilities.h */,
@@ -561,12 +567,6 @@
 				E267036F1228D7C0009C4EBB /* OverlayView.m */,
 				E229318D121E260F00484F9F /* SmartDescription.h */,
 				E229318E121E260F00484F9F /* SmartDescription.m */,
-				E27C00A9168CBB6600021417 /* WebServer.h */,
-				E27C00AA168CBB6600021417 /* WebServer.m */,
-				E27C00AB168CBB6600021417 /* WebServerRequest.h */,
-				E27C00AC168CBB6600021417 /* WebServerRequest.m */,
-				E27C00AD168CBB6600021417 /* WebServerResponse.h */,
-				E27C00AE168CBB6600021417 /* WebServerResponse.m */,
 				2CF616F41293D8A6008FD89E /* ZoomView.h */,
 				2CF616F51293D8A6008FD89E /* ZoomView.m */,
 			);
@@ -869,9 +869,9 @@
 				E27C00BE168CBBC500021417 /* NetReachability.m in Sources */,
 				E27C00BF168CBBC500021417 /* OverlayView.m in Sources */,
 				E27C00C0168CBBC500021417 /* SmartDescription.m in Sources */,
-				E27C00C1168CBBC500021417 /* WebServer.m in Sources */,
-				E27C00C2168CBBC500021417 /* WebServerRequest.m in Sources */,
-				E27C00C3168CBBC500021417 /* WebServerResponse.m in Sources */,
+				E27C00C1168CBBC500021417 /* GCDWebServer.m in Sources */,
+				E27C00C2168CBBC500021417 /* GCDWebServerRequest.m in Sources */,
+				E27C00C3168CBBC500021417 /* GCDWebServerResponse.m in Sources */,
 				E27C00C4168CBBC500021417 /* ZoomView.m in Sources */,
 				E27CFFB4168CA79700021417 /* ioapi.c in Sources */,
 				E27CFFB5168CA79700021417 /* mztools.c in Sources */,

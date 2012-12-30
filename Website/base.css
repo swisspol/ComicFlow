@@ -1,0 +1,101 @@
+body {
+  padding: 10px;
+  font-family: verdana,helvetica,arial,sans-serif;
+  font-size: 16px;
+}
+
+p {
+  margin: 5px 0px;
+}
+
+.header {
+  padding: 5px;
+  width: 588px;
+  background: #C9C9C9;
+  border: 1px solid #BFBFBF;
+  color: white;
+  font-size: 1.5em;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.header table {
+  margin-top: 10px;
+  width: 100%;
+  font-size: 0.66em;
+  border-collapse: separate;
+  border-spacing: 5px;
+}
+
+.header td {
+  width: 33%;
+  background: #999999;
+  padding-top: 5px;
+  padding-bottom: 7px;
+  border: 1px solid #888888;
+  color: white;
+}
+
+.header a:link {
+  text-decoration: none;
+  color: white;
+}
+
+.header a:hover {
+  text-decoration: underline;
+  color: white;
+}
+
+.header a:active {
+  text-decoration: underline;
+  color: white;
+}
+
+.header a:visited {
+  text-decoration: none;
+  color: white;
+}
+
+.list table {
+  border-collapse: collapse;
+}
+
+.list th, .list td {
+  border: 1px solid #98BF11;
+  padding: 2px;
+}
+
+.list thead > tr {
+  background: #A7C942;
+  padding-top: 5px;
+  padding-bottom: 4px;
+  font-size: 1.0em;
+  color: white;
+}
+
+.list tbody > tr {
+  font-size: 0.75em;
+}
+
+.list tbody > tr:nth-child(even) {
+  background: #EAF2D3;
+}
+
+.list tbody > tr:nth-child(odd) {
+  background: #FFFFFF;
+}
+
+.list tfoot > tr {
+  background: #A7C942;
+  color: white;
+  font-size: 0.75em;
+}
+
+.footer {
+  margin-top: 10px;
+  padding: 10px;
+  width: 578px;
+  color: gray;
+  font-size: 0.6em;
+  text-align: center;
+}

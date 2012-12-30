@@ -5,7 +5,7 @@
   <title>ComicFlow Web Server</title>
   <link rel="stylesheet" href="normalize.css">
   <link rel="stylesheet" href="base.css">
-  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="download.css">
 </head>
 <body>
   
@@ -20,10 +20,17 @@
     </table>
   </div>
   
-  <div id="intro">
-    <p>You are successfully connected to the ComicFlow app on your iPad. You can now upload new comics or download existing comics from this website.</p>
-    <p>Please do not quit ComicFlow while uploading or download comics.</p>
-  </div>
+  <table class="list" id="fileList">
+    <thead>
+      <tr><th id="collection">Series Name</th><th id="file">Comic File</th></tr>
+    </thead>
+    <tbody>
+    </tbody>
+      %content%
+    <tfoot>
+      <tr><td colspan="2">Click a comic file to download.</td></tr>
+    </tfoot>
+  </table>
   
   <div class="footer">
     <span>%footer%</span>

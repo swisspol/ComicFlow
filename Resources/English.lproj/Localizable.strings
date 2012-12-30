@@ -55,6 +55,10 @@
 "RATE_ALERT_CONFIRM" = "Rate Now";
 "RATE_ALERT_CANCEL" = "Remind Me Later";
 
+"SERVER_NAME_FORMAT" = "ComicFlow Web Server %@ (%@)";
+
+"SERVER_FOOTER_FORMAT" = "%@ &mdash; ComicFlow Version %@";
+
 "SERVER_STATUS_SUCCESS" = "Successfully Uploaded";
 "SERVER_STATUS_ERROR" = "Internal Error";
 "SERVER_STATUS_INVALID" = "Missing File Name";

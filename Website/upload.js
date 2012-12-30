@@ -1,5 +1,5 @@
 YUI({filter:"raw"}).use("uploader", function(Y) {
-  if ((Y.Uploader.TYPE == "html5") && !Y.UA.ios) {
+  if (Y.Uploader.TYPE == "html5" && !Y.UA.ios) {
     var uploadDone = false;
     var uploader = new Y.Uploader({
       width: "250px",
@@ -15,7 +15,7 @@ YUI({filter:"raw"}).use("uploader", function(Y) {
     
     uploader.after("fileselect", function (event) {
       var fileList = event.fileList;
-      var fileTable = Y.one("#fileNames tbody");
+      var fileTable = Y.one("#fileList tbody");
             
       if (uploadDone) {
         fileTable.setHTML("");
@@ -81,7 +81,8 @@ YUI({filter:"raw"}).use("uploader", function(Y) {
     });
     
   } else {
-    Y.one("#uploaderContainer").set("text", "To use the ComicFlow uploader, please use a modern browser that supports HTML5.");
+    Y.one("#uploaderContainer").set("text", "To use the ComicFlow Web Uploader, please use a modern browser that supports HTML5.");
+    Y.one("#collectionName").remove();
     Y.one("#fileList").remove();
   }
 });

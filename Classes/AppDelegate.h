@@ -15,11 +15,17 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #import "ApplicationDelegate.h"
-#import "WebServer.h"
+#import "GCDWebServer.h"
+
+@interface WebServer : GCDWebServer
+@end
 
 @interface AppDelegate : ApplicationDelegate {
   NSTimer* _updateTimer;
+  BOOL _needsUpdate;
   WebServer* _webServer;
+  BOOL _serverActive;
+  BOOL _networking;
   UIWindow* _dimmingWindow;
 }
 @property(nonatomic, readonly) WebServer* webServer;
