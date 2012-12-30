@@ -15,9 +15,12 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #import "ApplicationDelegate.h"
-#import "GCDWebServer.h"
+#import "GCDWebServerConnection.h"
 
 @interface WebServer : GCDWebServer
+@end
+
+@interface WebServerConnection : GCDWebServerConnection
 @end
 
 @interface AppDelegate : ApplicationDelegate {

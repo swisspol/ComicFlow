@@ -36,6 +36,7 @@
 		E20893E112FA1657001F1D2F /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E20893E012FA1657001F1D2F /* SystemConfiguration.framework */; };
 		E209D0651220F83E00B1077B /* Action.png in Resources */ = {isa = PBXBuildFile; fileRef = E209D0641220F83E00B1077B /* Action.png */; };
 		E209D0C71221090200B1077B /* Button.png in Resources */ = {isa = PBXBuildFile; fileRef = E209D0C61221090200B1077B /* Button.png */; };
+		E22112A91690B97B0048D2B2 /* GCDWebServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = E22112A81690B97B0048D2B2 /* GCDWebServerConnection.m */; };
 		E2240677129275BC007E5296 /* Comic-Screen.png in Resources */ = {isa = PBXBuildFile; fileRef = E2240675129275BC007E5296 /* Comic-Screen.png */; };
 		E240F00712533FEC00B95E4A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = E240F00512533FEC00B95E4A /* Localizable.strings */; };
 		E240F010125340B300B95E4A /* ComicViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E240F00C125340B300B95E4A /* ComicViewController.xib */; };
@@ -185,6 +186,8 @@
 		E209D2111221154300B1077B /* Defaults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Defaults.h; sourceTree = "<group>"; };
 		E209D54712218C3400B1077B /* GridView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridView.h; sourceTree = "<group>"; };
 		E209D54812218C3400B1077B /* GridView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GridView.m; sourceTree = "<group>"; };
+		E22112A71690B97B0048D2B2 /* GCDWebServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerConnection.h; sourceTree = "<group>"; };
+		E22112A81690B97B0048D2B2 /* GCDWebServerConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerConnection.m; sourceTree = "<group>"; };
 		E2240675129275BC007E5296 /* Comic-Screen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Comic-Screen.png"; sourceTree = "<group>"; };
 		E229317D121E260F00484F9F /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
 		E229317E121E260F00484F9F /* Logging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Logging.m; sourceTree = "<group>"; };
@@ -585,6 +588,8 @@
 			children = (
 				E2448E2216902B7D0069FA25 /* GCDWebServer.h */,
 				E2448E2316902B7D0069FA25 /* GCDWebServer.m */,
+				E22112A71690B97B0048D2B2 /* GCDWebServerConnection.h */,
+				E22112A81690B97B0048D2B2 /* GCDWebServerConnection.m */,
 				E2448E2416902B7D0069FA25 /* GCDWebServerPrivate.h */,
 				E2448E2516902B7D0069FA25 /* GCDWebServerRequest.h */,
 				E2448E2616902B7D0069FA25 /* GCDWebServerRequest.m */,
@@ -930,6 +935,7 @@
 				E2448E2916902B7D0069FA25 /* GCDWebServer.m in Sources */,
 				E2448E2A16902B7D0069FA25 /* GCDWebServerRequest.m in Sources */,
 				E2448E2B16902B7D0069FA25 /* GCDWebServerResponse.m in Sources */,
+				E22112A91690B97B0048D2B2 /* GCDWebServerConnection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

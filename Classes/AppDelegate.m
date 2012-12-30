@@ -37,9 +37,6 @@
 - (void) serverDidEnd;
 @end
 
-@interface WebServerConnection : GCDWebServerConnection
-@end
-
 static NSString* _serverName = nil;
 static dispatch_queue_t _connectionQueue = NULL;
 static NSInteger _connectionCount = 0;
