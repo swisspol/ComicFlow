@@ -14,23 +14,10 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#import "ApplicationDelegate.h"
-#import "WebServer.h"
+#import "GCDWebServerConnection.h"
 
-@interface AppDelegate : ApplicationDelegate {
-  NSTimer* _updateTimer;
-  BOOL _needsUpdate;
-  WebServer* _webServer;
-  BOOL _serverActive;
-  BOOL _networking;
-  UIWindow* _dimmingWindow;
-}
-@property(nonatomic, readonly) WebServer* webServer;
-@property(nonatomic, getter=isScreenDimmed) BOOL screenDimmed;
-- (void) enableWebServer;
-- (void) serverDidStart;  // To be called by WebServer
-- (void) serverDidUpdate;  // To be called by WebServer
-- (void) serverDidEnd;  // To be called by WebServer
-- (void) disableWebServer;
-- (void) updateLibrary;
+@interface WebServer : GCDWebServer
+@end
+
+@interface WebServerConnection : GCDWebServerConnection
 @end
