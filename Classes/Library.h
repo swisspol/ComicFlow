@@ -1,5 +1,5 @@
 //  This file is part of the ComicFlow application for iOS.
-//  Copyright (C) 2010-2011 Pierre-Olivier Latour <info@pol-online.net>
+//  Copyright (C) 2010-2013 Pierre-Olivier Latour <info@pol-online.net>
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
