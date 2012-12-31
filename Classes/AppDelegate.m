@@ -103,8 +103,10 @@
       case SKPaymentTransactionStateRestored: {
         LOG_VERBOSE(@"Processing App Store transaction '%@' from %@", transaction.transactionIdentifier, transaction.transactionDate);
         if ([transaction.payment.productIdentifier isEqualToString:kStoreKitProductIdentifier]) {
-          [[NSUserDefaults standardUserDefaults] setInteger:kServerMode_Full forKey:kDefaultKey_ServerMode];
-          [[NSUserDefaults standardUserDefaults] synchronize];
+          NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+          [defaults setInteger:kServerMode_Full forKey:kDefaultKey_ServerMode];
+          [defaults removeObjectForKey:kDefaultKey_UploadsRemaining];
+          [defaults synchronize];
         } else {
           LOG_ERROR(@"Unexpected App Store product \"%@\"", transaction.payment.productIdentifier);
           DNOT_REACHED();
