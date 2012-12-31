@@ -79,7 +79,11 @@
 @synthesize gridView=_gridView, navigationBar=_navigationBar, segmentedControl=_segmentedControl, menuView=_menuView,
             progressView=_progressView, markReadButton=_markReadButton, markNewButton=_markNewButton, updateButton=_updateButton,
             forceUpdateButton=_forceUpdateButton, serverSwitch=_serverSwitch, addressLabel=_addressLabel,
-            infoLabel=_infoLabel, versionLabel=_versionLabel, dimmingSwitch=_dimmingSwitch;
+            infoLabel=_infoLabel, versionLabel=_versionLabel, dimmingSwitch=_dimmingSwitch, purchaseButton=_purchaseButton;
+
+- (void) updatePurchase {
+  _purchaseButton.enabled = ([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerMode] != kServerMode_Full ? YES : NO);
+}
 
 - (void) _updateStatistics {
   NSDictionary* attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:[LibraryConnection libraryDatabasePath]
@@ -237,6 +241,7 @@ static void __DisplayQueueCallBack(void* info) {
   } else {
     [self _updateServer];
     [self _updateStatistics];
+    [self updatePurchase];
     [_menuController presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
   }
 }
@@ -443,6 +448,7 @@ static void __DisplayQueueCallBack(void* info) {
   self.infoLabel = nil;
   self.versionLabel = nil;
   self.dimmingSwitch = nil;
+  self.purchaseButton = nil;
   
   [_menuController release];
   _menuController = nil;
@@ -944,6 +950,10 @@ static void __ArrayApplierFunction(const void* value, void* context) {
 
 - (IBAction) toggleDimming:(id)sender {
   [(AppDelegate*)[AppDelegate sharedInstance] setScreenDimmed:_dimmingSwitch.on];
+}
+
+- (IBAction) purchase:(id)sender {
+  [(AppDelegate*)[AppDelegate sharedInstance] purchase];
 }
 
 @end

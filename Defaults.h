@@ -14,8 +14,16 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#define kDefaultKey_ScreenDimmed @"screenDimmed"
 #define kDefaultKey_ServerEnabled @"serverEnabled"
+#define kDefaultKey_ServerMode @"serverMode"
+typedef enum {
+  kServerMode_Limited = -1,
+  kServerMode_Trial = 0,
+  kServerMode_Full = 1
+} ServerMode;
+#define kDefaultKey_UploadsRemaining @"uploadsRemaining"
+
+#define kDefaultKey_ScreenDimmed @"screenDimmed"
 
 #define kDefaultKey_RootTimestamp @"rootTimestamp"
 #define kDefaultKey_RootScrolling @"rootScrolling"

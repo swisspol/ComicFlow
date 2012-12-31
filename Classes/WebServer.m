@@ -16,6 +16,7 @@
 
 #import "AppDelegate.h"
 #import "Library.h"
+#import "Defaults.h"
 
 #import "Logging.h"
 #import "Extensions_Foundation.h"
@@ -105,6 +106,7 @@ static NSInteger _connectionCount = 0;
     
     // Called from GCD thread
     NSMutableDictionary* variables = [NSMutableDictionary dictionaryWithDictionary:baseVariables];
+    [variables setObject:[NSString stringWithFormat:@"%i", kTrialMaxUploads] forKey:@"max"];
     return [GCDWebServerDataResponse responseWithHTMLTemplate:[websitePath stringByAppendingPathComponent:request.path] variables:variables];
     
   }];
@@ -160,64 +162,83 @@ static NSInteger _connectionCount = 0;
     
     // Called from GCD thread
     NSMutableDictionary* variables = [NSMutableDictionary dictionaryWithDictionary:baseVariables];
+    switch ([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerMode]) {
+      
+      case kServerMode_Limited:
+        [variables setObject:@"0" forKey:@"remaining"];
+        break;
+      
+      case kServerMode_Trial:
+        [variables setObject:[NSString stringWithFormat:@"%i", [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_UploadsRemaining]] forKey:@"remaining"];
+        break;
+      
+      case kServerMode_Full:
+        [variables setObject:@"hidden" forKey:@"class"];
+        break;
+      
+    }
     return [GCDWebServerDataResponse responseWithHTMLTemplate:[websitePath stringByAppendingPathComponent:request.path] variables:variables];
     
   }];
   [self addHandlerForMethod:@"POST" path:@"/upload" requestClass:[GCDWebServerMultiPartFormRequest class] processBlock:^GCDWebServerResponse *(GCDWebServerRequest* request) {
     
     // Called from GCD thread
-    NSString* html = NSLocalizedString(@"SERVER_STATUS_SUCCESS", nil);
-    GCDWebServerMultiPartFile* file = [[(GCDWebServerMultiPartFormRequest*)request files] objectForKey:@"file"];
-    NSString* fileName = file.fileName;
-    NSString* temporaryPath = file.temporaryPath;
-    GCDWebServerMultiPartArgument* collection = [[(GCDWebServerMultiPartFormRequest*)request arguments] objectForKey:@"collection"];
-    NSString* collectionName = [collection string];
-    if (fileName.length && ![fileName hasPrefix:@"."]) {
-      NSString* extension = [[fileName pathExtension] lowercaseString];
-      if (extension && [allowedFileExtensions containsObject:extension]) {
-        
-        NSString* directoryPath = [LibraryConnection libraryRootPath];
-        if (collectionName.length) {
-          for (NSString* directory in [[NSFileManager defaultManager] directoriesInDirectoryAtPath:directoryPath includeInvisible:NO]) {
-            if ([directory caseInsensitiveCompare:collectionName] == NSOrderedSame) {
-              collectionName = directory;
+    if ([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerMode] != kServerMode_Limited) {
+      NSString* html = NSLocalizedString(@"SERVER_STATUS_SUCCESS", nil);
+      GCDWebServerMultiPartFile* file = [[(GCDWebServerMultiPartFormRequest*)request files] objectForKey:@"file"];
+      NSString* fileName = file.fileName;
+      NSString* temporaryPath = file.temporaryPath;
+      GCDWebServerMultiPartArgument* collection = [[(GCDWebServerMultiPartFormRequest*)request arguments] objectForKey:@"collection"];
+      NSString* collectionName = [collection string];
+      if (fileName.length && ![fileName hasPrefix:@"."]) {
+        NSString* extension = [[fileName pathExtension] lowercaseString];
+        if (extension && [allowedFileExtensions containsObject:extension]) {
+          
+          NSString* directoryPath = [LibraryConnection libraryRootPath];
+          if (collectionName.length) {
+            for (NSString* directory in [[NSFileManager defaultManager] directoriesInDirectoryAtPath:directoryPath includeInvisible:NO]) {
+              if ([directory caseInsensitiveCompare:collectionName] == NSOrderedSame) {
+                collectionName = directory;
+                break;
+              }
+            }
+            directoryPath = [directoryPath stringByAppendingPathComponent:collectionName];
+            [[NSFileManager defaultManager] createDirectoryAtPath:directoryPath withIntermediateDirectories:NO attributes:nil error:NULL];
+          }
+          
+          for (NSString* file in [[NSFileManager defaultManager] filesInDirectoryAtPath:directoryPath includeInvisible:NO includeSymlinks:NO]) {
+            if ([file caseInsensitiveCompare:fileName] == NSOrderedSame) {
+              fileName = file;
               break;
             }
           }
-          directoryPath = [directoryPath stringByAppendingPathComponent:collectionName];
-          [[NSFileManager defaultManager] createDirectoryAtPath:directoryPath withIntermediateDirectories:NO attributes:nil error:NULL];
-        }
-        
-        for (NSString* file in [[NSFileManager defaultManager] filesInDirectoryAtPath:directoryPath includeInvisible:NO includeSymlinks:NO]) {
-          if ([file caseInsensitiveCompare:fileName] == NSOrderedSame) {
-            fileName = file;
-            break;
-          }
-        }
-        NSString* filePath = [directoryPath stringByAppendingPathComponent:fileName];
-        [[NSFileManager defaultManager] removeItemAtPath:filePath error:NULL];
-        
-        NSError* error = nil;
-        if ([[NSFileManager defaultManager] moveItemAtPath:temporaryPath toPath:filePath error:&error]) {
-          LOG_VERBOSE(@"Uploaded comic file \"%@\" in collection \"%@\"", fileName, collectionName);
+          NSString* filePath = [directoryPath stringByAppendingPathComponent:fileName];
+          [[NSFileManager defaultManager] removeItemAtPath:filePath error:NULL];
           
-          dispatch_async(dispatch_get_main_queue(), ^{
-            [(AppDelegate*)[[UIApplication sharedApplication] delegate] serverDidUpdate];
-          });
+          NSError* error = nil;
+          if ([[NSFileManager defaultManager] moveItemAtPath:temporaryPath toPath:filePath error:&error]) {
+            LOG_VERBOSE(@"Uploaded comic file \"%@\" in collection \"%@\"", fileName, collectionName);
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+              [(AppDelegate*)[[UIApplication sharedApplication] delegate] serverDidUpdate];
+            });
+          } else {
+            LOG_ERROR(@"Failed adding uploaded comic file \"%@\": %@", fileName, error);
+            html = NSLocalizedString(@"SERVER_STATUS_ERROR", nil);
+          }
+          
         } else {
-          LOG_ERROR(@"Failed adding uploaded comic file \"%@\": %@", fileName, error);
-          html = NSLocalizedString(@"SERVER_STATUS_ERROR", nil);
+          LOG_WARNING(@"Ignoring uploaded comic file \"%@\" with unsupported type", fileName);
+          html = NSLocalizedString(@"SERVER_STATUS_UNSUPPORTED", nil);
         }
-        
       } else {
-        LOG_WARNING(@"Ignoring uploaded comic file \"%@\" with unsupported type", fileName);
-        html = NSLocalizedString(@"SERVER_STATUS_UNSUPPORTED", nil);
+        LOG_WARNING(@"Ignoring uploaded comic file without name");
+        html = NSLocalizedString(@"SERVER_STATUS_INVALID", nil);
       }
+      return [GCDWebServerDataResponse responseWithHTML:html];
     } else {
-      LOG_WARNING(@"Ignoring uploaded comic file without name");
-      html = NSLocalizedString(@"SERVER_STATUS_INVALID", nil);
+      return [GCDWebServerResponse responseWithStatusCode:402];
     }
-    return [GCDWebServerDataResponse responseWithHTML:html];
     
   }];
   

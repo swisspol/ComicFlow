@@ -135,6 +135,7 @@
 		E2ACCE42129D6FF4001362E0 /* Background-Collection.png in Resources */ = {isa = PBXBuildFile; fileRef = E2ACCE40129D6FF4001362E0 /* Background-Collection.png */; };
 		E2ACCE43129D6FF4001362E0 /* Background-Library.png in Resources */ = {isa = PBXBuildFile; fileRef = E2ACCE41129D6FF4001362E0 /* Background-Library.png */; };
 		E2B680C5169115A6001CF037 /* WebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = E2B680C4169115A6001CF037 /* WebServer.m */; };
+		E2B680E516915033001CF037 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2B680E416915033001CF037 /* StoreKit.framework */; };
 		E2CAA9E4122295F800A4D85A /* DocumentView-Shadow-Left.png in Resources */ = {isa = PBXBuildFile; fileRef = E2CAA9E2122295F800A4D85A /* DocumentView-Shadow-Left.png */; };
 		E2CAA9E5122295F800A4D85A /* DocumentView-Shadow-Right.png in Resources */ = {isa = PBXBuildFile; fileRef = E2CAA9E3122295F800A4D85A /* DocumentView-Shadow-Right.png */; };
 		E2E1B365168E453F008FDA6D /* Website in Resources */ = {isa = PBXBuildFile; fileRef = E2E1B364168E453F008FDA6D /* Website */; };
@@ -370,6 +371,7 @@
 		E2ACCE41129D6FF4001362E0 /* Background-Library.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Background-Library.png"; sourceTree = "<group>"; };
 		E2B680C3169115A6001CF037 /* WebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebServer.h; sourceTree = "<group>"; };
 		E2B680C4169115A6001CF037 /* WebServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebServer.m; sourceTree = "<group>"; };
+		E2B680E416915033001CF037 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		E2BC918E1223FDFA008FB376 /* Extensions_UIKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Extensions_UIKit.h; sourceTree = "<group>"; };
 		E2BC918F1223FDFA008FB376 /* Extensions_UIKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Extensions_UIKit.m; sourceTree = "<group>"; };
 		E2CAA9DF122295F100A4D85A /* DocumentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentView.h; sourceTree = "<group>"; };
@@ -388,6 +390,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E2B680E516915033001CF037 /* StoreKit.framework in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */,
@@ -464,6 +467,7 @@
 				E20590BF121E295000A271CC /* CFNetwork.framework */,
 				E205A101121FB0E100A271CC /* QuartzCore.framework */,
 				E247C19A1293A79D00CEB396 /* CoreText.framework */,
+				E2B680E416915033001CF037 /* StoreKit.framework */,
 				E20590BD121E294B00A271CC /* libsqlite3.dylib */,
 				E2059154121E2F3B00A271CC /* libz.dylib */,
 			);

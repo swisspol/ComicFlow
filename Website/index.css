@@ -4,4 +4,14 @@
   padding: 5px;
   background: #EEEEEE;
   font-size: 0.95em;
+  color: black;
+}
+
+#purchase {
+  margin-top: 15px;
+  width: 590px;
+  padding: 5px;
+  background: #EEEEEE;
+  font-size: 0.95em;
+  color: #F20;
 }

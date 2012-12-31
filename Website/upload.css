@@ -1,3 +1,16 @@
+.hidden {
+  display: none;
+}
+
+#mode {
+  margin-top: 15px;
+  width: 590px;
+  padding: 5px;
+  background: #EEEEEE;
+  font-size: 0.95em;
+  color: #F20;
+}
+
 #collectionName {
   margin-top: 15px;
   padding: 5px;

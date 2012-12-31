@@ -55,6 +55,28 @@
 "RATE_ALERT_CONFIRM" = "Rate Now";
 "RATE_ALERT_CANCEL" = "Remind Me Later";
 
+"PURCHASE_SPINNER" = "Contacting App Store\nPlease Wait…";
+
+"OFFLINE_ALERT_TITLE" = "No Internet Connection!";
+"OFFLINE_ALERT_MESSAGE" = "You must be online to do In-App Purchases. Make sure you have a valid Internet Connection.";
+"OFFLINE_ALERT_BUTTON" = "OK";
+
+"DISABLED_ALERT_TITLE" = "Purchase Not Allowed!";
+"DISABLED_ALERT_MESSAGE" = "It looks like In-App Purchases are not allowed from this device. Check the Settings app.";
+"DISABLED_ALERT_BUTTON" = "OK";
+
+"BUSY_ALERT_TITLE" = "Purchase Pending!";
+"BUSY_ALERT_MESSAGE" = "There is already an In-App Purchase pending. Please try again later.";
+"BUSY_ALERT_BUTTON" = "OK";
+
+"FAILED_ALERT_TITLE" = "Purchase Failed!";
+"FAILED_ALERT_MESSAGE" = "An error happened while performing the In-App Purchase. Please try again later.";
+"FAILED_ALERT_BUTTON" = "OK";
+
+"COMPLETE_ALERT_TITLE" = "Thanks For Your Purchase!";
+"COMPLETE_ALERT_MESSAGE" = "You now have unlimited use of the ComicFlow web server.";
+"COMPLETE_ALERT_BUTTON" = "OK";
+
 "SERVER_NAME_FORMAT" = "ComicFlow Web Server %@ (%@)";
 
 "SERVER_FOOTER_FORMAT" = "%@ &mdash; ComicFlow Version %@";

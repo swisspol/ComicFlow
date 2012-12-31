@@ -35,6 +35,7 @@
   UILabel* _infoLabel;
   UILabel* _versionLabel;
   UISwitch* _dimmingSwitch;
+  UIButton* _purchaseButton;
   
   UIWindow* _window;
   BOOL _launched;
@@ -73,7 +74,9 @@
 @property(nonatomic, retain) IBOutlet UILabel* infoLabel;
 @property(nonatomic, retain) IBOutlet UILabel* versionLabel;
 @property(nonatomic, retain) IBOutlet UISwitch* dimmingSwitch;
+@property(nonatomic, retain) IBOutlet UIButton* purchaseButton;
 - (id) initWithWindow:(UIWindow*)window;
+- (void) updatePurchase;
 - (void) saveState;
 @end
 
@@ -86,4 +89,5 @@
 - (IBAction) markAllNew:(id)sender;
 - (IBAction) showLog:(id)sender;
 - (IBAction) toggleDimming:(id)sender;
+- (IBAction) purchase:(id)sender;
 @end

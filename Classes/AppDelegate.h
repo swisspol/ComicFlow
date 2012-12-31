@@ -14,8 +14,17 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#import <StoreKit/StoreKit.h>
+
 #import "ApplicationDelegate.h"
 #import "WebServer.h"
+
+#define kStoreKitProductIdentifier @"web_uploader"
+#ifdef NDEBUG
+#define kTrialMaxUploads 50
+#else
+#define kTrialMaxUploads 5
+#endif
 
 @interface AppDelegate : ApplicationDelegate {
   NSTimer* _updateTimer;
@@ -24,6 +33,7 @@
   BOOL _serverActive;
   BOOL _networking;
   UIWindow* _dimmingWindow;
+  BOOL _purchasing;
 }
 @property(nonatomic, readonly) WebServer* webServer;
 @property(nonatomic, getter=isScreenDimmed) BOOL screenDimmed;
@@ -33,4 +43,8 @@
 - (void) serverDidEnd;  // To be called by WebServer
 - (void) disableWebServer;
 - (void) updateLibrary;
+@end
+
+@interface AppDelegate (StoreKit) <SKPaymentTransactionObserver, SKProductsRequestDelegate>
+- (void) purchase;
 @end

@@ -26,10 +26,117 @@
 #import "Extensions_Foundation.h"
 #import "Extensions_UIKit.h"
 #import "Logging.h"
+#import "NetReachability.h"
 
 #define kUpdateDelay 1.0
 #define kNetworkingLatency 1.0
 #define kScreenDimmingOpacity 0.5
+
+@implementation AppDelegate (StoreKit)
+
+- (void) _initializeStoreKit {
+  [[SKPaymentQueue defaultQueue] addTransactionObserver:self];
+  //  [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
+}
+
+- (void) _startPurchase {
+  _purchasing = YES;
+  [self showSpinnerWithMessage:NSLocalizedString(@"PURCHASE_SPINNER", nil) fullScreen:YES animated:YES];
+  self.window.userInteractionEnabled = NO;
+}
+
+- (void) _finishPurchase {
+  DCHECK(_purchasing);
+  self.window.userInteractionEnabled = YES;
+  [self hideSpinner:YES];
+  _purchasing = NO;
+}
+
+- (void) purchase {
+  DCHECK([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerMode] != kServerMode_Full);
+  if (![[NetReachability sharedNetReachability] state]) {
+    [self showAlertWithTitle:NSLocalizedString(@"OFFLINE_ALERT_TITLE", nil) message:NSLocalizedString(@"OFFLINE_ALERT_MESSAGE", nil) button:NSLocalizedString(@"OFFLINE_ALERT_BUTTON", nil)];
+    return;
+  }
+  if (![SKPaymentQueue canMakePayments]) {
+    [self showAlertWithTitle:NSLocalizedString(@"DISABLED_ALERT_TITLE", nil) message:NSLocalizedString(@"DISABLED_ALERT_MESSAGE", nil) button:NSLocalizedString(@"DISABLED_ALERT_BUTTON", nil)];
+    return;
+  }
+  if (_purchasing || [[[SKPaymentQueue defaultQueue] transactions] count]) {
+    [self showAlertWithTitle:NSLocalizedString(@"BUSY_ALERT_TITLE", nil) message:NSLocalizedString(@"BUSY_ALERT_MESSAGE", nil) button:NSLocalizedString(@"BUSY_ALERT_BUTTON", nil)];
+    return;
+  }
+  SKProductsRequest* request = [[SKProductsRequest alloc] initWithProductIdentifiers:[NSSet setWithObject:kStoreKitProductIdentifier]];
+  request.delegate = self;
+  [request start];
+  [self _startPurchase];
+}
+
+- (void) request:(SKRequest*)request didFailWithError:(NSError*)error {
+  LOG_ERROR(@"App Store request failed: %@", error);
+  [self showAlertWithTitle:NSLocalizedString(@"FAILED_ALERT_TITLE", nil) message:NSLocalizedString(@"FAILED_ALERT_MESSAGE", nil) button:NSLocalizedString(@"FAILED_ALERT_BUTTON", nil)];
+  [self _finishPurchase];
+}
+
+- (void) productsRequest:(SKProductsRequest*)request didReceiveResponse:(SKProductsResponse*)response {
+  SKProduct* product = [response.products firstObject];
+  if (product) {
+    SKPayment* payment = [SKPayment paymentWithProduct:product];
+    [[SKPaymentQueue defaultQueue] addPayment:payment];
+  } else {
+    LOG_WARNING(@"Invalid App Store products: %@", response.invalidProductIdentifiers);
+    [self showAlertWithTitle:NSLocalizedString(@"FAILED_ALERT_TITLE", nil) message:NSLocalizedString(@"FAILED_ALERT_MESSAGE", nil) button:NSLocalizedString(@"FAILED_ALERT_BUTTON", nil)];
+    [self _finishPurchase];
+  }
+}
+
+// This can be called in response to a purchase request or on app cold launch if there are unfinished transactions still pending
+- (void) paymentQueue:(SKPaymentQueue*)queue updatedTransactions:(NSArray*)transactions {
+  LOG_VERBOSE(@"%i App Store transactions updated", transactions.count);
+  for (SKPaymentTransaction* transaction in transactions) {
+    switch (transaction.transactionState) {
+      
+      case SKPaymentTransactionStatePurchasing:
+        break;
+      
+      case SKPaymentTransactionStatePurchased:
+      case SKPaymentTransactionStateRestored: {
+        LOG_VERBOSE(@"Processing App Store transaction '%@' from %@", transaction.transactionIdentifier, transaction.transactionDate);
+        if ([transaction.payment.productIdentifier isEqualToString:kStoreKitProductIdentifier]) {
+          [[NSUserDefaults standardUserDefaults] setInteger:kServerMode_Full forKey:kDefaultKey_ServerMode];
+          [[NSUserDefaults standardUserDefaults] synchronize];
+        } else {
+          LOG_ERROR(@"Unexpected App Store product \"%@\"", transaction.payment.productIdentifier);
+          DNOT_REACHED();
+        }
+        [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+        if (transaction.transactionState == SKPaymentTransactionStatePurchased) {
+          [(LibraryViewController*)self.viewController updatePurchase];
+          [self showAlertWithTitle:NSLocalizedString(@"COMPLETE_ALERT_TITLE", nil) message:NSLocalizedString(@"COMPLETE_ALERT_MESSAGE", nil) button:NSLocalizedString(@"COMPLETE_ALERT_BUTTON", nil)];
+          [self _finishPurchase];
+        } else {
+          DCHECK(_purchasing == NO);
+        }
+        break;
+      }
+      
+      case SKPaymentTransactionStateFailed: {
+        NSError* error = transaction.error;
+        if (![error.domain isEqualToString:SKErrorDomain] || (error.code != SKErrorPaymentCancelled)) {
+          LOG_ERROR(@"App Store transaction failed: %@", error);
+        }
+        [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+        if (_purchasing) {
+          [self _finishPurchase];
+        }
+        break;
+      }
+      
+    }
+  }
+}
+
+@end
 
 @implementation AppDelegate
 
@@ -38,8 +145,10 @@
 + (void) initialize {
   // Setup initial user defaults
   NSMutableDictionary* defaults = [[NSMutableDictionary alloc] init];
-  [defaults setObject:[NSNumber numberWithBool:NO] forKey:kDefaultKey_ScreenDimmed];
   [defaults setObject:[NSNumber numberWithBool:NO] forKey:kDefaultKey_ServerEnabled];
+  [defaults setObject:[NSNumber numberWithInteger:kServerMode_Trial] forKey:kDefaultKey_ServerMode];
+  [defaults setObject:[NSNumber numberWithInteger:kTrialMaxUploads] forKey:kDefaultKey_UploadsRemaining];
+  [defaults setObject:[NSNumber numberWithBool:NO] forKey:kDefaultKey_ScreenDimmed];
   [defaults setObject:[NSNumber numberWithDouble:0.0] forKey:kDefaultKey_RootTimestamp];
   [defaults setObject:[NSNumber numberWithInteger:0] forKey:kDefaultKey_RootScrolling];
   [defaults setObject:[NSNumber numberWithInteger:0] forKey:kDefaultKey_CurrentCollection];
@@ -128,6 +237,9 @@
     [self setScreenDimmed:YES];
   }
   
+  // Initialize StoreKit
+  [self _initializeStoreKit];
+  
   return YES;
 }
 
@@ -179,6 +291,21 @@
 
 - (void) serverDidUpdate {
   _needsUpdate = YES;
+  
+  NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+  if ([defaults integerForKey:kDefaultKey_ServerMode] == kServerMode_Trial) {
+    NSUInteger count = [defaults integerForKey:kDefaultKey_UploadsRemaining];
+    count = count - 1;
+    if (count > 0) {
+      LOG_VERBOSE(@"Web Server trial has %i uploads left", count);
+      [defaults setInteger:count forKey:kDefaultKey_UploadsRemaining];
+    } else {
+      [defaults setInteger:kServerMode_Limited forKey:kDefaultKey_ServerMode];
+      [defaults removeObjectForKey:kDefaultKey_UploadsRemaining];
+      LOG_VERBOSE(@"Web Server trial has ended");
+    }
+    [defaults synchronize];
+  }
 }
 
 - (void) _serverDidEnd {
