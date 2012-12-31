@@ -124,6 +124,7 @@
         NSError* error = transaction.error;
         if (![error.domain isEqualToString:SKErrorDomain] || (error.code != SKErrorPaymentCancelled)) {
           LOG_ERROR(@"App Store transaction failed: %@", error);
+          [self showAlertWithTitle:NSLocalizedString(@"FAILED_ALERT_TITLE", nil) message:NSLocalizedString(@"FAILED_ALERT_MESSAGE", nil) button:NSLocalizedString(@"FAILED_ALERT_BUTTON", nil)];
         }
         [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
         if (_purchasing) {
