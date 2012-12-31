@@ -19,8 +19,7 @@
 #import <unistd.h>
 #endif
 
-#import "Flurry.h"
-
+#import "AppDelegate.h"
 #import "ComicViewController.h"
 #import "ZoomView.h"
 #import "MiniZip.h"
@@ -114,6 +113,14 @@
     }
     
     self.wantsFullScreenLayout = YES;
+    
+    NSString* type = @"";
+    switch (_type) {
+      case kComicType_PDF: type = @"PDF"; break;
+      case kComicType_ZIP: type = @"ZIP"; break;
+      case kComicType_RAR: type = @"RAR"; break;
+    }
+    [[AppDelegate sharedDelegate] logEvent:@"comic.read" withParameterName:@"type" value:type];
   }
   return self;
 }
@@ -349,7 +356,9 @@
 - (void) documentViewDidChangePage:(DocumentView*)documentView {
   _navigationControl.currentPage = _documentView.selectedPageIndex;
   
-  [Flurry logPageView];
+  if (_documentView.pageViews) {
+    [[AppDelegate sharedDelegate] logPageView];
+  }
 }
 
 - (UIView*) navigationControlOverlayViewForCurrentPage:(NavigationControl*)control {

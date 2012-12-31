@@ -36,7 +36,7 @@ static NSInteger _connectionCount = 0;
       dispatch_async(dispatch_get_main_queue(), ^{
         
         @autoreleasepool {
-          [(AppDelegate*)[[UIApplication sharedApplication] delegate] serverDidStart];
+          [[AppDelegate sharedDelegate] serverDidStart];
         }
         
       });
@@ -53,7 +53,7 @@ static NSInteger _connectionCount = 0;
       dispatch_async(dispatch_get_main_queue(), ^{
         
         @autoreleasepool {
-          [(AppDelegate*)[[UIApplication sharedApplication] delegate] serverDidEnd];
+          [[AppDelegate sharedDelegate] serverDidEnd];
         }
         
       });
@@ -84,6 +84,15 @@ static NSInteger _connectionCount = 0;
 
 + (NSString*) serverName {
   return _serverName;
+}
+
+- (NSString*) _serverMode {
+  switch ([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerMode]) {
+    case kServerMode_Limited: return @"Limited";
+    case kServerMode_Trial: return @"Trial";
+    case kServerMode_Full: return @"Full";
+  }
+  return nil;
 }
 
 - (BOOL) start {
@@ -148,6 +157,10 @@ static NSInteger _connectionCount = 0;
         NSString* path = comic ? [connection pathForComic:comic] : nil;
         if (path) {
           response = [GCDWebServerFileResponse responseWithFile:path isAttachment:YES];
+          
+          dispatch_async(dispatch_get_main_queue(), ^{
+            [[AppDelegate sharedDelegate] logEvent:@"server.download" withParameterName:@"mode" value:[self _serverMode]];
+          });
         } else {
           response = [GCDWebServerResponse responseWithStatusCode:404];
         }
@@ -220,7 +233,8 @@ static NSInteger _connectionCount = 0;
             LOG_VERBOSE(@"Uploaded comic file \"%@\" in collection \"%@\"", fileName, collectionName);
             
             dispatch_async(dispatch_get_main_queue(), ^{
-              [(AppDelegate*)[[UIApplication sharedApplication] delegate] serverDidUpdate];
+              [[AppDelegate sharedDelegate] logEvent:@"server.upload" withParameterName:@"mode" value:[self _serverMode]];
+              [[AppDelegate sharedDelegate] serverDidUpdate];
             });
           } else {
             LOG_ERROR(@"Failed adding uploaded comic file \"%@\": %@", fileName, error);

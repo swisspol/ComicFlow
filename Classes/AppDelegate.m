@@ -94,21 +94,24 @@
 - (void) paymentQueue:(SKPaymentQueue*)queue updatedTransactions:(NSArray*)transactions {
   LOG_VERBOSE(@"%i App Store transactions updated", transactions.count);
   for (SKPaymentTransaction* transaction in transactions) {
+    NSString* productIdentifier = transaction.payment.productIdentifier;
+    DCHECK(productIdentifier);
     switch (transaction.transactionState) {
       
       case SKPaymentTransactionStatePurchasing:
+        [self logEvent:@"iap.purchasing" withParameterName:@"product" value:productIdentifier];
         break;
       
       case SKPaymentTransactionStatePurchased:
       case SKPaymentTransactionStateRestored: {
         LOG_VERBOSE(@"Processing App Store transaction '%@' from %@", transaction.transactionIdentifier, transaction.transactionDate);
-        if ([transaction.payment.productIdentifier isEqualToString:kStoreKitProductIdentifier]) {
+        if ([productIdentifier isEqualToString:kStoreKitProductIdentifier]) {
           NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
           [defaults setInteger:kServerMode_Full forKey:kDefaultKey_ServerMode];
           [defaults removeObjectForKey:kDefaultKey_UploadsRemaining];
           [defaults synchronize];
         } else {
-          LOG_ERROR(@"Unexpected App Store product \"%@\"", transaction.payment.productIdentifier);
+          LOG_ERROR(@"Unexpected App Store product \"%@\"", productIdentifier);
           DNOT_REACHED();
         }
         [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
@@ -116,17 +119,23 @@
           [(LibraryViewController*)self.viewController updatePurchase];
           [self showAlertWithTitle:NSLocalizedString(@"COMPLETE_ALERT_TITLE", nil) message:NSLocalizedString(@"COMPLETE_ALERT_MESSAGE", nil) button:NSLocalizedString(@"COMPLETE_ALERT_BUTTON", nil)];
           [self _finishPurchase];
+          [self logEvent:@"iap.purchased" withParameterName:@"product" value:productIdentifier];
         } else {
           DCHECK(_purchasing == NO);
+          [self logEvent:@"iap.restored" withParameterName:@"product" value:productIdentifier];
         }
         break;
       }
       
       case SKPaymentTransactionStateFailed: {
         NSError* error = transaction.error;
-        if (![error.domain isEqualToString:SKErrorDomain] || (error.code != SKErrorPaymentCancelled)) {
+        if ([error.domain isEqualToString:SKErrorDomain] && (error.code == SKErrorPaymentCancelled)) {
+          LOG_INFO(@"App Store transaction cancelled");
+          [self logEvent:@"iap.cancelled" withParameterName:@"product" value:productIdentifier];
+        } else {
           LOG_ERROR(@"App Store transaction failed: %@", error);
           [self showAlertWithTitle:NSLocalizedString(@"FAILED_ALERT_TITLE", nil) message:NSLocalizedString(@"FAILED_ALERT_MESSAGE", nil) button:NSLocalizedString(@"FAILED_ALERT_BUTTON", nil)];
+          [self logEvent:@"iap.failed" withParameterName:@"product" value:productIdentifier];
         }
         [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
         if (_purchasing) {
@@ -162,6 +171,10 @@
   
   // Seed random generator
   srandomdev();
+}
+
++ (AppDelegate*) sharedDelegate {
+  return (AppDelegate*)[[UIApplication sharedApplication] delegate];
 }
 
 - (void) awakeFromNib {
@@ -256,6 +269,7 @@
       [[AppDelegate sharedInstance] showAlertWithTitle:NSLocalizedString(@"INBOX_ALERT_TITLE", nil)
                                                message:[NSString stringWithFormat:NSLocalizedString(@"INBOX_ALERT_MESSAGE", nil), file]
                                                 button:NSLocalizedString(@"INBOX_ALERT_BUTTON", nil)];
+      [self logEvent:@"app.open"];
       return YES;
     }
   }
@@ -358,6 +372,29 @@
     }
   }];
   [[NSUserDefaults standardUserDefaults] setBool:flag forKey:kDefaultKey_ScreenDimmed];
+}
+
+@end
+
+@implementation AppDelegate (Events)
+
+- (void) logEvent:(NSString*)event {
+  [self logEvent:event withParameterName:nil value:nil];
+}
+
+- (void) logEvent:(NSString*)event withParameterName:(NSString*)name value:(NSString*)value {
+  if (name && value) {
+    LOG_VERBOSE(@"<EVENT> %@ ('%@' = '%@')", event, name, value);
+    [Flurry logEvent:event withParameters:[NSDictionary dictionaryWithObject:value forKey:name]];
+  } else {
+    LOG_VERBOSE(@"<EVENT> %@", event);
+    [Flurry logEvent:event];
+  }
+}
+
+- (void) logPageView {
+  LOG_VERBOSE(@"<PAGE VIEW>");
+  [Flurry logPageView];
 }
 
 @end

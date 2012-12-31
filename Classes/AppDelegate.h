@@ -37,6 +37,7 @@
 }
 @property(nonatomic, readonly) WebServer* webServer;
 @property(nonatomic, getter=isScreenDimmed) BOOL screenDimmed;
++ (AppDelegate*) sharedDelegate;
 - (void) enableWebServer;
 - (void) serverDidStart;  // To be called by WebServer
 - (void) serverDidUpdate;  // To be called by WebServer
@@ -47,4 +48,10 @@
 
 @interface AppDelegate (StoreKit) <SKPaymentTransactionObserver, SKProductsRequestDelegate>
 - (void) purchase;
+@end
+
+@interface AppDelegate (Events)
+- (void) logEvent:(NSString*)event;
+- (void) logEvent:(NSString*)event withParameterName:(NSString*)name value:(NSString*)value;
+- (void) logPageView;
 @end

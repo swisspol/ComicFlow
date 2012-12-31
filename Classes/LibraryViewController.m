@@ -17,8 +17,6 @@
 #import <unistd.h>
 #import <QuartzCore/QuartzCore.h>
 
-#import "Flurry.h"
-
 #import "LibraryViewController.h"
 #import "ComicViewController.h"
 #import "AppDelegate.h"
@@ -308,10 +306,12 @@ static void __DisplayQueueCallBack(void* info) {
 
 - (void) _setRead:(id)sender {
   [self _setStatus:0];
+  [[AppDelegate sharedDelegate] logEvent:@"menu.read"];
 }
 
 - (void) _setNew:(id)sender {
   [self _setStatus:-1];
+  [[AppDelegate sharedDelegate] logEvent:@"menu.new"];
 }
 
 - (void) _delete:(id)sender {
@@ -336,6 +336,7 @@ static void __DisplayQueueCallBack(void* info) {
   } else {
     DNOT_REACHED();
   }
+  [[AppDelegate sharedDelegate] logEvent:@"menu.delete"];
 }
 
 - (void) _press:(UILongPressGestureRecognizer*)recognizer {
@@ -631,27 +632,27 @@ static void __DisplayQueueCallBack(void* info) {
 }
 
 - (void) _rateNow:(id)argument {
-  [Flurry logEvent:@"rating.now" withParameters:nil];
+  [[AppDelegate sharedDelegate] logEvent:@"rating.now"];
   [[NSUserDefaults standardUserDefaults] setInteger:-1 forKey:kDefaultUserKey_LaunchCount];
   
   [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"iTunesURL"]]];
 }
 
 - (void) _rateLater:(id)argument {
-  [Flurry logEvent:@"rating.later" withParameters:nil];
+  [[AppDelegate sharedDelegate] logEvent:@"rating.later"];
   [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:kDefaultUserKey_LaunchCount];
 }
 
 - (void) _showRatingScreen {
-  [Flurry logEvent:@"rating.prompt" withParameters:nil];
-  [(ApplicationDelegate*)[[UIApplication sharedApplication] delegate] showAlertWithTitle:NSLocalizedString(@"RATE_ALERT_TITLE", nil)
-                                                                                 message:NSLocalizedString(@"RATE_ALERT_MESSAGE", nil)
-                                                                           confirmButton:NSLocalizedString(@"RATE_ALERT_CONFIRM", nil)
-                                                                            cancelButton:NSLocalizedString(@"RATE_ALERT_CANCEL", nil)
-                                                                                delegate:self
-                                                                         confirmSelector:@selector(_rateNow:)
-                                                                          cancelSelector:@selector(_rateLater:)
-                                                                                argument:nil];
+  [[AppDelegate sharedDelegate] logEvent:@"rating.prompt"];
+  [[AppDelegate sharedDelegate] showAlertWithTitle:NSLocalizedString(@"RATE_ALERT_TITLE", nil)
+                                           message:NSLocalizedString(@"RATE_ALERT_MESSAGE", nil)
+                                     confirmButton:NSLocalizedString(@"RATE_ALERT_CONFIRM", nil)
+                                      cancelButton:NSLocalizedString(@"RATE_ALERT_CANCEL", nil)
+                                          delegate:self
+                                   confirmSelector:@selector(_rateNow:)
+                                    cancelSelector:@selector(_rateLater:)
+                                          argument:nil];
   [[UIApplication sharedApplication] endIgnoringInteractionEvents];
 }
 
