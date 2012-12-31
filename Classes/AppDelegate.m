@@ -36,7 +36,9 @@
 
 - (void) _initializeStoreKit {
   [[SKPaymentQueue defaultQueue] addTransactionObserver:self];
-  //  [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
+  
+  // TODO: Should we automatically call -restoreCompletedTransactions on new installs or backup restores? It seems the user can purchase again without being charged twice anyway.
+  // [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
 }
 
 - (void) _startPurchase {
