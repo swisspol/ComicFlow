@@ -199,9 +199,11 @@
 - (BOOL) application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions {
   [super application:application didFinishLaunchingWithOptions:launchOptions];
   
+#if defined(NDEBUG) && !TARGET_IPHONE_SIMULATOR
   // Start Flurry analytics
   [Flurry setAppVersion:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
   [Flurry startSession:@"2ZSSCCWQY2Z36J78MTTZ"];
+#endif
   
   // Prevent backup of Documents directory as it contains only "offline data" (iOS 5.0.1 and later)
   NSString* documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
