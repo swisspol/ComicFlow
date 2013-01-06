@@ -33,12 +33,9 @@ static NSInteger _connectionCount = 0;
   dispatch_sync(_connectionQueue, ^{
     DCHECK(_connectionCount >= 0);
     if (_connectionCount == 0) {
+      WebServer* server = (WebServer*)self.server;
       dispatch_async(dispatch_get_main_queue(), ^{
-        
-        @autoreleasepool {
-          [[AppDelegate sharedDelegate] serverDidStart];
-        }
-        
+        [server.delegate webServerDidConnect:server];
       });
     }
     _connectionCount += 1;
@@ -50,12 +47,9 @@ static NSInteger _connectionCount = 0;
     DCHECK(_connectionCount > 0);
     _connectionCount -= 1;
     if (_connectionCount == 0) {
+      WebServer* server = (WebServer*)self.server;
       dispatch_async(dispatch_get_main_queue(), ^{
-        
-        @autoreleasepool {
-          [[AppDelegate sharedDelegate] serverDidEnd];
-        }
-        
+        [server.delegate webServerDidDisconnect:server];
       });
     }
   });
@@ -66,6 +60,8 @@ static NSInteger _connectionCount = 0;
 @end
 
 @implementation WebServer
+
+@synthesize delegate=_delegate;
 
 + (void) initialize {
   if (_serverName == nil) {
@@ -84,15 +80,6 @@ static NSInteger _connectionCount = 0;
 
 + (NSString*) serverName {
   return _serverName;
-}
-
-- (NSString*) _serverMode {
-  switch ([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerMode]) {
-    case kServerMode_Limited: return @"Limited";
-    case kServerMode_Trial: return @"Trial";
-    case kServerMode_Full: return @"Full";
-  }
-  return nil;
 }
 
 - (BOOL) start {
@@ -159,7 +146,7 @@ static NSInteger _connectionCount = 0;
           response = [GCDWebServerFileResponse responseWithFile:path isAttachment:YES];
           
           dispatch_async(dispatch_get_main_queue(), ^{
-            [[AppDelegate sharedDelegate] logEvent:@"server.download" withParameterName:@"mode" value:[self _serverMode]];
+            [_delegate webServerDidDownloadComic:self];
           });
         } else {
           response = [GCDWebServerResponse responseWithStatusCode:404];
@@ -233,8 +220,7 @@ static NSInteger _connectionCount = 0;
             LOG_VERBOSE(@"Uploaded comic file \"%@\" in collection \"%@\"", fileName, collectionName);
             
             dispatch_async(dispatch_get_main_queue(), ^{
-              [[AppDelegate sharedDelegate] logEvent:@"server.upload" withParameterName:@"mode" value:[self _serverMode]];
-              [[AppDelegate sharedDelegate] serverDidUpdate];
+              [_delegate webServerDidUploadComic:self];
             });
           } else {
             LOG_ERROR(@"Failed adding uploaded comic file \"%@\": %@", fileName, error);

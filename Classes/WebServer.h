@@ -16,7 +16,20 @@
 
 #import "GCDWebServerConnection.h"
 
-@interface WebServer : GCDWebServer
+@class WebServer;
+
+@protocol WebServerDelegate <NSObject>
+- (void) webServerDidConnect:(WebServer*)server;
+- (void) webServerDidUploadComic:(WebServer*)server;
+- (void) webServerDidDownloadComic:(WebServer*)server;
+- (void) webServerDidDisconnect:(WebServer*)server;
+@end
+
+@interface WebServer : GCDWebServer {
+@private
+  id<WebServerDelegate> _delegate;
+}
+@property(nonatomic, assign) id<WebServerDelegate> delegate;
 @end
 
 @interface WebServerConnection : GCDWebServerConnection

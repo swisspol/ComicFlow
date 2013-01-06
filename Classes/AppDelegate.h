@@ -30,20 +30,21 @@
   NSTimer* _updateTimer;
   BOOL _needsUpdate;
   WebServer* _webServer;
+  BOOL _serverConnected;
   BOOL _serverActive;
-  BOOL _networking;
+  UIBackgroundTaskIdentifier _backgroundTask;
   UIWindow* _dimmingWindow;
   BOOL _purchasing;
 }
-@property(nonatomic, readonly) WebServer* webServer;
 @property(nonatomic, getter=isScreenDimmed) BOOL screenDimmed;
 + (AppDelegate*) sharedDelegate;
-- (void) enableWebServer;
-- (void) serverDidStart;  // To be called by WebServer
-- (void) serverDidUpdate;  // To be called by WebServer
-- (void) serverDidEnd;  // To be called by WebServer
-- (void) disableWebServer;
 - (void) updateLibrary;
+@end
+
+@interface AppDelegate (WebServer) <WebServerDelegate>
+@property(nonatomic, readonly) WebServer* webServer;
+- (void) enableWebServer;
+- (void) disableWebServer;
 @end
 
 @interface AppDelegate (StoreKit) <SKPaymentTransactionObserver, SKProductsRequestDelegate>

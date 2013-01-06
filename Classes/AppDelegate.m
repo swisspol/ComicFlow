@@ -29,7 +29,7 @@
 #import "NetReachability.h"
 
 #define kUpdateDelay 1.0
-#define kNetworkingLatency 1.0
+#define kDisconnectLatency 1.0
 #define kScreenDimmingOpacity 0.5
 
 @implementation AppDelegate (StoreKit)
@@ -154,8 +154,6 @@
 
 @implementation AppDelegate
 
-@synthesize webServer=_webServer;
-
 + (void) initialize {
   // Setup initial user defaults
   NSMutableDictionary* defaults = [[NSMutableDictionary alloc] init];
@@ -180,6 +178,8 @@
 }
 
 - (void) awakeFromNib {
+  _backgroundTask = UIBackgroundTaskInvalid;
+  
   // Initialize library
   CHECK([LibraryConnection mainConnection]);
 }
@@ -291,26 +291,77 @@
   [(LibraryViewController*)self.viewController saveState];
 }
 
+- (BOOL) isScreenDimmed {
+  return [[NSUserDefaults standardUserDefaults] boolForKey:kDefaultKey_ScreenDimmed];
+}
+
+- (void) setScreenDimmed:(BOOL)flag {
+  if (flag) {
+    _dimmingWindow.hidden = NO;
+  }
+  [UIView animateWithDuration:(1.0 / 3.0) animations:^{
+    _dimmingWindow.alpha = flag ? kScreenDimmingOpacity : 0.0;
+  } completion:^(BOOL finished) {
+    if (!flag) {
+      _dimmingWindow.hidden = YES;
+    }
+  }];
+  [[NSUserDefaults standardUserDefaults] setBool:flag forKey:kDefaultKey_ScreenDimmed];
+}
+
+@end
+
+@implementation AppDelegate (WebServer)
+
+- (WebServer*) webServer {
+  return _webServer;
+}
+
+- (NSString*) _serverMode {
+  switch ([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerMode]) {
+    case kServerMode_Limited: return @"Limited";
+    case kServerMode_Trial: return @"Trial";
+    case kServerMode_Full: return @"Full";
+  }
+  return nil;
+}
+
 - (void) enableWebServer {
   if (_webServer == nil) {
     _webServer = [[WebServer alloc] init];
+    _webServer.delegate = self;
     [_webServer start];
     
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:kDefaultKey_ServerEnabled];
   }
 }
 
-- (void) serverDidStart {
-  _serverActive = YES;
+- (void) webServerDidConnect:(WebServer*)server {
+  _serverConnected = YES;
   
-  if (_networking == NO) {
+  if (_serverActive == NO) {
+    DCHECK(_backgroundTask == UIBackgroundTaskInvalid);
+    _backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+      
+      LOG_WARNING(@"Ending background task while Web Server connected");
+      [_webServer stop];
+      [[UIApplication sharedApplication] endBackgroundTask:_backgroundTask];
+      _backgroundTask = UIBackgroundTaskInvalid;
+      
+    }];
     [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
     [[UIApplication sharedApplication] showNetworkActivityIndicator];
-    _networking = YES;
+    _serverActive = YES;
+    LOG_VERBOSE(@"Web Server did connect");
   }
 }
 
-- (void) serverDidUpdate {
+- (void) webServerDidDownloadComic:(WebServer*)server {
+  [self logEvent:@"server.download" withParameterName:@"mode" value:[self _serverMode]];
+}
+
+- (void) webServerDidUploadComic:(WebServer*)server {
+  [self logEvent:@"server.upload" withParameterName:@"mode" value:[self _serverMode]];
   _needsUpdate = YES;
   
   NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
@@ -329,12 +380,37 @@
   }
 }
 
-- (void) _serverDidEnd {
-  if (_serverActive == NO) {
-    if (_networking == YES) {
+- (void) applicationDidEnterBackground:(UIApplication*)application {
+  if (_webServer && !_serverActive) {
+    [_webServer stop];  // Stop web server if not active while entering background
+  }
+  
+  [super applicationDidEnterBackground:application];
+}
+
+- (void) applicationWillEnterForeground:(UIApplication*)application {
+  [super applicationWillEnterForeground:application];
+  
+  // Restart web server if stopped previously while in background
+  if (_webServer && !_serverActive) {
+    [_webServer start];
+  }
+}
+
+- (void) _serverDidDisconnect {
+  if (_serverConnected == NO) {
+    if (_serverActive == YES) {
+      LOG_VERBOSE(@"Web Server did disconnect");
+      _serverActive = NO;
       [[UIApplication sharedApplication] hideNetworkActivityIndicator];
       [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
-      _networking = NO;
+      if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateBackground) {
+        [_webServer stop];  // If we are in background, stop server as it can't accept new connections anyway
+      }
+      if (_backgroundTask != UIBackgroundTaskInvalid) {
+        [[UIApplication sharedApplication] endBackgroundTask:_backgroundTask];
+        _backgroundTask = UIBackgroundTaskInvalid;
+      }
       
       if (_needsUpdate) {
         [self _updateTimer:nil];
@@ -344,10 +420,10 @@
   }
 }
 
-- (void) serverDidEnd {
-  _serverActive = NO;
+- (void) webServerDidDisconnect:(WebServer*)server {
+  _serverConnected = NO;
   
-  [self performSelector:@selector(_serverDidEnd) withObject:nil afterDelay:kNetworkingLatency];
+  [self performSelector:@selector(_serverDidDisconnect) withObject:nil afterDelay:kDisconnectLatency];
 }
 
 - (void) disableWebServer {
@@ -358,24 +434,6 @@
     
     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:kDefaultKey_ServerEnabled];
   }
-}
-
-- (BOOL) isScreenDimmed {
-  return [[NSUserDefaults standardUserDefaults] boolForKey:kDefaultKey_ScreenDimmed];
-}
-
-- (void) setScreenDimmed:(BOOL)flag {
-  if (flag) {
-    _dimmingWindow.hidden = NO;
-  }
-  [UIView animateWithDuration:(1.0 / 3.0) animations:^{
-    _dimmingWindow.alpha = flag ? kScreenDimmingOpacity : 0.0;
-  } completion:^(BOOL finished) {
-    if (!flag) {
-      _dimmingWindow.hidden = YES;
-    }
-  }];
-  [[NSUserDefaults standardUserDefaults] setBool:flag forKey:kDefaultKey_ScreenDimmed];
 }
 
 @end
