@@ -242,7 +242,7 @@ static NSInteger _connectionCount = 0;
     
   }];
   
-  if (![self startWithRunloop:[NSRunLoop mainRunLoop] port:8080 bonjourName:nil]) {
+  if (![self startWithPort:8080 bonjourName:nil]) {
     [self removeAllHandlers];
     return NO;
   }
