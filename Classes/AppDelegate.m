@@ -202,7 +202,8 @@
 #if defined(NDEBUG) && !TARGET_IPHONE_SIMULATOR
   // Start Flurry analytics
   [Flurry setAppVersion:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
-  [Flurry startSession:@"2ZSSCCWQY2Z36J78MTTZ"];
+  [Flurry setCrashReportingEnabled:YES];
+  [Flurry startSession:@"2ZSSCCWQY2Z36J78MTTZ" withOptions:launchOptions];
 #endif
   
   // Prevent backup of Documents directory as it contains only "offline data" (iOS 5.0.1 and later)
