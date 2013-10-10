@@ -77,10 +77,13 @@
 @synthesize gridView=_gridView, navigationBar=_navigationBar, segmentedControl=_segmentedControl, menuView=_menuView,
             progressView=_progressView, markReadButton=_markReadButton, markNewButton=_markNewButton, updateButton=_updateButton,
             forceUpdateButton=_forceUpdateButton, serverSwitch=_serverSwitch, addressLabel=_addressLabel,
-            infoLabel=_infoLabel, versionLabel=_versionLabel, dimmingSwitch=_dimmingSwitch, purchaseButton=_purchaseButton;
+            infoLabel=_infoLabel, versionLabel=_versionLabel, dimmingSwitch=_dimmingSwitch, purchaseButton=_purchaseButton,
+            restoreButton=_restoreButton;
 
 - (void) updatePurchase {
-  _purchaseButton.enabled = ([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerMode] != kServerMode_Full ? YES : NO);
+  BOOL enabled = [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerMode] != kServerMode_Full ? YES : NO;
+  _purchaseButton.enabled = enabled;
+  _restoreButton.enabled = enabled;
 }
 
 - (void) _updateStatistics {
@@ -450,6 +453,7 @@ static void __DisplayQueueCallBack(void* info) {
   self.versionLabel = nil;
   self.dimmingSwitch = nil;
   self.purchaseButton = nil;
+  self.restoreButton = nil;
   
   [_menuController release];
   _menuController = nil;
@@ -955,6 +959,10 @@ static void __ArrayApplierFunction(const void* value, void* context) {
 
 - (IBAction) purchase:(id)sender {
   [(AppDelegate*)[AppDelegate sharedInstance] purchase];
+}
+
+- (IBAction) restore:(id)sender {
+  [(AppDelegate*)[AppDelegate sharedInstance] restore];
 }
 
 @end

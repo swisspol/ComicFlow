@@ -49,6 +49,7 @@
 
 @interface AppDelegate (StoreKit) <SKPaymentTransactionObserver, SKProductsRequestDelegate>
 - (void) purchase;
+- (void) restore;
 @end
 
 @interface AppDelegate (Events)

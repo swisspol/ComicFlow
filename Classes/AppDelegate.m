@@ -34,13 +34,6 @@
 
 @implementation AppDelegate (StoreKit)
 
-- (void) _initializeStoreKit {
-  [[SKPaymentQueue defaultQueue] addTransactionObserver:self];
-  
-  // TODO: Should we automatically call -restoreCompletedTransactions on new installs or backup restores? It seems the user can purchase again without being charged twice anyway.
-  // [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
-}
-
 - (void) _startPurchase {
   _purchasing = YES;
   [self showSpinnerWithMessage:NSLocalizedString(@"PURCHASE_SPINNER", nil) fullScreen:YES animated:YES];
@@ -71,6 +64,12 @@
   SKProductsRequest* request = [[SKProductsRequest alloc] initWithProductIdentifiers:[NSSet setWithObject:kStoreKitProductIdentifier]];
   request.delegate = self;
   [request start];
+  [self _startPurchase];
+}
+
+- (void) restore {
+  DCHECK([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerMode] != kServerMode_Full);
+  [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
   [self _startPurchase];
 }
 
@@ -132,7 +131,7 @@
       case SKPaymentTransactionStateFailed: {
         NSError* error = transaction.error;
         if ([error.domain isEqualToString:SKErrorDomain] && (error.code == SKErrorPaymentCancelled)) {
-          LOG_INFO(@"App Store transaction cancelled");
+          LOG_VERBOSE(@"App Store transaction cancelled");
           [self logEvent:@"iap.cancelled" withParameterName:@"product" value:productIdentifier];
         } else {
           LOG_ERROR(@"App Store transaction failed: %@", error);
@@ -140,14 +139,30 @@
           [self logEvent:@"iap.failed" withParameterName:@"product" value:productIdentifier];
         }
         [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
-        if (_purchasing) {
-          [self _finishPurchase];
-        }
+        [self _finishPurchase];
         break;
       }
       
     }
   }
+}
+
+- (void) paymentQueue:(SKPaymentQueue*)queue removedTransactions:(NSArray*)transactions {
+  LOG_VERBOSE(@"%i App Store transactions removed", transactions.count);
+}
+
+- (void) paymentQueue:(SKPaymentQueue*)queue restoreCompletedTransactionsFailedWithError:(NSError*)error {
+  if ([error.domain isEqualToString:SKErrorDomain] && (error.code == SKErrorPaymentCancelled)) {
+    LOG_VERBOSE(@"App Store transaction restoration cancelled");
+  } else {
+    LOG_ERROR(@"App Store transaction restoration failed: %@", error);
+  }
+  [self _finishPurchase];
+}
+
+- (void) paymentQueueRestoreCompletedTransactionsFinished:(SKPaymentQueue*)queue {
+  LOG_VERBOSE(@"App Store transactions restored");
+  [self _finishPurchase];
 }
 
 @end
@@ -259,7 +274,7 @@
   }
   
   // Initialize StoreKit
-  [self _initializeStoreKit];
+  [[SKPaymentQueue defaultQueue] addTransactionObserver:self];
   
   return YES;
 }

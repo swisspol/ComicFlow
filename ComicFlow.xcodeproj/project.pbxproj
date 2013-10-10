@@ -776,6 +776,11 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0500;
+				TargetAttributes = {
+					1D6058900D05DD3D006BFB54 = {
+						DevelopmentTeam = 88W3E55T4B;
+					};
+				};
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "ComicFlow" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -986,6 +991,8 @@
 		1D6058940D05DD3E006BFB54 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1.2;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Prefix.pch;
@@ -998,12 +1005,15 @@
 				LIBRARY_SEARCH_PATHS = Flurry;
 				OTHER_LDFLAGS = "-lFlurry";
 				PRODUCT_NAME = ComicFlow;
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
 		1D6058950D05DD3E006BFB54 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1.2;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Prefix.pch;
@@ -1016,6 +1026,7 @@
 				LIBRARY_SEARCH_PATHS = Flurry;
 				OTHER_LDFLAGS = "-lFlurry";
 				PRODUCT_NAME = ComicFlow;
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};
@@ -1052,6 +1063,8 @@
 		E25373CE14F2C68F009E3A74 /* Distribution */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1.2;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Prefix.pch;
@@ -1064,6 +1077,7 @@
 				LIBRARY_SEARCH_PATHS = Flurry;
 				OTHER_LDFLAGS = "-lFlurry";
 				PRODUCT_NAME = ComicFlow;
+				PROVISIONING_PROFILE = "";
 			};
 			name = Distribution;
 		};
