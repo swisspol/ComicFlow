@@ -1,0 +1,6 @@
+[submodule "Cooliris-ToolKit"]
+	path = Cooliris-ToolKit
+	url = https://github.com/swisspol/Cooliris-ToolKit.git
+[submodule "GCDWebServer"]
+	path = GCDWebServer
+	url = https://github.com/swisspol/GCDWebServer.git
