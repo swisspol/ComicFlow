@@ -242,7 +242,12 @@ static NSInteger _connectionCount = 0;
     
   }];
   
-  if (![self startWithPort:8080 bonjourName:nil]) {
+#if TARGET_IPHONE_SIMULATOR
+  if (![self startWithPort:8080 bonjourName:@""])
+#else
+  if (![self startWithPort:80 bonjourName:@""])
+#endif
+  {
     [self removeAllHandlers];
     return NO;
   }

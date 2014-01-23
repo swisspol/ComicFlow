@@ -100,7 +100,10 @@
   _serverSwitch.on = server ? YES : NO;
   if (server) {
     NSString* ipAddress = [[UIDevice currentDevice] currentWiFiAddress];
-    _addressLabel.text = ipAddress ? [NSString stringWithFormat:NSLocalizedString(@"ADDRESS_FORMAT", nil), ipAddress, server.port]
+    if (server.port != 80) {
+      ipAddress = [ipAddress stringByAppendingFormat:@":%i", server.port];
+    }
+    _addressLabel.text = ipAddress ? [NSString stringWithFormat:NSLocalizedString(@"ADDRESS_FORMAT", nil), ipAddress]
                                    : NSLocalizedString(@"ADDRESS_UNAVAILABLE", nil);
     _addressLabel.textColor = [UIColor darkGrayColor];
   } else {
