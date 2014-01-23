@@ -437,8 +437,6 @@ static void __DisplayQueueCallBack(void* info) {
 - (void) viewDidUnload {
   [super viewDidUnload];
   
-  [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
-  
   _window.layer.contents = nil;
   
   self.gridView = nil;
