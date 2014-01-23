@@ -19,7 +19,7 @@
 #import "GridView.h"
 #import "Library.h"
 
-@interface LibraryViewController : UIViewController <UINavigationBarDelegate, GridViewDelegate, LibraryUpdaterDelegate> {
+@interface LibraryViewController : UIViewController <UINavigationBarDelegate, UIPopoverControllerDelegate, GridViewDelegate, LibraryUpdaterDelegate> {
 @private
   GridView* _gridView;
   UINavigationBar* _navigationBar;
@@ -60,6 +60,7 @@
   LibraryConnection* _displayConnection;
 #endif
 #endif
+  NSTimer* _updateTimer;
 }
 @property(nonatomic, retain) IBOutlet GridView* gridView;
 @property(nonatomic, retain) IBOutlet UINavigationBar* navigationBar;

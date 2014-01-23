@@ -46,6 +46,8 @@
 #define kLaunchCountBeforeRating 10
 #define kShowRatingDelay 1.0
 
+#define kUpdateTimerInterval 1.0
+
 #if __DISPLAY_THUMBNAILS_IN_BACKGROUND__
 @interface ThumbnailView : UIView
 #else
@@ -95,16 +97,30 @@
                                                ceil((double)[attributes fileSize] / (1024.0 * 1024.0))];
 }
 
-- (void) _updateServer {
+- (void) _updateTimer:(NSTimer*)timer {
   GCDWebServer* server = [(AppDelegate*)[AppDelegate sharedInstance] webServer];
-  _serverSwitch.on = server ? YES : NO;
+  if (timer == nil) {
+    _serverSwitch.on = server ? YES : NO;
+  }
   if (server) {
     NSString* ipAddress = [[UIDevice currentDevice] currentWiFiAddress];
-    if (server.port != 80) {
-      ipAddress = [ipAddress stringByAppendingFormat:@":%i", server.port];
+    if (ipAddress) {
+      if (server.port != 80) {
+        ipAddress = [ipAddress stringByAppendingFormat:@":%i", server.port];
+      }
+      NSString* bonjourName = server.bonjourName;
+      if (bonjourName) {
+        bonjourName = [bonjourName stringByAppendingString:@".local"];
+        if (server.port != 80) {
+          bonjourName = [bonjourName stringByAppendingFormat:@":%i", server.port];
+        }
+        _addressLabel.text = [NSString stringWithFormat:NSLocalizedString(@"ADDRESS_FORMAT_BONJOUR", nil), bonjourName, ipAddress];
+      } else {
+        _addressLabel.text = [NSString stringWithFormat:NSLocalizedString(@"ADDRESS_FORMAT_IP", nil), ipAddress];
+      }
+    } else {
+      _addressLabel.text = NSLocalizedString(@"ADDRESS_UNAVAILABLE", nil);
     }
-    _addressLabel.text = ipAddress ? [NSString stringWithFormat:NSLocalizedString(@"ADDRESS_FORMAT", nil), ipAddress]
-                                   : NSLocalizedString(@"ADDRESS_UNAVAILABLE", nil);
     _addressLabel.textColor = [UIColor darkGrayColor];
   } else {
     _addressLabel.text = NSLocalizedString(@"ADDRESS_UNAVAILABLE", nil);
@@ -239,14 +255,20 @@ static void __DisplayQueueCallBack(void* info) {
   return YES;
 }
 
+- (void) popoverControllerDidDismissPopover:(UIPopoverController*)popoverController {
+  [_updateTimer setFireDate:[NSDate distantFuture]];
+}
+
 - (void) _toggleMenu:(id)sender {
   if (_menuController.popoverVisible) {
     [_menuController dismissPopoverAnimated:YES];
+    [_updateTimer setFireDate:[NSDate distantFuture]];
   } else {
-    [self _updateServer];
+    [self _updateTimer:nil];
     [self _updateStatistics];
     [self updatePurchase];
     [_menuController presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+    [_updateTimer setFireDate:[NSDate dateWithTimeIntervalSinceNow:kUpdateTimerInterval]];
   }
 }
 
@@ -419,6 +441,7 @@ static void __DisplayQueueCallBack(void* info) {
   UIViewController* viewController = [[UIViewController alloc] init];
   viewController.view = _menuView;
   _menuController = [[UIPopoverController alloc] initWithContentViewController:viewController];
+  _menuController.delegate = self;
   _menuController.popoverContentSize = _menuView.frame.size;
   [viewController release];
   
@@ -432,10 +455,19 @@ static void __DisplayQueueCallBack(void* info) {
   _updateButton.enabled = !updating;
   _forceUpdateButton.enabled = !updating;
   _dimmingSwitch.on = [(AppDelegate*)[AppDelegate sharedInstance] isScreenDimmed];
+  
+  DCHECK(_updateTimer == nil);
+  _updateTimer = [[NSTimer alloc] initWithFireDate:[NSDate distantFuture] interval:kUpdateTimerInterval target:self selector:@selector(_updateTimer:) userInfo:nil repeats:YES];
+  [[NSRunLoop mainRunLoop] addTimer:_updateTimer forMode:NSRunLoopCommonModes];
 }
 
 - (void) viewDidUnload {
   [super viewDidUnload];
+
+  DCHECK(_updateTimer != nil);
+  [_updateTimer invalidate];
+  [_updateTimer release];
+  _updateTimer = nil;
   
   _window.layer.contents = nil;
   
@@ -914,7 +946,7 @@ static void __ArrayApplierFunction(const void* value, void* context) {
   } else {
     [(AppDelegate*)[AppDelegate sharedInstance] disableWebServer];
   }
-  [self _updateServer];
+  [self _updateTimer:nil];
 }
 
 - (void) _markAllRead {
@@ -951,6 +983,7 @@ static void __ArrayApplierFunction(const void* value, void* context) {
 
 - (IBAction) showLog:(id)sender {
   [_menuController dismissPopoverAnimated:YES];
+  [_updateTimer setFireDate:[NSDate distantFuture]];
   [[AppDelegate sharedInstance] showLogViewControllerWithTitle:NSLocalizedString(@"LOG_TITLE", nil)];
 }
 
