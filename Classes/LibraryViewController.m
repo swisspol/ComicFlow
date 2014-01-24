@@ -696,8 +696,6 @@ static void __DisplayQueueCallBack(void* info) {
     _currentComic = nil;
     
     [self _presentComic:comic];
-  } else {
-    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
   }
   
   [CATransaction flush];
