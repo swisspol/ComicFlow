@@ -14,7 +14,6 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#import <QuartzCore/QuartzCore.h>
 #import <sys/xattr.h>
 
 #import "Flurry.h"
@@ -258,7 +257,6 @@
   
   // Show window
   self.window.backgroundColor = nil;
-  self.window.layer.contentsGravity = kCAGravityCenter;
   self.window.rootViewController = self.viewController;
   [self.window makeKeyAndVisible];
   

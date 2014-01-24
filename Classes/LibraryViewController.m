@@ -431,7 +431,7 @@ static void __DisplayQueueCallBack(void* info) {
   [pressRecognizer release];
   
   UINavigationItem* item = [_navigationBar.items objectAtIndex:0];
-  UIBarButtonItem* rightButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"Action.png"]
+  UIBarButtonItem* rightButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"SETTINGS_BUTTON", nil)
                                                                   style:UIBarButtonItemStyleBordered
                                                                  target:self
                                                                  action:@selector(_toggleMenu:)];
@@ -468,8 +468,6 @@ static void __DisplayQueueCallBack(void* info) {
   [_updateTimer invalidate];
   [_updateTimer release];
   _updateTimer = nil;
-  
-  _window.layer.contents = nil;
   
   self.gridView = nil;
   self.navigationBar = nil;
@@ -548,9 +546,7 @@ static void __DisplayQueueCallBack(void* info) {
 }
 
 - (void) _setCurrentCollection:(Collection*)collection {
-  UIImage* backgroundImage = [UIImage imageNamed:(collection ? @"Background-Collection.png" : @"Background-Library.png")];
-  _window.layer.contents = (id)[backgroundImage CGImage];
-  _window.layer.contentsScale = backgroundImage.scale;
+  _window.backgroundColor = [UIColor whiteColor];
   
   NSMutableArray* barItems = [[NSMutableArray alloc] initWithArray:_navigationBar.items];
   if (barItems.count == 2) {
@@ -558,7 +554,7 @@ static void __DisplayQueueCallBack(void* info) {
   }
   if (collection) {
     UINavigationItem* item = [[UINavigationItem alloc] initWithTitle:collection.name];
-    UIBarButtonItem* button = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"Action.png"]
+    UIBarButtonItem* button = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"SETTINGS_BUTTON", nil)
                                                                style:UIBarButtonItemStyleBordered
                                                               target:self
                                                               action:@selector(_toggleMenu:)];
