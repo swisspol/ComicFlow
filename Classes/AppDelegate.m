@@ -29,7 +29,7 @@
 
 #define kUpdateDelay 1.0
 #define kDisconnectLatency 1.0
-#define kScreenDimmingOpacity 0.5
+#define kScreenDimmingOpacity 0.6
 
 @implementation AppDelegate (StoreKit)
 
