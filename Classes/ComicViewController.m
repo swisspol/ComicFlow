@@ -241,6 +241,8 @@
 - (void) viewDidLoad {
   [super viewDidLoad];
   
+  self.view.clipsToBounds = YES;  // Required on iOS 7
+  
   UINavigationItem* item = [[UINavigationItem alloc] initWithTitle:[_path lastPathComponent]];
   [_navigationBar pushNavigationItem:item animated:NO];
   [item release];
