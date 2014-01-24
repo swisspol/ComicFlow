@@ -14,6 +14,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+"SETTINGS_BUTTON" = "Settings";
+
 "INFO_FORMAT" = "%i Comics | %i Series | %.0f MB Database";
 "VERSION_FORMAT" = "ComicFlow Version %@";
 

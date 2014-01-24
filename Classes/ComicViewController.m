@@ -223,8 +223,6 @@
 }
 
 - (void) documentViewDidReachFirstPage:(DocumentView*)documentView {
-  [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
-  
   if ([self respondsToSelector:@selector(presentingViewController)]) {
     [self.presentingViewController dismissModalViewControllerAnimated:YES];
   } else {
@@ -233,8 +231,6 @@
 }
 
 - (void) documentViewDidReachLastPage:(DocumentView*)documentView {
-  [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
-  
   if ([self respondsToSelector:@selector(presentingViewController)]) {
     [self.presentingViewController dismissModalViewControllerAnimated:YES];
   } else {
@@ -245,6 +241,8 @@
 - (void) viewDidLoad {
   [super viewDidLoad];
   
+  self.view.clipsToBounds = YES;  // Required on iOS 7
+  
   UINavigationItem* item = [[UINavigationItem alloc] initWithTitle:[_path lastPathComponent]];
   [_navigationBar pushNavigationItem:item animated:NO];
   [item release];
@@ -252,8 +250,6 @@
   _navigationControl.delegate = self;
   _navigationControl.continuous = NO;
   _navigationControl.margins = UIEdgeInsetsMake(0, 80, 20, 80);
-  _navigationControl.thumbTintColor = [UIColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:1.0];
-  _navigationControl.overlayTintColor = [UIColor colorWithRed:0.7 green:0.7 blue:0.7 alpha:1.0];
   _navigationControl.hidden = YES;
   _contentView.backgroundColor = nil;
   
@@ -295,15 +291,8 @@
     }
     // Center
     else {
-      if ([[UIApplication sharedApplication] isStatusBarHidden]) {
-        [[UIApplication sharedApplication] setStatusBarHidden:NO];
-        _navigationBar.hidden = NO;
-        _navigationControl.hidden = NO;
-      } else {
-        [[UIApplication sharedApplication] setStatusBarHidden:YES];
-        _navigationBar.hidden = YES;
-        _navigationControl.hidden = YES;
-      }
+      _navigationBar.hidden = !_navigationBar.hidden;
+      _navigationControl.hidden = !_navigationControl.hidden;
     }
   }
 }
@@ -340,9 +329,6 @@
   _navigationControl.numberOfMarkers = MIN(array.count, 50);
   _navigationControl.currentPage = _documentView.selectedPageIndex;
   [array release];
-  
-  [[UIApplication sharedApplication] setStatusBarHidden:YES
-                                          withAnimation:(animated ? UIStatusBarAnimationFade : UIStatusBarAnimationNone)];
 }
 
 - (void) viewWillDisappear:(BOOL)animated {

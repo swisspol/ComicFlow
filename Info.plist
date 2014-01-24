@@ -24,13 +24,21 @@
 	<true/>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2010-2014 Pol-Online. All Rights Reserved.</string>
-	<key>UIPrerenderedIcon</key>
-	<true/>
-	<key>CFBundleIconFiles</key>
-	<array>
-		<string>Icon.png</string>
-		<string>Icon@2x.png</string>
-	</array>
+	<key>CFBundleIcons</key>
+	<dict>
+		<key>CFBundlePrimaryIcon</key>
+		<dict>
+			<key>CFBundleIconFiles</key>
+			<array>
+				<string>Icon_72x72.png</string>
+				<string>Icon_72x72@2x.png</string>
+				<string>Icon_76x76.png</string>
+				<string>Icon_76x76@2x.png</string>
+			</array>
+			<key>UIPrerenderedIcon</key>
+			<true/>
+		</dict>
+	</dict>
 	<key>NSMainNibFile</key>
 	<string>MainWindow</string>
 	<key>UISupportedInterfaceOrientations</key>
@@ -42,6 +50,8 @@
 	</array>
 	<key>UIStatusBarHidden</key>
 	<true/>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
