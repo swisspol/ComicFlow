@@ -26,22 +26,25 @@
 #import "NetReachability.h"
 #import "Logging.h"
 
+#define kBackgroundOffset 6.0
+
 #define kGridMargin 10.0
 #define kGridMarginExtra_Portrait 2.0
 #define kGridMarginExtra_Landscape 2.0
+
 #define kItemVerticalSpacing 8.0
 #define kItemHorizontalSpacing_Portrait 17.0
 #define kItemHorizontalSpacing_Landscape 9.0
 
-#define kNewImageX 0.0
-#define kNewImageY 0.0
-#define kNewImageWidth 65.0
-#define kNewImageHeight 65.0
+#define kNewImageX 67.0
+#define kNewImageY 6.0
+#define kNewImageWidth 60.0
+#define kNewImageHeight 60.0
 
-#define kRibbonImageX 58.0
-#define kRibbonImageY 0.0
+#define kRibbonImageX 67.0
+#define kRibbonImageY 6.0
 #define kRibbonImageWidth 60.0
-#define kRibbonImageHeight 70.0
+#define kRibbonImageHeight 60.0
 
 #define kLaunchCountBeforeRating 10
 #define kShowRatingDelay 1.0
@@ -60,12 +63,6 @@
 }
 @property(nonatomic, assign) UIView* noteView;
 @property(nonatomic, assign) UIView* ribbonView;
-@end
-
-@interface LibraryViewController ()
-- (void) _reloadCurrentCollection;
-- (void) _presentComic:(Comic*)comic;
-- (void) _setCurrentCollection:(Collection*)collection;
 @end
 
 @implementation ThumbnailView
@@ -139,8 +136,8 @@ static void __DisplayQueueApplierFunction(const void* key, const void* value, vo
 #if __STORE_THUMBNAILS_IN_DATABASE__
   DatabaseSQLRowID rowID = [(id)item thumbnail];
   if (rowID > 0) {
-    Thumbnail* thumnail = [(LibraryConnection*)params[1] fetchObjectOfClass:[Thumbnail class] withSQLRowID:rowID];
-    image = [[UIImage alloc] initWithData:thumnail.data];
+    Thumbnail* thumbnail = [(LibraryConnection*)params[1] fetchObjectOfClass:[Thumbnail class] withSQLRowID:rowID];
+    image = [[UIImage alloc] initWithData:thumbnail.data];
   }
 #else
   NSString* name = [(id)item thumbnail];
@@ -421,6 +418,8 @@ static void __DisplayQueueCallBack(void* info) {
   
   self.view.backgroundColor = nil;  // Can't do this in Interface Builder
   
+  _gridView.contentBackgroundOffset = CGPointMake(0.0, kBackgroundOffset);
+  _gridView.contentBackgroundColor = [UIColor colorWithPatternImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Background" ofType:@"png"]]];
   _gridView.delegate = self;
   UITapGestureRecognizer* tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_tap:)];
   [_gridView addGestureRecognizer:tapRecognizer];
@@ -546,8 +545,6 @@ static void __DisplayQueueCallBack(void* info) {
 }
 
 - (void) _setCurrentCollection:(Collection*)collection {
-  _window.backgroundColor = [UIColor whiteColor];
-  
   NSMutableArray* barItems = [[NSMutableArray alloc] initWithArray:_navigationBar.items];
   if (barItems.count == 2) {
     [barItems removeObjectAtIndex:1];
@@ -742,6 +739,20 @@ static void __DisplayQueueCallBack(void* info) {
   return NO;
 }
 
+- (void) saveState {
+  if ([self.modalViewController isKindOfClass:[ComicViewController class]]) {
+    [(ComicViewController*)self.modalViewController saveState];
+  }
+  
+  [self gridViewDidUpdateScrollingAmount:nil];
+  [[NSUserDefaults standardUserDefaults] setInteger:_currentCollection.sqlRowID forKey:kDefaultKey_CurrentCollection];
+  [[NSUserDefaults standardUserDefaults] setInteger:_currentComic.sqlRowID forKey:kDefaultKey_CurrentComic];
+}
+
+@end
+
+@implementation LibraryViewController (LibraryUpdaterDelegate)
+
 - (void) libraryUpdaterWillStart:(LibraryUpdater*)library {
   _progressView.progress = 0.0;
   _markReadButton.enabled = NO;
@@ -770,6 +781,10 @@ static void __DisplayQueueCallBack(void* info) {
   _updateButton.enabled = YES;
   _forceUpdateButton.enabled = YES;
 }
+
+@end
+
+@implementation LibraryViewController (GridViewDelegate)
 
 - (UIView*) gridView:(GridView*)gridView viewForItem:(id)item {
   ThumbnailView* view = [[ThumbnailView alloc] initWithFrame:CGRectMake(0, 0, kLibraryThumbnailWidth, kLibraryThumbnailHeight)];
@@ -810,8 +825,8 @@ static void __DisplayQueueCallBack(void* info) {
 #if __STORE_THUMBNAILS_IN_DATABASE__
   DatabaseSQLRowID rowID = [item thumbnail];
   if (rowID > 0) {
-    Thumbnail* thumnail = [[LibraryConnection mainConnection] fetchObjectOfClass:[Thumbnail class] withSQLRowID:rowID];
-    image = [[UIImage alloc] initWithData:thumnail.data];
+    Thumbnail* thumbnail = [[LibraryConnection mainConnection] fetchObjectOfClass:[Thumbnail class] withSQLRowID:rowID];
+    image = [[UIImage alloc] initWithData:thumbnail.data];
   }
 #else
   NSString* name = [item thumbnail];
@@ -889,16 +904,6 @@ static void __ArrayApplierFunction(const void* value, void* context) {
 }
 
 #endif
-
-- (void) saveState {
-  if ([self.modalViewController isKindOfClass:[ComicViewController class]]) {
-    [(ComicViewController*)self.modalViewController saveState];
-  }
-  
-  [self gridViewDidUpdateScrollingAmount:nil];
-  [[NSUserDefaults standardUserDefaults] setInteger:_currentCollection.sqlRowID forKey:kDefaultKey_CurrentCollection];
-  [[NSUserDefaults standardUserDefaults] setInteger:_currentComic.sqlRowID forKey:kDefaultKey_CurrentComic];
-}
 
 @end
 

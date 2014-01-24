@@ -19,7 +19,7 @@
 #import "GridView.h"
 #import "Library.h"
 
-@interface LibraryViewController : UIViewController <UINavigationBarDelegate, UIPopoverControllerDelegate, GridViewDelegate, LibraryUpdaterDelegate> {
+@interface LibraryViewController : UIViewController <UINavigationBarDelegate, UIPopoverControllerDelegate> {
 @private
   GridView* _gridView;
   UINavigationBar* _navigationBar;
@@ -94,4 +94,10 @@
 - (IBAction) toggleDimming:(id)sender;
 - (IBAction) purchase:(id)sender;
 - (IBAction) restore:(id)sender;
+@end
+
+@interface LibraryViewController (GridViewDelegate) <GridViewDelegate>
+@end
+
+@interface LibraryViewController (LibraryUpdaterDelegate) <LibraryUpdaterDelegate>
 @end

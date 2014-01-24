@@ -134,6 +134,8 @@
 		E2E50D3A18920DEC00908424 /* ComicViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2E50D3418920DEC00908424 /* ComicViewController.xib */; };
 		E2E50D3B18920DEC00908424 /* LibraryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2E50D3618920DEC00908424 /* LibraryViewController.xib */; };
 		E2E50D3C18920DEC00908424 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = E2E50D3818920DEC00908424 /* Localizable.strings */; };
+		E2E50D3E1892D84F00908424 /* Background.png in Resources */ = {isa = PBXBuildFile; fileRef = E2E50D3D1892D84F00908424 /* Background.png */; };
+		E2E50D4018930EE000908424 /* Background@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E2E50D3F18930EE000908424 /* Background@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -371,6 +373,8 @@
 		E2E50D3518920DEC00908424 /* eng */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = eng; path = eng.lproj/ComicViewController.xib; sourceTree = "<group>"; };
 		E2E50D3718920DEC00908424 /* eng */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = eng; path = eng.lproj/LibraryViewController.xib; sourceTree = "<group>"; };
 		E2E50D3918920DEC00908424 /* eng */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = eng; path = eng.lproj/Localizable.strings; sourceTree = "<group>"; };
+		E2E50D3D1892D84F00908424 /* Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Background.png; sourceTree = "<group>"; };
+		E2E50D3F18930EE000908424 /* Background@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Background@2x.png"; sourceTree = "<group>"; };
 		E2FE180A128ADD67005B17EC /* Database.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Database.h; sourceTree = "<group>"; };
 		E2FE180B128ADD67005B17EC /* Database.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Database.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -494,6 +498,8 @@
 		E2059926121EE21400A271CC /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				E2E50D3D1892D84F00908424 /* Background.png */,
+				E2E50D3F18930EE000908424 /* Background@2x.png */,
 				E247C0AF1293996500CEB396 /* Collection-Screen.png */,
 				E2661115153214090045E707 /* Collection-Screen@2x.png */,
 				E205992B121EE24E00A271CC /* Collection.png */,
@@ -789,7 +795,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				E205992A121EE21400A271CC /* MainWindow.xib in Resources */,
+				E2E50D3E1892D84F00908424 /* Background.png in Resources */,
 				E205992D121EE24E00A271CC /* Collection.png in Resources */,
+				E2E50D4018930EE000908424 /* Background@2x.png in Resources */,
 				E205992E121EE24E00A271CC /* Comic.png in Resources */,
 				E24036BE1891A1880098F028 /* Icon_72x72.png in Resources */,
 				E2CAA9E4122295F800A4D85A /* DocumentView-Shadow-Left.png in Resources */,

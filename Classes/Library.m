@@ -31,13 +31,19 @@
 #define kComicCoverY 8
 #define kComicCoverWidth 117
 #define kComicCoverHeight 166
+#define kComicCoverInset 2
 
-#define kCollectionCoverX 30
-#define kCollectionCoverY 9
-#define kCollectionCoverWidth 96
-#define kCollectionCoverHeight 164
-#define kCollectionFontName "Helvetica-Bold"
+#define kCollectionCoverX 15
+#define kCollectionCoverY 13
+#define kCollectionCoverWidth 107
+#define kCollectionCoverHeight 156
+#define kCollectionCoverOpacity 0.25
+#define kCollectionCoverInset 0
+
+#define kCollectionFontName "HelveticaNeue-Bold"
 #define kCollectionFontSize 16.0
+#define kCollectionFontOffsetX 0.0
+#define kCollectionFontOffsetY 15.0
 
 #define kFakeRowID 0xFFFFFFFF
 
@@ -305,8 +311,10 @@ typedef enum {
   CGContextSetBlendMode(context, kCGBlendModeCopy);
   CGContextDrawImage(context, CGRectMake(0, 0, kLibraryThumbnailWidth, kLibraryThumbnailHeight), _comicBackgroundImageRef);
   
-  CGContextSetBlendMode(context, kCGBlendModeMultiply);
-  CGContextDrawImage(context, CGRectMake(kComicCoverX, kComicCoverY, kComicCoverWidth, kComicCoverHeight), imageRef);
+  CGContextSaveGState(context);
+  CGContextClipToRect(context, CGRectMake(kComicCoverX, kComicCoverY, kComicCoverWidth, kComicCoverHeight));
+  CGContextDrawImage(context, CGRectMake(kComicCoverX - kComicCoverInset, kComicCoverY - kComicCoverInset, kComicCoverWidth + 2 * kComicCoverInset, kComicCoverHeight + 2 * kComicCoverInset), imageRef);
+  CGContextRestoreGState(context);
   
   CGContextSetBlendMode(context, kCGBlendModeScreen);
   CGContextDrawImage(context, CGRectMake(0, 0, kLibraryThumbnailWidth, kLibraryThumbnailHeight), _comicScreenImageRef);
@@ -336,9 +344,11 @@ typedef enum {
   CGContextDrawImage(context, CGRectMake(0, 0, kLibraryThumbnailWidth, kLibraryThumbnailHeight), _collectionBackgroundImageRef);
   
   CGContextSetBlendMode(context, kCGBlendModeLuminosity);
-  CGContextSetAlpha(context, 0.25);
-  CGContextDrawImage(context, CGRectMake(kCollectionCoverX, kCollectionCoverY, kCollectionCoverWidth, kCollectionCoverHeight), imageRef);
-  CGContextSetAlpha(context, 1.0);
+  CGContextSaveGState(context);
+  CGContextClipToRect(context, CGRectMake(kCollectionCoverX, kCollectionCoverY, kCollectionCoverWidth, kCollectionCoverHeight));
+  CGContextSetAlpha(context, kCollectionCoverOpacity);
+  CGContextDrawImage(context, CGRectMake(kCollectionCoverX - kCollectionCoverInset, kCollectionCoverY - kCollectionCoverInset, kCollectionCoverWidth + 2 * kCollectionCoverInset, kCollectionCoverHeight + 2 * kCollectionCoverInset), imageRef);
+  CGContextRestoreGState(context);
   
   CGContextSetBlendMode(context, kCGBlendModeScreen);
   CGContextDrawImage(context, CGRectMake(0, 0, kLibraryThumbnailWidth, kLibraryThumbnailHeight), _collectionScreenImageRef);
@@ -371,7 +381,7 @@ typedef enum {
     if (framesetter) {
       CGMutablePathRef path = CGPathCreateMutable();
       CGRect rect = CGRectMake(kCollectionCoverX, kCollectionCoverY, kCollectionCoverWidth, kCollectionCoverHeight);
-      CGPathAddRect(path, NULL, CGRectOffset(CGRectInset(rect, 4.0, 30.0), 0.0, 20.0));
+      CGPathAddRect(path, NULL, CGRectOffset(CGRectInset(rect, 4.0, 30.0), kCollectionFontOffsetX, kCollectionFontOffsetY));
       CTFrameRef frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, CFAttributedStringGetLength(string)), path, NULL);
       if (frame) {
         CFArrayRef lines = CTFrameGetLines(frame);
