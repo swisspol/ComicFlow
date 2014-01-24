@@ -42,13 +42,13 @@
                         <navigationItem title="Library" id="22">
                             <barButtonItem key="leftBarButtonItem" id="48">
                                 <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="47">
-                                    <rect key="frame" x="16" y="7" width="280" height="30"/>
+                                    <rect key="frame" x="16" y="7" width="287" height="30"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <segments>
                                         <segment title="By Series"/>
                                         <segment title="By Name"/>
                                         <segment title="By Date"/>
-                                        <segment title="By Status"/>
+                                        <segment title="By State"/>
                                     </segments>
                                     <connections>
                                         <action selector="resort:" destination="-1" eventType="valueChanged" id="51"/>
