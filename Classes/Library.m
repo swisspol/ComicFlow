@@ -431,8 +431,14 @@ typedef enum {
     id archive = nil;
     if (type == kArchiveType_ZIP) {
       archive = [[MiniZip alloc] initWithArchiveAtPath:path];
+      if (!archive) {
+        archive = [[UnRAR alloc] initWithArchiveAtPath:path];  // Attempt to fall back to CBR in case extension is wrong
+      }
     } else if (type == kArchiveType_RAR) {
       archive = [[UnRAR alloc] initWithArchiveAtPath:path];
+      if (!archive) {
+        archive = [[MiniZip alloc] initWithArchiveAtPath:path];  // Attempt to fall back to CBZ in case extension is wrong
+      }
     }
     [archive setSkipInvisibleFiles:YES];
     NSString* cover = nil;
