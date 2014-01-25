@@ -404,6 +404,7 @@ typedef enum {
         CGContextSetRGBFillColor(context, 1.0, 1.0, 1.0, 1.0);
         CGContextSetTextMatrix(context, CGAffineTransformIdentity);
         CTFrameDraw(frame, context);
+        CFRelease(frame);
       }
       CGPathRelease(path);
       CFRelease(framesetter);
