@@ -1,3 +1,5 @@
+![Users](https://raw2.github.com/swisspol/ComicFlow/master/Resources/Default-Landscape.png)
+
 Overview
 ========
 
