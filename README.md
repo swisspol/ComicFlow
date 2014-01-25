@@ -14,6 +14,6 @@ See the complete product description at http://itunes.apple.com/us/app/comicflow
 License
 =======
 
-ComicFlow is copyright 2010-2013 Pierre-Olivier Latour and available under [GPL v3 license](http://www.gnu.org/licenses/gpl-3.0.txt). See the [LICENSE](LICENSE) file in the project for more information.
+ComicFlow is copyright 2010-2014 Pierre-Olivier Latour and available under [GPL v3 license](http://www.gnu.org/licenses/gpl-3.0.txt). See the [LICENSE](LICENSE) file in the project for more information.
 
 **IMPORTANT:** ComicFlow includes some other open-source projects and such projects remain under their own license.
