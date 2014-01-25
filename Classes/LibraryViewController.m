@@ -663,14 +663,14 @@ static void __DisplayQueueCallBack(void* info) {
 
 - (void) _rateNow:(id)argument {
   [[AppDelegate sharedDelegate] logEvent:@"rating.now"];
-  [[NSUserDefaults standardUserDefaults] setInteger:-1 forKey:kDefaultUserKey_LaunchCount];
+  [[NSUserDefaults standardUserDefaults] setInteger:-1 forKey:kDefaultKey_LaunchCount];
   
   [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"iTunesURL"]]];
 }
 
 - (void) _rateLater:(id)argument {
   [[AppDelegate sharedDelegate] logEvent:@"rating.later"];
-  [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:kDefaultUserKey_LaunchCount];
+  [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:kDefaultKey_LaunchCount];
 }
 
 - (void) _showRatingScreen {
@@ -686,7 +686,19 @@ static void __DisplayQueueCallBack(void* info) {
   [[UIApplication sharedApplication] endIgnoringInteractionEvents];
 }
 
+- (void) _requireUpdate {
+  [self _forceUpdate];
+  [[NSUserDefaults standardUserDefaults] setInteger:kLibraryVersion forKey:kDefaultKey_LibraryVersion];
+}
+
 - (void) _viewDidReallyAppear {
+  BOOL needLibraryUpdate = [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_LibraryVersion] != kLibraryVersion;
+  if (needLibraryUpdate) {
+    LOG_VERBOSE(@"Library is outdated at version %i", [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_LibraryVersion]);
+    [_currentComic release];
+    _currentComic = nil;
+  }
+  
   if (_currentComic) {
     Comic* comic = [[_currentComic retain] autorelease];
     [_currentComic release];
@@ -707,15 +719,26 @@ static void __DisplayQueueCallBack(void* info) {
   }];
   _launchView = nil;
   
-  NSInteger count = [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultUserKey_LaunchCount];
+  NSInteger count = [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_LaunchCount];
   if (count >= 0) {
-    [[NSUserDefaults standardUserDefaults] setInteger:(count + 1) forKey:kDefaultUserKey_LaunchCount];
-    if ((count + 1 >= kLaunchCountBeforeRating) && !self.modalViewController && [[NetReachability sharedNetReachability] state]) {
+    [[NSUserDefaults standardUserDefaults] setInteger:(count + 1) forKey:kDefaultKey_LaunchCount];
+    if (!needLibraryUpdate && (count + 1 >= kLaunchCountBeforeRating) && !self.modalViewController && [[NetReachability sharedNetReachability] state]) {
       [[UIApplication sharedApplication] beginIgnoringInteractionEvents];
       [self performSelector:@selector(_showRatingScreen) withObject:nil afterDelay:kShowRatingDelay];
     } else {
-      LOG_VERBOSE(@"Launch count is now %i", [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultUserKey_LaunchCount]);
+      LOG_VERBOSE(@"Launch count is now %i", [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_LaunchCount]);
     }
+  }
+  
+  if (needLibraryUpdate) {
+    [[AppDelegate sharedInstance] showAlertWithTitle:NSLocalizedString(@"REQUIRE_UPDATE_TITLE", nil)
+                                             message:NSLocalizedString(@"REQUIRE_UPDATE_MESSAGE", nil)
+                                       confirmButton:NSLocalizedString(@"REQUIRE_UPDATE_CONTINUE", nil)
+                                        cancelButton:NSLocalizedString(@"REQUIRE_UPDATE_CANCEL", nil)
+                                            delegate:self
+                                     confirmSelector:@selector(_requireUpdate)
+                                      cancelSelector:NULL
+                                            argument:nil];
   }
 }
 
@@ -747,6 +770,13 @@ static void __DisplayQueueCallBack(void* info) {
   [self gridViewDidUpdateScrollingAmount:nil];
   [[NSUserDefaults standardUserDefaults] setInteger:_currentCollection.sqlRowID forKey:kDefaultKey_CurrentCollection];
   [[NSUserDefaults standardUserDefaults] setInteger:_currentComic.sqlRowID forKey:kDefaultKey_CurrentComic];
+}
+
+- (void) _forceUpdate {
+  LoggingPurgeHistory(0.0);
+  [[LibraryUpdater sharedUpdater] update:YES];
+  [self _updateStatistics];
+  [self _setCurrentCollection:nil];
 }
 
 @end
@@ -919,13 +949,6 @@ static void __ArrayApplierFunction(const void* value, void* context) {
 
 - (IBAction) update:(id)sender {
   [[LibraryUpdater sharedUpdater] update:NO];
-}
-
-- (void) _forceUpdate {
-  LoggingPurgeHistory(0.0);
-  [[LibraryUpdater sharedUpdater] update:YES];
-  [self _updateStatistics];
-  [self _setCurrentCollection:nil];
 }
 
 - (IBAction) forceUpdate:(id)sender {

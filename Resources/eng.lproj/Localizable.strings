@@ -36,8 +36,13 @@
 
 "LABEL_FORMAT" = "Page %i of %i";
 
+"REQUIRE_UPDATE_TITLE" = "Library must be recreated";
+"REQUIRE_UPDATE_MESSAGE" = "All comics and series will be re-imported to be updated to the new look and bookmarks will be cleared.";
+"REQUIRE_UPDATE_CANCEL" = "Remind Me Later";
+"REQUIRE_UPDATE_CONTINUE" = "Recreate Now";
+
 "FORCE_UPDATE_TITLE" = "Are you sure?";
-"FORCE_UPDATE_MESSAGE" = "Regenerating the library will clear all bookmarks and re-import all comics and series.";
+"FORCE_UPDATE_MESSAGE" = "Recreating the library will clear all bookmarks and re-import all comics and series.";
 "FORCE_UPDATE_CANCEL" = "Cancel";
 "FORCE_UPDATE_CONTINUE" = "Continue";
 

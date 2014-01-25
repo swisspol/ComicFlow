@@ -171,6 +171,7 @@
 + (void) initialize {
   // Setup initial user defaults
   NSMutableDictionary* defaults = [[NSMutableDictionary alloc] init];
+  [defaults setObject:[NSNumber numberWithInteger:0] forKey:kDefaultKey_LibraryVersion];
   [defaults setObject:[NSNumber numberWithBool:NO] forKey:kDefaultKey_ServerEnabled];
   [defaults setObject:[NSNumber numberWithInteger:kServerMode_Trial] forKey:kDefaultKey_ServerMode];
   [defaults setObject:[NSNumber numberWithInteger:kTrialMaxUploads] forKey:kDefaultKey_UploadsRemaining];
@@ -180,6 +181,7 @@
   [defaults setObject:[NSNumber numberWithInteger:0] forKey:kDefaultKey_CurrentCollection];
   [defaults setObject:[NSNumber numberWithInteger:0] forKey:kDefaultKey_CurrentComic];
   [defaults setObject:[NSNumber numberWithInteger:kSortingMode_ByStatus] forKey:kDefaultKey_SortingMode];
+  [defaults setObject:[NSNumber numberWithInteger:0] forKey:kDefaultKey_LaunchCount];
   [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
   [defaults release];
   
@@ -237,6 +239,7 @@
   // Update library immediately
   if ([[LibraryConnection mainConnection] countObjectsOfClass:[Comic class]] == 0) {
     [[LibraryUpdater sharedUpdater] update:YES];
+    [[NSUserDefaults standardUserDefaults] setInteger:kLibraryVersion forKey:kDefaultKey_LibraryVersion];
   } else {
     [[LibraryUpdater sharedUpdater] update:NO];
   }

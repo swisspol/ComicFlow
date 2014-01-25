@@ -14,6 +14,9 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#define kDefaultKey_LibraryVersion @"libraryVersion"
+#define kLibraryVersion 1
+
 #define kDefaultKey_ServerEnabled @"serverEnabled"
 #define kDefaultKey_ServerMode @"serverMode"
 typedef enum {
@@ -38,4 +41,4 @@ typedef enum {
   kSortingMode_ByStatus
 } SortingMode;
 
-#define kDefaultUserKey_LaunchCount @"launchCount"
+#define kDefaultKey_LaunchCount @"launchCount"
