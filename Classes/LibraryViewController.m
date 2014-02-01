@@ -455,6 +455,11 @@ static void __DisplayQueueCallBack(void* info) {
   _forceUpdateButton.enabled = !updating;
   _dimmingSwitch.on = [(AppDelegate*)[AppDelegate sharedInstance] isScreenDimmed];
   
+  if (kCFCoreFoundationVersionNumber < kCFCoreFoundationVersionNumber_iOS_7_0) {
+    [_purchaseButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
+    [_restoreButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
+  }
+  
   DCHECK(_updateTimer == nil);
   _updateTimer = [[NSTimer alloc] initWithFireDate:[NSDate distantFuture] interval:kUpdateTimerInterval target:self selector:@selector(_updateTimer:) userInfo:nil repeats:YES];
   [[NSRunLoop mainRunLoop] addTimer:_updateTimer forMode:NSRunLoopCommonModes];
