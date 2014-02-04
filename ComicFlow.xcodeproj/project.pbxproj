@@ -746,7 +746,7 @@
 				1D60588D0D05DD3D006BFB54 /* Resources */,
 				1D60588E0D05DD3D006BFB54 /* Sources */,
 				1D60588F0D05DD3D006BFB54 /* Frameworks */,
-				E2D06E1B18A082CB00A75340 /* ShellScript */,
+				E2D06E1B18A082CB00A75340 /* Crashlytics */,
 			);
 			buildRules = (
 			);
@@ -846,13 +846,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		E2D06E1B18A082CB00A75340 /* ShellScript */ = {
+		E2D06E1B18A082CB00A75340 /* Crashlytics */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = Crashlytics;
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
