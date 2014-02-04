@@ -15,8 +15,8 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #import <sys/xattr.h>
-
-#import "Flurry.h"
+#import <Crashlytics/Crashlytics.h>
+#import <Flurry.h>
 
 #import "AppDelegate.h"
 #import "Library.h"
@@ -30,6 +30,9 @@
 #define kUpdateDelay 1.0
 #define kDisconnectLatency 1.0
 #define kScreenDimmingOpacity 0.5
+
+@interface AppDelegate () <CrashlyticsDelegate>
+@end
 
 @implementation AppDelegate (StoreKit)
 
@@ -212,14 +215,22 @@
   [self _updateTimer:nil];
 }
 
+- (void) crashlytics:(Crashlytics*)crashlytics didDetectCrashDuringPreviousExecution:(id<CLSCrashReport>)crash {
+  LOG_WARNING(@"Crashlytics did detect previous crash on %@", crash.crashedOnDate);
+}
+
 - (BOOL) application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions {
   [super application:application didFinishLaunchingWithOptions:launchOptions];
   
 #if defined(NDEBUG) && !TARGET_IPHONE_SIMULATOR
   // Start Flurry analytics
   [Flurry setAppVersion:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
-  [Flurry setCrashReportingEnabled:YES];
   [Flurry startSession:@"2ZSSCCWQY2Z36J78MTTZ" withOptions:launchOptions];
+#endif
+
+#if defined(NDEBUG)
+  // Start Crashlytics
+  [Crashlytics startWithAPIKey:@"936a419a4a141683e2eb17db02a13b72ee02b362" delegate:self];
 #endif
   
   // Prevent backup of Documents directory as it contains only "offline data" (iOS 5.0.1 and later)

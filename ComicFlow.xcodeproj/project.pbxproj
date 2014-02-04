@@ -746,6 +746,7 @@
 				1D60588D0D05DD3D006BFB54 /* Resources */,
 				1D60588E0D05DD3D006BFB54 /* Sources */,
 				1D60588F0D05DD3D006BFB54 /* Frameworks */,
+				E2D06E1B18A082CB00A75340 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -843,6 +844,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		E2D06E1B18A082CB00A75340 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"$CONFIGURATION\" == \"Debug\" ]; then\n  echo \"Skipping Crashlytics in Debug configuration\"\nelse\n  ./Crashlytics.framework/run \"936a419a4a141683e2eb17db02a13b72ee02b362\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1D60588E0D05DD3D006BFB54 /* Sources */ = {
@@ -959,6 +976,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = (
@@ -968,7 +986,11 @@
 				HEADER_SEARCH_PATHS = Flurry;
 				INFOPLIST_FILE = Info.plist;
 				LIBRARY_SEARCH_PATHS = Flurry;
-				OTHER_LDFLAGS = "-lFlurry";
+				OTHER_LDFLAGS = (
+					"-lFlurry",
+					"-framework",
+					Crashlytics,
+				);
 				PRODUCT_NAME = ComicFlow;
 				PROVISIONING_PROFILE = "";
 			};
@@ -979,6 +1001,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = (
@@ -988,7 +1011,11 @@
 				HEADER_SEARCH_PATHS = Flurry;
 				INFOPLIST_FILE = Info.plist;
 				LIBRARY_SEARCH_PATHS = Flurry;
-				OTHER_LDFLAGS = "-lFlurry";
+				OTHER_LDFLAGS = (
+					"-lFlurry",
+					"-framework",
+					Crashlytics,
+				);
 				PRODUCT_NAME = ComicFlow;
 				PROVISIONING_PROFILE = "";
 			};
@@ -1029,6 +1056,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = (
@@ -1038,7 +1066,11 @@
 				HEADER_SEARCH_PATHS = Flurry;
 				INFOPLIST_FILE = Info.plist;
 				LIBRARY_SEARCH_PATHS = Flurry;
-				OTHER_LDFLAGS = "-lFlurry";
+				OTHER_LDFLAGS = (
+					"-lFlurry",
+					"-framework",
+					Crashlytics,
+				);
 				PRODUCT_NAME = ComicFlow;
 				PROVISIONING_PROFILE = "";
 			};
