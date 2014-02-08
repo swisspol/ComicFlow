@@ -190,9 +190,6 @@
 		E229317E121E260F00484F9F /* Logging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Logging.m; sourceTree = "<group>"; };
 		E229318D121E260F00484F9F /* SmartDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartDescription.h; sourceTree = "<group>"; };
 		E229318E121E260F00484F9F /* SmartDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SmartDescription.m; sourceTree = "<group>"; };
-		E22932A2121E260F00484F9F /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
-		E22932A3121E260F00484F9F /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
-		E22932A4121E260F00484F9F /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		E229344C121E285200484F9F /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E24036BA1891A1880098F028 /* Icon_72x72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon_72x72.png; sourceTree = "<group>"; };
 		E24036BB1891A1880098F028 /* Icon_72x72@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon_72x72@2x.png"; sourceTree = "<group>"; };
@@ -207,7 +204,6 @@
 		E2448E2816902B7D0069FA25 /* GCDWebServerResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerResponse.m; sourceTree = "<group>"; };
 		E247C0AF1293996500CEB396 /* Collection-Screen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Collection-Screen.png"; sourceTree = "<group>"; };
 		E247C19A1293A79D00CEB396 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
-		E25373D314F2C6A3009E3A74 /* Distribution.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Distribution.xcconfig; sourceTree = "<group>"; };
 		E266110415320E700045E707 /* New@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "New@2x.png"; sourceTree = "<group>"; };
 		E266110515320E700045E707 /* Ribbon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Ribbon@2x.png"; sourceTree = "<group>"; };
 		E26611091532125B0045E707 /* Default-Landscape@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Landscape@2x.png"; sourceTree = "<group>"; };
@@ -533,7 +529,6 @@
 			children = (
 				E229316A121E260F00484F9F /* Classes */,
 				E2059814121ED28000A271CC /* Resources */,
-				E22932A1121E260F00484F9F /* Xcode-Configurations */,
 			);
 			path = "Cooliris-ToolKit";
 			sourceTree = "<group>";
@@ -571,17 +566,6 @@
 				2CF616F51293D8A6008FD89E /* ZoomView.m */,
 			);
 			path = Classes;
-			sourceTree = "<group>";
-		};
-		E22932A1121E260F00484F9F /* Xcode-Configurations */ = {
-			isa = PBXGroup;
-			children = (
-				E22932A2121E260F00484F9F /* Base.xcconfig */,
-				E22932A3121E260F00484F9F /* Debug.xcconfig */,
-				E25373D314F2C6A3009E3A74 /* Distribution.xcconfig */,
-				E22932A4121E260F00484F9F /* Release.xcconfig */,
-			);
-			path = "Xcode-Configurations";
 			sourceTree = "<group>";
 		};
 		E2448E2116902B7D0069FA25 /* CGDWebServer */ = {
@@ -992,7 +976,6 @@
 					Crashlytics,
 				);
 				PRODUCT_NAME = ComicFlow;
-				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -1016,63 +999,39 @@
 					Crashlytics,
 				);
 				PRODUCT_NAME = ComicFlow;
-				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E22932A3121E260F00484F9F /* Debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
+				WARNING_CFLAGS = "-Wall";
 			};
 			name = Debug;
 		};
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E22932A4121E260F00484F9F /* Release.xcconfig */;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					NDEBUG,
+					NS_BLOCK_ASSERTIONS,
+				);
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
+				WARNING_CFLAGS = "-Wall";
 			};
 			name = Release;
-		};
-		E25373CD14F2C68F009E3A74 /* Distribution */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = E25373D314F2C6A3009E3A74 /* Distribution.xcconfig */;
-			buildSettings = {
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = 2;
-			};
-			name = Distribution;
-		};
-		E25373CE14F2C68F009E3A74 /* Distribution */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)";
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = Prefix.pch;
-				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = (
-					USE_FILE32API,
-					RARDLL,
-				);
-				HEADER_SEARCH_PATHS = Flurry;
-				INFOPLIST_FILE = Info.plist;
-				LIBRARY_SEARCH_PATHS = Flurry;
-				OTHER_LDFLAGS = (
-					"-lFlurry",
-					"-framework",
-					Crashlytics,
-				);
-				PRODUCT_NAME = ComicFlow;
-				PROVISIONING_PROFILE = "";
-			};
-			name = Distribution;
 		};
 /* End XCBuildConfiguration section */
 
@@ -1082,7 +1041,6 @@
 			buildConfigurations = (
 				1D6058940D05DD3E006BFB54 /* Debug */,
 				1D6058950D05DD3E006BFB54 /* Release */,
-				E25373CE14F2C68F009E3A74 /* Distribution */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1092,7 +1050,6 @@
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,
 				C01FCF5008A954540054247B /* Release */,
-				E25373CD14F2C68F009E3A74 /* Distribution */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
