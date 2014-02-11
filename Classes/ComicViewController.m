@@ -312,7 +312,7 @@
   } else {
     [_contents setSkipInvisibleFiles:YES];
     NSUInteger index = 0;
-    for (NSString* file in [[_contents retrieveFileList] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]) {
+    for (NSString* file in [[_contents retrieveFileList] sortedArrayUsingSelector:@selector(localizedStandardCompare:)]) {
       NSString* extension = [file pathExtension];
       if (![extension caseInsensitiveCompare:@"jpg"] || ![extension caseInsensitiveCompare:@"jpeg"] ||
         ![extension caseInsensitiveCompare:@"png"] || ![extension caseInsensitiveCompare:@"gif"]) {

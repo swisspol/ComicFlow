@@ -457,7 +457,7 @@ typedef enum {
       NSString* extension = [file pathExtension];
       if (![extension caseInsensitiveCompare:@"jpg"] || ![extension caseInsensitiveCompare:@"jpeg"] ||
         ![extension caseInsensitiveCompare:@"png"] || ![extension caseInsensitiveCompare:@"gif"]) {
-        if (!cover || ([file caseInsensitiveCompare:cover] == NSOrderedAscending)) {
+        if (!cover || ([file localizedStandardCompare:cover] == NSOrderedAscending)) {
           cover = file;
         }
       }
