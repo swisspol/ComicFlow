@@ -122,6 +122,7 @@
 		E27CFFB5168CA79700021417 /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = E27CFFAE168CA79700021417 /* mztools.c */; settings = {COMPILER_FLAGS = "-Wno-all"; }; };
 		E27CFFB6168CA79700021417 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = E27CFFB0168CA79700021417 /* unzip.c */; settings = {COMPILER_FLAGS = "-Wno-all"; }; };
 		E27CFFB7168CA79700021417 /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = E27CFFB2168CA79700021417 /* zip.c */; settings = {COMPILER_FLAGS = "-Wno-all"; }; };
+		E2832F3018E48757004868E1 /* ImageDecompression.m in Sources */ = {isa = PBXBuildFile; fileRef = E2832F2F18E48757004868E1 /* ImageDecompression.m */; };
 		E28CF46312237F790076FB21 /* Default-Landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = E28CF46112237F790076FB21 /* Default-Landscape.png */; };
 		E28CF46412237F790076FB21 /* Default-Portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = E28CF46212237F790076FB21 /* Default-Portrait.png */; };
 		E28CF6E01223A0BC0076FB21 /* Ribbon.png in Resources */ = {isa = PBXBuildFile; fileRef = E28CF6DF1223A0BC0076FB21 /* Ribbon.png */; };
@@ -350,6 +351,8 @@
 		E27CFFFD168CA7A200021417 /* rar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rar.cpp; sourceTree = "<group>"; };
 		E27CFFFE168CA7A200021417 /* rar.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = rar.hpp; sourceTree = "<group>"; };
 		E27CFFFF168CA7A200021417 /* rardefs.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = rardefs.hpp; sourceTree = "<group>"; };
+		E2832F2E18E48757004868E1 /* ImageDecompression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageDecompression.h; sourceTree = "<group>"; };
+		E2832F2F18E48757004868E1 /* ImageDecompression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageDecompression.m; sourceTree = "<group>"; };
 		E28CF46112237F790076FB21 /* Default-Landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Landscape.png"; sourceTree = "<group>"; };
 		E28CF46212237F790076FB21 /* Default-Portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Portrait.png"; sourceTree = "<group>"; };
 		E28CF6DF1223A0BC0076FB21 /* Ribbon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Ribbon.png; sourceTree = "<group>"; };
@@ -405,6 +408,8 @@
 				1D3623250D0F684500981E51 /* AppDelegate.m */,
 				E2059D64121F7D7C00A271CC /* ComicViewController.h */,
 				E2059D65121F7D7C00A271CC /* ComicViewController.m */,
+				E2832F2E18E48757004868E1 /* ImageDecompression.h */,
+				E2832F2F18E48757004868E1 /* ImageDecompression.m */,
 				E2059497121E66A300A271CC /* Library.h */,
 				E2059498121E66A300A271CC /* Library.m */,
 				E2059D72121F7E0E00A271CC /* LibraryViewController.h */,
@@ -886,6 +891,7 @@
 				E27C0043168CA7A200021417 /* encname.cpp in Sources */,
 				E27C0044168CA7A200021417 /* errhnd.cpp in Sources */,
 				E27C0045168CA7A200021417 /* extinfo.cpp in Sources */,
+				E2832F3018E48757004868E1 /* ImageDecompression.m in Sources */,
 				E27C0046168CA7A200021417 /* extract.cpp in Sources */,
 				E27C0047168CA7A200021417 /* filcreat.cpp in Sources */,
 				E27C0048168CA7A200021417 /* file.cpp in Sources */,
@@ -967,13 +973,24 @@
 					USE_FILE32API,
 					RARDLL,
 				);
-				HEADER_SEARCH_PATHS = Flurry;
+				HEADER_SEARCH_PATHS = (
+					"libjpeg-turbo/include",
+					libwebp/include,
+					Flurry,
+				);
 				INFOPLIST_FILE = Info.plist;
-				LIBRARY_SEARCH_PATHS = Flurry;
+				LIBRARY_SEARCH_PATHS = (
+					"libjpeg-turbo/lib",
+					libwebp/lib,
+					Flurry,
+				);
 				OTHER_LDFLAGS = (
-					"-lFlurry",
 					"-framework",
 					Crashlytics,
+					"-Wl,-search_paths_first",
+					"-ljpeg",
+					"-lwebp",
+					"-lFlurry",
 				);
 				PRODUCT_NAME = ComicFlow;
 			};
@@ -990,13 +1007,24 @@
 					USE_FILE32API,
 					RARDLL,
 				);
-				HEADER_SEARCH_PATHS = Flurry;
+				HEADER_SEARCH_PATHS = (
+					"libjpeg-turbo/include",
+					libwebp/include,
+					Flurry,
+				);
 				INFOPLIST_FILE = Info.plist;
-				LIBRARY_SEARCH_PATHS = Flurry;
+				LIBRARY_SEARCH_PATHS = (
+					"libjpeg-turbo/lib",
+					libwebp/lib,
+					Flurry,
+				);
 				OTHER_LDFLAGS = (
-					"-lFlurry",
 					"-framework",
 					Crashlytics,
+					"-Wl,-search_paths_first",
+					"-ljpeg",
+					"-lwebp",
+					"-lFlurry",
 				);
 				PRODUCT_NAME = ComicFlow;
 			};

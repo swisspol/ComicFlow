@@ -25,6 +25,7 @@
 #import "UnRAR.h"
 #import "ImageUtilities.h"
 #import "Logging.h"
+#import "ImageDecompression.h"
 
 #define kMaxPageSize 1500.0
 #define kLeftZoneRatio 0.2
@@ -164,18 +165,22 @@
 }
 
 - (void) documentView:(DocumentView*)documentView willShowPageView:(UIView*)view {
+  CFTimeInterval time = CFAbsoluteTimeGetCurrent();
   CGFloat maxPageSize = kMaxPageSize * [[UIScreen mainScreen] scale];
   CGImageRef imageRef = NULL;
+  NSString* extension = nil;
+  size_t originalWidth = 0;
+  size_t originalHeight = 0;
   if (_type == kComicType_PDF) {
     CGPDFDocumentRef document = CGPDFDocumentCreateWithURL((CFURLRef)[NSURL fileURLWithPath:_path]);  // Don't keep CGPDFDocument around as it caches pages content heavily
     if (document) {
+      extension = @"pdf";
       CGPDFPageRef page = CGPDFDocumentGetPage(document, view.tag);
       if (page) {
+        originalWidth = CGPDFPageGetBoxRect(page, kCGPDFMediaBox).size.width;
+        originalHeight = CGPDFPageGetBoxRect(page, kCGPDFMediaBox).size.height;
         imageRef = CreateRenderedPDFPage(page, CGSizeMake(maxPageSize, maxPageSize), kImageScalingMode_AspectFit,
                                          [[UIColor whiteColor] CGColor]);
-        LOG_VERBOSE(@"Loading page %i of %ix%i pixels resized to %ix%i pixels", view.tag,
-                    (int)CGPDFPageGetBoxRect(page, kCGPDFMediaBox).size.width, (int)CGPDFPageGetBoxRect(page, kCGPDFMediaBox).size.height,
-                    CGImageGetWidth(imageRef), CGImageGetHeight(imageRef));
       }
       CGPDFDocumentRelease(document);
     }
@@ -184,18 +189,19 @@
     if ([_contents extractFile:[(ComicPageView*)view file] toPath:temp]) {
       NSData* data = [[NSData alloc] initWithContentsOfFile:temp];
       if (data) {
-        UIImage* image = [[UIImage alloc] initWithData:data];
+        extension = [[(ComicPageView*)view file] pathExtension];
+        CGImageRef image = CreateCGImageFromFileData(data, extension);
         if (image) {
-          imageRef = [image CGImage];
-          if ((CGImageGetWidth(imageRef) > maxPageSize) || (CGImageGetHeight(imageRef) > maxPageSize)) {
+          imageRef = image;
+          originalWidth = CGImageGetWidth(imageRef);
+          originalHeight = CGImageGetHeight(imageRef);
+          if ((originalWidth > maxPageSize) || (originalHeight > maxPageSize)) {
             imageRef = CreateScaledImage(imageRef, CGSizeMake(maxPageSize, maxPageSize), kImageScalingMode_AspectFit,
                                          [[UIColor blackColor] CGColor]);
           } else {
             CGImageRetain(imageRef);
           }
-          LOG_VERBOSE(@"Loading page %i of %ix%i pixels resized to %ix%i pixels", view.tag,
-                      (int)image.size.width, (int)image.size.height, CGImageGetWidth(imageRef), CGImageGetHeight(imageRef));
-          [image release];
+          CGImageRelease(image);
         }
         [data release];
       }
@@ -207,6 +213,9 @@
     [(ComicPageView*)view displayImage:image];
     [image release];
     view.backgroundColor = [UIColor blackColor];
+    LOG_VERBOSE(@"Loaded '%@' page %i of %ix%i pixels resized to %ix%i pixels in %.3f seconds", [extension lowercaseString], view.tag,
+                originalWidth, originalHeight, CGImageGetWidth(imageRef), CGImageGetHeight(imageRef),
+                CFAbsoluteTimeGetCurrent() - time);
     CGImageRelease(imageRef);
   } else {
     view.backgroundColor = [UIColor redColor];
@@ -312,9 +321,7 @@
     [_contents setSkipInvisibleFiles:YES];
     NSUInteger index = 0;
     for (NSString* file in [[_contents retrieveFileList] sortedArrayUsingSelector:@selector(localizedStandardCompare:)]) {
-      NSString* extension = [file pathExtension];
-      if (![extension caseInsensitiveCompare:@"jpg"] || ![extension caseInsensitiveCompare:@"jpeg"] ||
-        ![extension caseInsensitiveCompare:@"png"] || ![extension caseInsensitiveCompare:@"gif"]) {
+      if (IsImageFileExtensionSupported([file pathExtension])) {
         ComicPageView* view = [[ComicPageView alloc] initWithTapTarget:self action:@selector(_tapAction:)];
         view.tag = ++index;
         view.file = file;

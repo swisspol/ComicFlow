@@ -23,6 +23,7 @@
 #import "Extensions_Foundation.h"
 #import "ImageUtilities.h"
 #import "Logging.h"
+#import "ImageDecompression.h"
 
 #define kInboxDirectoryName @"Inbox"
 
@@ -453,9 +454,7 @@ typedef enum {
     [archive setSkipInvisibleFiles:YES];
     NSString* cover = nil;
     for (NSString* file in [archive retrieveFileList]) {
-      NSString* extension = [file pathExtension];
-      if (![extension caseInsensitiveCompare:@"jpg"] || ![extension caseInsensitiveCompare:@"jpeg"] ||
-        ![extension caseInsensitiveCompare:@"png"] || ![extension caseInsensitiveCompare:@"gif"]) {
+      if (IsImageFileExtensionSupported([file pathExtension])) {
         if (!cover || ([file localizedStandardCompare:cover] == NSOrderedAscending)) {
           cover = file;
         }
@@ -466,10 +465,10 @@ typedef enum {
       if ([archive extractFile:cover toPath:temp]) {
         NSData* data = [[NSData alloc] initWithContentsOfFile:temp];
         if (data) {
-          UIImage* image = [[UIImage alloc] initWithData:data];
+          CGImageRef image = CreateCGImageFromFileData(data, [cover pathExtension]);
           if (image) {
-            imageRef = CreateScaledImage([image CGImage], size, kImageScalingMode_AspectFill, [[UIColor blackColor] CGColor]);
-            [image release];
+            imageRef = CreateScaledImage(image, size, kImageScalingMode_AspectFill, [[UIColor blackColor] CGColor]);
+            CGImageRelease(image);
           }
           [data release];
         }
