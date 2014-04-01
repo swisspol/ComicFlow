@@ -629,13 +629,10 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
         continue;
       }
       NSString* fullPath = [rootPath stringByAppendingPathComponent:path];
-      NSString* type = [[[NSFileManager defaultManager] attributesOfItemAtPath:fullPath error:NULL] fileType];
 #if TARGET_IPHONE_SIMULATOR
-      if ([type isEqualToString:NSFileTypeSymbolicLink]) {
-        NSString* path = [[NSFileManager defaultManager] destinationOfSymbolicLinkAtPath:fullPath error:NULL];
-        type = [[[NSFileManager defaultManager] attributesOfItemAtPath:path error:NULL] fileType];
-      }
+      fullPath = [fullPath stringByResolvingSymlinksInPath];
 #endif
+      NSString* type = [[[NSFileManager defaultManager] attributesOfItemAtPath:fullPath error:NULL] fileType];
       if ([type isEqualToString:NSFileTypeRegular]) {
         NSMutableArray* array = [directories objectForKey:@""];
         if (array == nil) {
@@ -672,6 +669,9 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
     for (NSString* directory in directories) {
       NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
       NSString* fullPath = [rootPath stringByAppendingPathComponent:directory];
+#if TARGET_IPHONE_SIMULATOR
+      fullPath = [fullPath stringByResolvingSymlinksInPath];
+#endif
       NSDictionary* attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:fullPath error:NULL];
       NSTimeInterval time = [[attributes fileModificationDate] timeIntervalSinceReferenceDate];
       BOOL needsUpdate = NO;

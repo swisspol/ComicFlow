@@ -3,8 +3,8 @@
 "INFO_FORMAT" = "%i Comics | %i Series | %.0f MB Database";
 "VERSION_FORMAT" = "ComicFlow Version %@";
 
-"ADDRESS_FORMAT_IP" = "Using your web browser go to\nhttp://%@/";
-"ADDRESS_FORMAT_BONJOUR" = "Using your web browser go to\nhttp://%@/\n(or http://%@/)";
+"ADDRESS_FORMAT_IP" = "Using your web browser go to\n%@";
+"ADDRESS_FORMAT_BONJOUR" = "Using your web browser go to\n%@\n(or %@)";
 "ADDRESS_UNAVAILABLE" = "Enable Web Server to import comics over WiFi using your web browser";
 
 "SPINNER_MESSAGE" = "Please Wait…";
@@ -70,10 +70,7 @@
 "COMPLETE_ALERT_BUTTON" = "OK";
 
 "SERVER_NAME_FORMAT" = "ComicFlow Web Server %@ (%@)";
-
+"SERVER_TITLE" = "ComicFlow Web Server";
+"SERVER_CONTENT" = "<div class=\"alert alert-success alert-dismissable\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button><strong>You are successfully connected to the ComicFlow app on your iPad.</strong> Drag &amp; drop comic files (%@) on this window or use the \"Upload Files&hellip;\" button to import them in ComicFlow. Please leave the app running in the foreground on your iPad while uploading or downloading comics.</div>";
+"SERVER_LIMITED_CONTENT" = "<div class=\"alert alert-danger alert-dismissable\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button><strong>Uploading comics using ComicFlow Web Server is initially limited to %i files.</strong> Tap the Purchase button in the Settings window of the app to enable unlimited use of this feature. You will see the price and be prompted for confirmation before the purchase is processed by the App Store.</div>";
 "SERVER_FOOTER_FORMAT" = "%@ &mdash; ComicFlow Version %@";
-
-"SERVER_STATUS_SUCCESS" = "Successfully Uploaded";
-"SERVER_STATUS_ERROR" = "Internal Error";
-"SERVER_STATUS_INVALID" = "Missing File Name";
-"SERVER_STATUS_UNSUPPORTED" = "Unknown File Type";

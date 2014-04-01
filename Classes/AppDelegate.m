@@ -356,7 +356,7 @@
 - (void) enableWebServer {
   if (_webServer == nil) {
     _webServer = [[WebServer alloc] init];
-    _webServer.delegate = self;
+    _webServer.serverDelegate = self;
     [_webServer start];
     
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:kDefaultKey_ServerEnabled];
@@ -405,6 +405,10 @@
     }
     [defaults synchronize];
   }
+}
+
+- (void) webServerDidUpdate:(WebServer*)server {
+  _needsUpdate = YES;
 }
 
 - (void) applicationDidEnterBackground:(UIApplication*)application {

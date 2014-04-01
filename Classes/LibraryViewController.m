@@ -99,20 +99,13 @@
     _serverSwitch.on = server ? YES : NO;
   }
   if (server) {
-    NSString* ipAddress = [[UIDevice currentDevice] currentWiFiAddress];
-    if (ipAddress) {
-      if (server.port != 80) {
-        ipAddress = [ipAddress stringByAppendingFormat:@":%i", server.port];
-      }
-      NSString* bonjourName = server.bonjourName;
-      if (bonjourName) {
-        bonjourName = [bonjourName stringByAppendingString:@".local"];
-        if (server.port != 80) {
-          bonjourName = [bonjourName stringByAppendingFormat:@":%i", server.port];
-        }
-        _addressLabel.text = [NSString stringWithFormat:NSLocalizedString(@"ADDRESS_FORMAT_BONJOUR", nil), bonjourName, ipAddress];
+    NSURL* serverURL = server.serverURL;
+    if (serverURL) {
+      NSURL* bonjourServerURL = server.bonjourServerURL;
+      if (bonjourServerURL) {
+        _addressLabel.text = [NSString stringWithFormat:NSLocalizedString(@"ADDRESS_FORMAT_BONJOUR", nil), [bonjourServerURL absoluteString], [serverURL absoluteString]];
       } else {
-        _addressLabel.text = [NSString stringWithFormat:NSLocalizedString(@"ADDRESS_FORMAT_IP", nil), ipAddress];
+        _addressLabel.text = [NSString stringWithFormat:NSLocalizedString(@"ADDRESS_FORMAT_IP", nil), [serverURL absoluteString]];
       }
     } else {
       _addressLabel.text = NSLocalizedString(@"ADDRESS_UNAVAILABLE", nil);

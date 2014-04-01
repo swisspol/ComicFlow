@@ -13,6 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#import "GCDWebUploader.h"
 #import "GCDWebServerConnection.h"
 
 @class WebServer;
@@ -21,14 +22,15 @@
 - (void) webServerDidConnect:(WebServer*)server;
 - (void) webServerDidUploadComic:(WebServer*)server;
 - (void) webServerDidDownloadComic:(WebServer*)server;
+- (void) webServerDidUpdate:(WebServer*)server;
 - (void) webServerDidDisconnect:(WebServer*)server;
 @end
 
-@interface WebServer : GCDWebServer {
+@interface WebServer : GCDWebUploader <GCDWebUploaderDelegate> {
 @private
-  id<WebServerDelegate> _delegate;
+  id<WebServerDelegate> _serverDelegate;
 }
-@property(nonatomic, assign) id<WebServerDelegate> delegate;
+@property(nonatomic, assign) id<WebServerDelegate> serverDelegate;
 @end
 
 @interface WebServerConnection : GCDWebServerConnection
