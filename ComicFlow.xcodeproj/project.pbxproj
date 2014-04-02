@@ -33,6 +33,7 @@
 		E2059D74121F7E0E00A271CC /* LibraryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E2059D73121F7E0E00A271CC /* LibraryViewController.m */; };
 		E205A102121FB0E100A271CC /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E205A101121FB0E100A271CC /* QuartzCore.framework */; };
 		E20893E112FA1657001F1D2F /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E20893E012FA1657001F1D2F /* SystemConfiguration.framework */; };
+		E21F01E118EBA01E00051CA8 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E21F01E018EBA01E00051CA8 /* ImageIO.framework */; };
 		E21F982418060E3000A9B745 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E21F982318060E3000A9B745 /* Security.framework */; };
 		E22112A91690B97B0048D2B2 /* GCDWebServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = E22112A81690B97B0048D2B2 /* GCDWebServerConnection.m */; };
 		E2240677129275BC007E5296 /* Comic-Screen.png in Resources */ = {isa = PBXBuildFile; fileRef = E2240675129275BC007E5296 /* Comic-Screen.png */; };
@@ -184,6 +185,7 @@
 		E209D2111221154300B1077B /* Defaults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Defaults.h; sourceTree = "<group>"; };
 		E209D54712218C3400B1077B /* GridView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridView.h; sourceTree = "<group>"; };
 		E209D54812218C3400B1077B /* GridView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GridView.m; sourceTree = "<group>"; };
+		E21F01E018EBA01E00051CA8 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		E21F982318060E3000A9B745 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		E22112A71690B97B0048D2B2 /* GCDWebServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerConnection.h; sourceTree = "<group>"; };
 		E22112A81690B97B0048D2B2 /* GCDWebServerConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerConnection.m; sourceTree = "<group>"; };
@@ -396,6 +398,7 @@
 				E205A102121FB0E100A271CC /* QuartzCore.framework in Frameworks */,
 				E247C19B1293A79D00CEB396 /* CoreText.framework in Frameworks */,
 				E20893E112FA1657001F1D2F /* SystemConfiguration.framework in Frameworks */,
+				E21F01E118EBA01E00051CA8 /* ImageIO.framework in Frameworks */,
 				E20590BE121E294B00A271CC /* libsqlite3.dylib in Frameworks */,
 				E2059155121E2F3B00A271CC /* libz.dylib in Frameworks */,
 			);
@@ -468,6 +471,7 @@
 				E205A101121FB0E100A271CC /* QuartzCore.framework */,
 				E247C19A1293A79D00CEB396 /* CoreText.framework */,
 				E2B680E416915033001CF037 /* StoreKit.framework */,
+				E21F01E018EBA01E00051CA8 /* ImageIO.framework */,
 				E20590BD121E294B00A271CC /* libsqlite3.dylib */,
 				E2059154121E2F3B00A271CC /* libz.dylib */,
 			);

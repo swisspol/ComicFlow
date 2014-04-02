@@ -20,7 +20,8 @@ extern "C" {
 #endif
 
 BOOL IsImageFileExtensionSupported(NSString* extension);
-CGImageRef CreateCGImageFromFileData(NSData* data, NSString* extension);
+CGImageRef CreateCGImageFromFileData(NSData* data, NSString* extension, CGSize targetSize, BOOL fillMode);
+CGImageRef CreateCGImageFromPDFPage(CGPDFPageRef page, CGSize targetSize, BOOL fillMode);
 
 #ifdef __cplusplus
 }

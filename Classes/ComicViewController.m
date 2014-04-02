@@ -23,7 +23,6 @@
 #import "ZoomView.h"
 #import "MiniZip.h"
 #import "UnRAR.h"
-#import "ImageUtilities.h"
 #import "Logging.h"
 #import "ImageDecompression.h"
 
@@ -169,18 +168,13 @@
   CGFloat maxPageSize = kMaxPageSize * [[UIScreen mainScreen] scale];
   CGImageRef imageRef = NULL;
   NSString* extension = nil;
-  size_t originalWidth = 0;
-  size_t originalHeight = 0;
   if (_type == kComicType_PDF) {
     CGPDFDocumentRef document = CGPDFDocumentCreateWithURL((CFURLRef)[NSURL fileURLWithPath:_path]);  // Don't keep CGPDFDocument around as it caches pages content heavily
     if (document) {
       extension = @"pdf";
       CGPDFPageRef page = CGPDFDocumentGetPage(document, view.tag);
       if (page) {
-        originalWidth = CGPDFPageGetBoxRect(page, kCGPDFMediaBox).size.width;
-        originalHeight = CGPDFPageGetBoxRect(page, kCGPDFMediaBox).size.height;
-        imageRef = CreateRenderedPDFPage(page, CGSizeMake(maxPageSize, maxPageSize), kImageScalingMode_AspectFit,
-                                         [[UIColor whiteColor] CGColor]);
+        imageRef = CreateCGImageFromPDFPage(page, CGSizeMake(maxPageSize, maxPageSize), NO);
       }
       CGPDFDocumentRelease(document);
     }
@@ -190,19 +184,7 @@
       NSData* data = [[NSData alloc] initWithContentsOfFile:temp];
       if (data) {
         extension = [[(ComicPageView*)view file] pathExtension];
-        CGImageRef image = CreateCGImageFromFileData(data, extension);
-        if (image) {
-          imageRef = image;
-          originalWidth = CGImageGetWidth(imageRef);
-          originalHeight = CGImageGetHeight(imageRef);
-          if ((originalWidth > maxPageSize) || (originalHeight > maxPageSize)) {
-            imageRef = CreateScaledImage(imageRef, CGSizeMake(maxPageSize, maxPageSize), kImageScalingMode_AspectFit,
-                                         [[UIColor blackColor] CGColor]);
-          } else {
-            CGImageRetain(imageRef);
-          }
-          CGImageRelease(image);
-        }
+        imageRef = CreateCGImageFromFileData(data, extension, CGSizeMake(maxPageSize, maxPageSize), NO);
         [data release];
       }
       [[NSFileManager defaultManager] removeItemAtPath:temp error:NULL];
@@ -213,8 +195,8 @@
     [(ComicPageView*)view displayImage:image];
     [image release];
     view.backgroundColor = [UIColor blackColor];
-    LOG_VERBOSE(@"Loaded '%@' page %i of %ix%i pixels resized to %ix%i pixels in %.3f seconds", [extension lowercaseString], view.tag,
-                originalWidth, originalHeight, CGImageGetWidth(imageRef), CGImageGetHeight(imageRef),
+    LOG_VERBOSE(@"Loaded '%@' page %i resized to %ix%i pixels in %.3f seconds", [extension lowercaseString], view.tag,
+                CGImageGetWidth(imageRef), CGImageGetHeight(imageRef),
                 CFAbsoluteTimeGetCurrent() - time);
     CGImageRelease(imageRef);
   } else {

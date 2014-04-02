@@ -21,7 +21,6 @@
 #import "MiniZip.h"
 #import "UnRAR.h"
 #import "Extensions_Foundation.h"
-#import "ImageUtilities.h"
 #import "Logging.h"
 #import "ImageDecompression.h"
 
@@ -432,8 +431,7 @@ typedef enum {
       if (CGPDFDocumentGetNumberOfPages(document) > 0) {
         CGPDFPageRef page = CGPDFDocumentGetPage(document, 1);
         if (page) {
-          imageRef = CreateRenderedPDFPage(page, CGSizeMake(2.0 * size.width, 2 * size.height),  // Render at 2x resolution to ensure good antialiasing
-                                           kImageScalingMode_AspectFill, [[UIColor whiteColor] CGColor]);
+          imageRef = CreateCGImageFromPDFPage(page, CGSizeMake(2.0 * size.width, 2 * size.height), YES);  // Render at 2x resolution to ensure good antialiasing
         }
       }
       CGPDFDocumentRelease(document);
@@ -465,11 +463,7 @@ typedef enum {
       if ([archive extractFile:cover toPath:temp]) {
         NSData* data = [[NSData alloc] initWithContentsOfFile:temp];
         if (data) {
-          CGImageRef image = CreateCGImageFromFileData(data, [cover pathExtension]);
-          if (image) {
-            imageRef = CreateScaledImage(image, size, kImageScalingMode_AspectFill, [[UIColor blackColor] CGColor]);
-            CGImageRelease(image);
-          }
+          imageRef = CreateCGImageFromFileData(data, [cover pathExtension], size, YES);
           [data release];
         }
         [[NSFileManager defaultManager] removeItemAtPath:temp error:NULL];

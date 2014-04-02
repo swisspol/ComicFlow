@@ -19,8 +19,10 @@
 #import <jerror.h>
 #import <jpeglib.h>
 #import <webp/decode.h>
+#import <ImageIO/ImageIO.h>
 
 #import "ImageDecompression.h"
+#import "ImageUtilities.h"
 #import "Logging.h"
 
 #define __USE_RGBX_JPEG__ 0  // RGB appears a bit faster than RGBX on iPad Mini
@@ -73,133 +75,164 @@ static void _ReleaseDataCallback(void* info, const void* data, size_t size) {
   free(info);
 }
 
-CGImageRef CreateCGImageFromFileData(NSData* data, NSString* extension) {
-  CGImageRef imageRef = NULL;
-  if (![extension caseInsensitiveCompare:@"jpg"] || ![extension caseInsensitiveCompare:@"jpeg"]) {
-    
-    void* buffer = NULL;
-    struct jpeg_decompress_struct dinfo;
-    ErrorManager errorManager;
-    jpeg_create_decompress(&dinfo);
-    dinfo.err = jpeg_std_error(&errorManager.error_mgr);
-    errorManager.error_mgr.error_exit = _ErrorExit;
-    errorManager.error_mgr.emit_message = _EmitMessage;
-    if (setjmp(errorManager.jmp_buffer)) {
-      if (buffer) {
-        free(buffer);
-      }
-      jpeg_destroy_decompress(&dinfo);
-      return NULL;
-    }
-    jpeg_mem_src(&dinfo, (unsigned char*)data.bytes, data.length);
-    jpeg_read_header(&dinfo, true);  // This sets dinfo.scale_num and dinfo.scale_denom to 1
-    size_t rowBytes = 4 * dinfo.image_width;
-    if (rowBytes % 16) {
-      rowBytes = ((rowBytes / 16) + 1) * 16;
-    }
-    size_t size = dinfo.image_height * rowBytes;
-    buffer = malloc(size);
-    if (buffer == NULL) {
-      LOG_ERROR(@"Failed allocating memory for JPEG buffer");
-      jpeg_destroy_decompress(&dinfo);
-      return NULL;
-    }
-    dinfo.dct_method = JDCT_IFAST;
-#if __USE_RGBX_JPEG__
-    dinfo.out_color_space = JCS_EXT_RGBX;
-#else
-    dinfo.out_color_space = JCS_RGB;
-#endif
-    jpeg_start_decompress(&dinfo);
-    JDIMENSION scanline = 0;
-    unsigned char* base_address = (unsigned char*)buffer;
-    while (scanline < dinfo.image_height) {
-      JDIMENSION lines = jpeg_read_scanlines(&dinfo, (JSAMPARRAY)&base_address, dinfo.rec_outbuf_height);
-      scanline += lines;
-      base_address += lines * rowBytes;
-    }
-    jpeg_finish_decompress(&dinfo);
-    jpeg_destroy_decompress(&dinfo);
-    
-    CGDataProviderRef provider = CGDataProviderCreateWithData(buffer, buffer, size, _ReleaseDataCallback);
-    CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
-#if __USE_RGBX_JPEG__
-    imageRef = CGImageCreate(dinfo.image_width, dinfo.image_height, 8, 32, rowBytes, colorspace, kCGImageAlphaNoneSkipLast, provider, NULL, true, kCGRenderingIntentDefault);
-#else
-    imageRef = CGImageCreate(dinfo.image_width, dinfo.image_height, 8, 24, rowBytes, colorspace, kCGImageAlphaNone, provider, NULL, true, kCGRenderingIntentDefault);
-#endif
-    CGColorSpaceRelease(colorspace);
-    CGDataProviderRelease(provider);
-    
-  } else if (![extension caseInsensitiveCompare:@"webp"]) {
-    static uint32_t cores = 0;
-    if (cores == 0) {
-      size_t length = sizeof(cores);
-      if (sysctlbyname("hw.physicalcpu", &cores, &length, NULL, 0)) {
-        cores = 1;
-      }
-    }
-    
-    WebPDecoderConfig config;
-    WebPInitDecoderConfig(&config);
-    VP8StatusCode status = WebPGetFeatures(data.bytes, data.length, &config.input);
-    if (status != VP8_STATUS_OK) {
-      LOG_ERROR(@"Failed retrieving WebP image features (%i)", status);
-      return NULL;
-    }
-#if __USE_RGBA_WEBP__
-    size_t rowBytes = 4 * config.input.width;
-#else
-    size_t rowBytes = 3 * config.input.width;
-#endif
-    if (rowBytes % 16) {
-      rowBytes = ((rowBytes / 16) + 1) * 16;
-    }
-    size_t size = config.input.height * rowBytes;
-    void* buffer = malloc(size);
-    if (buffer == NULL) {
-      LOG_ERROR(@"Failed allocating memory for WebP buffer");
-      return NULL;
-    }
-    config.options.bypass_filtering = 1;
-    config.options.no_fancy_upsampling = 1;
-    config.options.use_threads = cores > 1 ? 1 : 0;
-#if __USE_RGBA_WEBP__
-    config.output.colorspace = MODE_RGBA;
-#else
-    config.output.colorspace = MODE_RGB;
-#endif
-    config.output.is_external_memory = 1;
-    config.output.u.RGBA.rgba = buffer;
-    config.output.u.RGBA.stride = rowBytes;
-    config.output.u.RGBA.size = size;
-    status = WebPDecode(data.bytes, data.length, &config);
-    if (status != VP8_STATUS_OK) {
-      LOG_ERROR(@"Failed decoding WebP image (%i)", status);
+static CGImageRef _CreateCGImageFromJPEGData(NSData* data, CGSize targetSize, BOOL fillMode) {
+  void* buffer = NULL;
+  struct jpeg_decompress_struct dinfo;
+  ErrorManager errorManager;
+  jpeg_create_decompress(&dinfo);
+  dinfo.err = jpeg_std_error(&errorManager.error_mgr);
+  errorManager.error_mgr.error_exit = _ErrorExit;
+  errorManager.error_mgr.emit_message = _EmitMessage;
+  if (setjmp(errorManager.jmp_buffer)) {
+    if (buffer) {
       free(buffer);
-      return NULL;
     }
-    
-    CGDataProviderRef provider = CGDataProviderCreateWithData(buffer, buffer, size, _ReleaseDataCallback);
-    CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
-#if __USE_RGBA_WEBP__
-    imageRef = CGImageCreate(config.input.width, config.input.height, 8, 32, rowBytes, colorspace, kCGImageAlphaNoneSkipLast, provider, NULL, true, kCGRenderingIntentDefault);
+    jpeg_destroy_decompress(&dinfo);
+    return NULL;
+  }
+  jpeg_mem_src(&dinfo, (unsigned char*)data.bytes, data.length);
+  jpeg_read_header(&dinfo, true);  // This sets dinfo.scale_num and dinfo.scale_denom to 1
+  size_t rowBytes = 4 * dinfo.image_width;
+  if (rowBytes % 16) {
+    rowBytes = ((rowBytes / 16) + 1) * 16;
+  }
+  size_t size = dinfo.image_height * rowBytes;
+  buffer = malloc(size);
+  if (buffer == NULL) {
+    LOG_ERROR(@"Failed allocating memory for JPEG buffer");
+    jpeg_destroy_decompress(&dinfo);
+    return NULL;
+  }
+  dinfo.dct_method = JDCT_IFAST;
+#if __USE_RGBX_JPEG__
+  dinfo.out_color_space = JCS_EXT_RGBX;
 #else
-    imageRef = CGImageCreate(config.input.width, config.input.height, 8, 24, rowBytes, colorspace, kCGImageAlphaNone, provider, NULL, true, kCGRenderingIntentDefault);
+  dinfo.out_color_space = JCS_RGB;
 #endif
-    CGColorSpaceRelease(colorspace);
-    CGDataProviderRelease(provider);
-    
-  } else {
-    
-    UIImage* image = [[UIImage alloc] initWithData:data];
-    if (image == nil) {
-      LOG_ERROR(@"Failed decompressing image");
-      return NULL;
+  jpeg_start_decompress(&dinfo);
+  JDIMENSION scanline = 0;
+  unsigned char* base_address = (unsigned char*)buffer;
+  while (scanline < dinfo.image_height) {
+    JDIMENSION lines = jpeg_read_scanlines(&dinfo, (JSAMPARRAY)&base_address, dinfo.rec_outbuf_height);
+    scanline += lines;
+    base_address += lines * rowBytes;
+  }
+  jpeg_finish_decompress(&dinfo);
+  jpeg_destroy_decompress(&dinfo);
+  
+  CGDataProviderRef provider = CGDataProviderCreateWithData(buffer, buffer, size, _ReleaseDataCallback);
+  CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
+#if __USE_RGBX_JPEG__
+  CGImageRef image = CGImageCreate(dinfo.image_width, dinfo.image_height, 8, 32, rowBytes, colorspace, kCGImageAlphaNoneSkipLast, provider, NULL, true, kCGRenderingIntentDefault);
+#else
+  CGImageRef image = CGImageCreate(dinfo.image_width, dinfo.image_height, 8, 24, rowBytes, colorspace, kCGImageAlphaNone, provider, NULL, true, kCGRenderingIntentDefault);
+#endif
+  CGColorSpaceRelease(colorspace);
+  CGDataProviderRelease(provider);
+  if (image == NULL) {
+    return NULL;
+  }
+  
+  CGImageRef imageRef = CreateScaledImage(image, targetSize, fillMode ? kImageScalingMode_AspectFill : kImageScalingMode_AspectFit, [[UIColor blackColor] CGColor]);
+  CGImageRelease(image);
+  
+  return imageRef;
+}
+
+static CGImageRef _CreateCGImageFromWebPData(NSData* data, CGSize targetSize, BOOL fillMode) {
+  static uint32_t cores = 0;
+  if (cores == 0) {
+    size_t length = sizeof(cores);
+    if (sysctlbyname("hw.physicalcpu", &cores, &length, NULL, 0)) {
+      cores = 1;
     }
-    imageRef = CGImageRetain([image CGImage]);
-    [image release];
-    
+  }
+  
+  WebPDecoderConfig config;
+  WebPInitDecoderConfig(&config);
+  VP8StatusCode status = WebPGetFeatures(data.bytes, data.length, &config.input);
+  if (status != VP8_STATUS_OK) {
+    LOG_ERROR(@"Failed retrieving WebP image features (%i)", status);
+    return NULL;
+  }
+#if __USE_RGBA_WEBP__
+  size_t rowBytes = 4 * config.input.width;
+#else
+  size_t rowBytes = 3 * config.input.width;
+#endif
+  if (rowBytes % 16) {
+    rowBytes = ((rowBytes / 16) + 1) * 16;
+  }
+  size_t size = config.input.height * rowBytes;
+  void* buffer = malloc(size);
+  if (buffer == NULL) {
+    LOG_ERROR(@"Failed allocating memory for WebP buffer");
+    return NULL;
+  }
+  config.options.bypass_filtering = 1;
+  config.options.no_fancy_upsampling = 1;
+  config.options.use_threads = cores > 1 ? 1 : 0;
+#if __USE_RGBA_WEBP__
+  config.output.colorspace = MODE_RGBA;
+#else
+  config.output.colorspace = MODE_RGB;
+#endif
+  config.output.is_external_memory = 1;
+  config.output.u.RGBA.rgba = buffer;
+  config.output.u.RGBA.stride = rowBytes;
+  config.output.u.RGBA.size = size;
+  status = WebPDecode(data.bytes, data.length, &config);
+  if (status != VP8_STATUS_OK) {
+    LOG_ERROR(@"Failed decoding WebP image (%i)", status);
+    free(buffer);
+    return NULL;
+  }
+  
+  CGDataProviderRef provider = CGDataProviderCreateWithData(buffer, buffer, size, _ReleaseDataCallback);
+  CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
+#if __USE_RGBA_WEBP__
+  CGImageRef image = CGImageCreate(config.input.width, config.input.height, 8, 32, rowBytes, colorspace, kCGImageAlphaNoneSkipLast, provider, NULL, true, kCGRenderingIntentDefault);
+#else
+  CGImageRef image = CGImageCreate(config.input.width, config.input.height, 8, 24, rowBytes, colorspace, kCGImageAlphaNone, provider, NULL, true, kCGRenderingIntentDefault);
+#endif
+  CGColorSpaceRelease(colorspace);
+  CGDataProviderRelease(provider);
+  if (image == NULL) {
+    return NULL;
+  }
+  
+  CGImageRef imageRef = CreateScaledImage(image, targetSize, fillMode ? kImageScalingMode_AspectFill : kImageScalingMode_AspectFit, [[UIColor blackColor] CGColor]);
+  CGImageRelease(image);
+  
+  return imageRef;
+}
+
+static CGImageRef _CreateCGImageFromData(NSData* data, CGSize targetSize, BOOL fillMode) {
+  CGImageRef imageRef = NULL;
+  CGImageSourceRef source = CGImageSourceCreateWithData((CFDataRef)data, NULL);
+  if (source) {
+    CGImageRef image = CGImageSourceCreateImageAtIndex(source, 0, NULL);
+    if (image) {
+      imageRef = CreateScaledImage(image, targetSize, fillMode ? kImageScalingMode_AspectFill : kImageScalingMode_AspectFit, [[UIColor blackColor] CGColor]);
+      CGImageRelease(image);
+    }
+    CFRelease(source);
   }
   return imageRef;
+}
+
+CGImageRef CreateCGImageFromFileData(NSData* data, NSString* extension, CGSize targetSize, BOOL fillMode) {
+  CGImageRef imageRef = NULL;
+  if (![extension caseInsensitiveCompare:@"jpg"] || ![extension caseInsensitiveCompare:@"jpeg"]) {
+    imageRef = _CreateCGImageFromJPEGData(data, targetSize, fillMode);
+  } else if (![extension caseInsensitiveCompare:@"webp"]) {
+    imageRef = _CreateCGImageFromWebPData(data, targetSize, fillMode);
+  } else {
+    imageRef = _CreateCGImageFromData(data, targetSize, fillMode);
+  }
+  return imageRef;
+}
+
+CGImageRef CreateCGImageFromPDFPage(CGPDFPageRef page, CGSize targetSize, BOOL fillMode) {
+  return CreateRenderedPDFPage(page, targetSize, fillMode ? kImageScalingMode_AspectFill : kImageScalingMode_AspectFit, [[UIColor whiteColor] CGColor]);
 }
