@@ -431,7 +431,7 @@ typedef enum {
       if (CGPDFDocumentGetNumberOfPages(document) > 0) {
         CGPDFPageRef page = CGPDFDocumentGetPage(document, 1);
         if (page) {
-          imageRef = CreateCGImageFromPDFPage(page, CGSizeMake(2.0 * size.width, 2 * size.height), YES);  // Render at 2x resolution to ensure good antialiasing
+          imageRef = CreateCGImageFromPDFPage(page, size, YES);
         }
       }
       CGPDFDocumentRelease(document);

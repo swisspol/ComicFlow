@@ -164,14 +164,11 @@
 }
 
 - (void) documentView:(DocumentView*)documentView willShowPageView:(UIView*)view {
-  CFTimeInterval time = CFAbsoluteTimeGetCurrent();
   CGFloat maxPageSize = kMaxPageSize * [[UIScreen mainScreen] scale];
   CGImageRef imageRef = NULL;
-  NSString* extension = nil;
   if (_type == kComicType_PDF) {
     CGPDFDocumentRef document = CGPDFDocumentCreateWithURL((CFURLRef)[NSURL fileURLWithPath:_path]);  // Don't keep CGPDFDocument around as it caches pages content heavily
     if (document) {
-      extension = @"pdf";
       CGPDFPageRef page = CGPDFDocumentGetPage(document, view.tag);
       if (page) {
         imageRef = CreateCGImageFromPDFPage(page, CGSizeMake(maxPageSize, maxPageSize), NO);
@@ -183,7 +180,7 @@
     if ([_contents extractFile:[(ComicPageView*)view file] toPath:temp]) {
       NSData* data = [[NSData alloc] initWithContentsOfFile:temp];
       if (data) {
-        extension = [[(ComicPageView*)view file] pathExtension];
+        NSString* extension = [[(ComicPageView*)view file] pathExtension];
         imageRef = CreateCGImageFromFileData(data, extension, CGSizeMake(maxPageSize, maxPageSize), NO);
         [data release];
       }
@@ -195,9 +192,6 @@
     [(ComicPageView*)view displayImage:image];
     [image release];
     view.backgroundColor = [UIColor blackColor];
-    LOG_VERBOSE(@"Loaded '%@' page %i resized to %ix%i pixels in %.3f seconds", [extension lowercaseString], view.tag,
-                CGImageGetWidth(imageRef), CGImageGetHeight(imageRef),
-                CFAbsoluteTimeGetCurrent() - time);
     CGImageRelease(imageRef);
   } else {
     view.backgroundColor = [UIColor redColor];

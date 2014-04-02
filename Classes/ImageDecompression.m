@@ -92,11 +92,28 @@ static CGImageRef _CreateCGImageFromJPEGData(NSData* data, CGSize targetSize, BO
   }
   jpeg_mem_src(&dinfo, (unsigned char*)data.bytes, data.length);
   jpeg_read_header(&dinfo, true);  // This sets dinfo.scale_num and dinfo.scale_denom to 1
-  size_t rowBytes = 4 * dinfo.image_width;
+  
+  size_t width = dinfo.image_width;
+  size_t height = dinfo.image_height;
+  unsigned int target_size = MAX(targetSize.width, targetSize.height);
+  if (fillMode) {
+    unsigned int min_size = MIN(width, height);
+    if (min_size > target_size) {
+      dinfo.scale_denom = MIN(1 << (unsigned int)log2f((float)min_size / target_size), 8);
+    }
+  } else {
+    unsigned int max_size = MAX(width, height);
+    if (max_size > target_size) {
+      dinfo.scale_denom = MIN(1 << (unsigned int)log2f((float)max_size / target_size), 8);
+    }
+  }
+  jpeg_calc_output_dimensions(&dinfo);
+  
+  size_t rowBytes = 4 * dinfo.output_width;
   if (rowBytes % 16) {
     rowBytes = ((rowBytes / 16) + 1) * 16;
   }
-  size_t size = dinfo.image_height * rowBytes;
+  size_t size = dinfo.output_height * rowBytes;
   buffer = malloc(size);
   if (buffer == NULL) {
     LOG_ERROR(@"Failed allocating memory for JPEG buffer");
@@ -112,7 +129,7 @@ static CGImageRef _CreateCGImageFromJPEGData(NSData* data, CGSize targetSize, BO
   jpeg_start_decompress(&dinfo);
   JDIMENSION scanline = 0;
   unsigned char* base_address = (unsigned char*)buffer;
-  while (scanline < dinfo.image_height) {
+  while (scanline < dinfo.output_height) {
     JDIMENSION lines = jpeg_read_scanlines(&dinfo, (JSAMPARRAY)&base_address, dinfo.rec_outbuf_height);
     scanline += lines;
     base_address += lines * rowBytes;
@@ -123,23 +140,17 @@ static CGImageRef _CreateCGImageFromJPEGData(NSData* data, CGSize targetSize, BO
   CGDataProviderRef provider = CGDataProviderCreateWithData(buffer, buffer, size, _ReleaseDataCallback);
   CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
 #if __USE_RGBX_JPEG__
-  CGImageRef image = CGImageCreate(dinfo.image_width, dinfo.image_height, 8, 32, rowBytes, colorspace, kCGImageAlphaNoneSkipLast, provider, NULL, true, kCGRenderingIntentDefault);
+  CGImageRef imageRef = CGImageCreate(dinfo.output_width, dinfo.output_height, 8, 32, rowBytes, colorspace, kCGImageAlphaNoneSkipLast, provider, NULL, true, kCGRenderingIntentDefault);
 #else
-  CGImageRef image = CGImageCreate(dinfo.image_width, dinfo.image_height, 8, 24, rowBytes, colorspace, kCGImageAlphaNone, provider, NULL, true, kCGRenderingIntentDefault);
+  CGImageRef imageRef = CGImageCreate(dinfo.output_width, dinfo.output_height, 8, 24, rowBytes, colorspace, kCGImageAlphaNone, provider, NULL, true, kCGRenderingIntentDefault);
 #endif
   CGColorSpaceRelease(colorspace);
   CGDataProviderRelease(provider);
-  if (image == NULL) {
-    return NULL;
-  }
-  
-  CGImageRef imageRef = CreateScaledImage(image, targetSize, fillMode ? kImageScalingMode_AspectFill : kImageScalingMode_AspectFit, [[UIColor blackColor] CGColor]);
-  CGImageRelease(image);
   
   return imageRef;
 }
 
-static CGImageRef _CreateCGImageFromWebPData(NSData* data, CGSize targetSize, BOOL fillMode) {
+static CGImageRef _CreateCGImageFromWebPData(NSData* data) {
   static uint32_t cores = 0;
   if (cores == 0) {
     size_t length = sizeof(cores);
@@ -191,48 +202,58 @@ static CGImageRef _CreateCGImageFromWebPData(NSData* data, CGSize targetSize, BO
   CGDataProviderRef provider = CGDataProviderCreateWithData(buffer, buffer, size, _ReleaseDataCallback);
   CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
 #if __USE_RGBA_WEBP__
-  CGImageRef image = CGImageCreate(config.input.width, config.input.height, 8, 32, rowBytes, colorspace, kCGImageAlphaNoneSkipLast, provider, NULL, true, kCGRenderingIntentDefault);
+  CGImageRef imageRef = CGImageCreate(config.input.width, config.input.height, 8, 32, rowBytes, colorspace, kCGImageAlphaNoneSkipLast, provider, NULL, true, kCGRenderingIntentDefault);
 #else
-  CGImageRef image = CGImageCreate(config.input.width, config.input.height, 8, 24, rowBytes, colorspace, kCGImageAlphaNone, provider, NULL, true, kCGRenderingIntentDefault);
+  CGImageRef imageRef = CGImageCreate(config.input.width, config.input.height, 8, 24, rowBytes, colorspace, kCGImageAlphaNone, provider, NULL, true, kCGRenderingIntentDefault);
 #endif
   CGColorSpaceRelease(colorspace);
   CGDataProviderRelease(provider);
-  if (image == NULL) {
-    return NULL;
-  }
-  
-  CGImageRef imageRef = CreateScaledImage(image, targetSize, fillMode ? kImageScalingMode_AspectFill : kImageScalingMode_AspectFit, [[UIColor blackColor] CGColor]);
-  CGImageRelease(image);
   
   return imageRef;
 }
 
-static CGImageRef _CreateCGImageFromData(NSData* data, CGSize targetSize, BOOL fillMode) {
+static CGImageRef _CreateCGImageFromData(NSData* data) {
   CGImageRef imageRef = NULL;
   CGImageSourceRef source = CGImageSourceCreateWithData((CFDataRef)data, NULL);
   if (source) {
-    CGImageRef image = CGImageSourceCreateImageAtIndex(source, 0, NULL);
-    if (image) {
-      imageRef = CreateScaledImage(image, targetSize, fillMode ? kImageScalingMode_AspectFill : kImageScalingMode_AspectFit, [[UIColor blackColor] CGColor]);
-      CGImageRelease(image);
-    }
+    imageRef = CGImageSourceCreateImageAtIndex(source, 0, NULL);
     CFRelease(source);
   }
   return imageRef;
 }
 
-CGImageRef CreateCGImageFromFileData(NSData* data, NSString* extension, CGSize targetSize, BOOL fillMode) {
+CGImageRef CreateCGImageFromFileData(NSData* data, NSString* extension, CGSize targetSize, BOOL thumbnailMode) {
+  CFTimeInterval time = CFAbsoluteTimeGetCurrent();
   CGImageRef imageRef = NULL;
   if (![extension caseInsensitiveCompare:@"jpg"] || ![extension caseInsensitiveCompare:@"jpeg"]) {
-    imageRef = _CreateCGImageFromJPEGData(data, targetSize, fillMode);
+    imageRef = _CreateCGImageFromJPEGData(data, targetSize, thumbnailMode);
   } else if (![extension caseInsensitiveCompare:@"webp"]) {
-    imageRef = _CreateCGImageFromWebPData(data, targetSize, fillMode);
+    imageRef = _CreateCGImageFromWebPData(data);
   } else {
-    imageRef = _CreateCGImageFromData(data, targetSize, fillMode);
+    imageRef = _CreateCGImageFromData(data);
+  }
+  if (imageRef) {
+    if (thumbnailMode || (CGImageGetWidth(imageRef) > (size_t)targetSize.width) || (CGImageGetHeight(imageRef) > (size_t)targetSize.height)) {
+      CGImageRef scaledImageRef = CreateScaledImage(imageRef, targetSize, thumbnailMode ? kImageScalingMode_AspectFill : kImageScalingMode_AspectFit, [[UIColor blackColor] CGColor]);
+      if (scaledImageRef) {
+        LOG_VERBOSE(@"Decompressed '%@' image of %ix%i pixels and rescaled to %ix%i pixels in %.3f seconds", [extension lowercaseString],
+                    CGImageGetWidth(imageRef), CGImageGetHeight(imageRef), CGImageGetWidth(scaledImageRef), CGImageGetHeight(scaledImageRef), CFAbsoluteTimeGetCurrent() - time);
+      }
+      CGImageRelease(imageRef);
+      imageRef = scaledImageRef;
+    } else {
+      LOG_VERBOSE(@"Decompressed '%@' image of %ix%i pixels in %.3f seconds", [extension lowercaseString],
+                  CGImageGetWidth(imageRef), CGImageGetHeight(imageRef), CFAbsoluteTimeGetCurrent() - time);
+    }
   }
   return imageRef;
 }
 
-CGImageRef CreateCGImageFromPDFPage(CGPDFPageRef page, CGSize targetSize, BOOL fillMode) {
-  return CreateRenderedPDFPage(page, targetSize, fillMode ? kImageScalingMode_AspectFill : kImageScalingMode_AspectFit, [[UIColor whiteColor] CGColor]);
+CGImageRef CreateCGImageFromPDFPage(CGPDFPageRef page, CGSize targetSize, BOOL thumbnailMode) {
+  // Render at 2x resolution to ensure good antialiasing
+  if (thumbnailMode) {
+    targetSize.width *= 2.0;
+    targetSize.height *= 2.0;
+  }
+  return CreateRenderedPDFPage(page, targetSize, thumbnailMode ? kImageScalingMode_AspectFill : kImageScalingMode_AspectFit, [[UIColor whiteColor] CGColor]);
 }
