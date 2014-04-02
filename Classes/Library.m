@@ -239,14 +239,17 @@ typedef enum {
 - (id) init {
   if ((self = [super init])) {
     _screenScale = [[UIScreen mainScreen] scale];
+    _comicPlaceholderImageRef = CGImageRetain([[UIImage imageWithContentsOfFile:
+                                              [[NSBundle mainBundle] pathForResource:@"Comic-Placeholder" ofType:@"png"]] CGImage]);
+    CHECK(_comicPlaceholderImageRef);
     _comicBackgroundImageRef = CGImageRetain([[UIImage imageWithContentsOfFile:
-                                             [[NSBundle mainBundle] pathForResource:@"Comic" ofType:@"png"]] CGImage]);
+                                             [[NSBundle mainBundle] pathForResource:@"Comic-Background" ofType:@"png"]] CGImage]);
     CHECK(_comicBackgroundImageRef);
     _comicScreenImageRef = CGImageRetain([[UIImage imageWithContentsOfFile:
                                          [[NSBundle mainBundle] pathForResource:@"Comic-Screen" ofType:@"png"]] CGImage]);
     CHECK(_comicScreenImageRef);
     _collectionBackgroundImageRef = CGImageRetain([[UIImage imageWithContentsOfFile:
-                                                  [[NSBundle mainBundle] pathForResource:@"Collection" ofType:@"png"]] CGImage]);
+                                                  [[NSBundle mainBundle] pathForResource:@"Collection-Background" ofType:@"png"]] CGImage]);
     CHECK(_collectionBackgroundImageRef);
     _collectionScreenImageRef = CGImageRetain([[UIImage imageWithContentsOfFile:
                                               [[NSBundle mainBundle] pathForResource:@"Collection-Screen" ofType:@"png"]] CGImage]);
@@ -514,49 +517,50 @@ typedef enum {
     
     // Process comic
     CGImageRef imageRef = [self _copyCoverImageFromComicAtPath:path withArchiveType:type forSize:CGSizeMake(kComicCoverWidth, kComicCoverHeight)];
-    if (imageRef) {
-      NSData* data = [self _thumbnailDataForComicWithCoverImage:imageRef];
-      if (data) {
+    if (imageRef == NULL) {
+      imageRef = CGImageRetain(_comicPlaceholderImageRef);
+    }
+    NSData* data = [self _thumbnailDataForComicWithCoverImage:imageRef];
+    if (data) {
 #if __STORE_THUMBNAILS_IN_DATABASE__
-        Thumbnail* thumbnail = [[[Thumbnail alloc] init] autorelease];
-        thumbnail.data = data;
-        if (![connection insertObject:thumbnail]) {
-          thumbnail = nil;
-        }
+      Thumbnail* thumbnail = [[[Thumbnail alloc] init] autorelease];
+      thumbnail.data = data;
+      if (![connection insertObject:thumbnail]) {
+        thumbnail = nil;
+      }
 #else
-        NSString* thumbnail = [[[NSProcessInfo processInfo] globallyUniqueString] stringByAppendingPathExtension:@"png"];
-        if (![data writeToFile:[[LibraryConnection libraryApplicationDataPath] stringByAppendingPathComponent:thumbnail] atomically:YES]) {
-          thumbnail = nil;
-        }
+      NSString* thumbnail = [[[NSProcessInfo processInfo] globallyUniqueString] stringByAppendingPathExtension:@"png"];
+      if (![data writeToFile:[[LibraryConnection libraryApplicationDataPath] stringByAppendingPathComponent:thumbnail] atomically:YES]) {
+        thumbnail = nil;
+      }
 #endif
-        if (thumbnail) {
-          comic = [[[Comic alloc] init] autorelease];
-          comic.collection = collection.sqlRowID;
-          comic.name = name;
+      if (thumbnail) {
+        comic = [[[Comic alloc] init] autorelease];
+        comic.collection = collection.sqlRowID;
+        comic.name = name;
 #if __STORE_THUMBNAILS_IN_DATABASE__
-          comic.thumbnail = thumbnail.sqlRowID;
+        comic.thumbnail = thumbnail.sqlRowID;
 #else
-          comic.thumbnail = thumbnail;
+        comic.thumbnail = thumbnail;
 #endif
-          comic.time = CFAbsoluteTimeGetCurrent();
-          comic.status = -1;
-          if ([connection insertObject:comic]) {
-            DatabaseSQLRowID rowID = comic.sqlRowID;
-            [[NSFileManager defaultManager] setExtendedAttributeData:[NSData dataWithBytes:&rowID length:sizeof(DatabaseSQLRowID)]
-                                                            withName:kLibraryExtendedAttribute
-                                                       forFileAtPath:path];
-          } else {
-            comic = nil;
-          }
+        comic.time = CFAbsoluteTimeGetCurrent();
+        comic.status = -1;
+        if ([connection insertObject:comic]) {
+          DatabaseSQLRowID rowID = comic.sqlRowID;
+          [[NSFileManager defaultManager] setExtendedAttributeData:[NSData dataWithBytes:&rowID length:sizeof(DatabaseSQLRowID)]
+                                                          withName:kLibraryExtendedAttribute
+                                                     forFileAtPath:path];
+        } else {
+          comic = nil;
         }
       }
-      CGImageRelease(imageRef);
     }
-    if (comic) {
-      LOG_VERBOSE(@"Imported comic \"%@\" (%i)", name, comic.sqlRowID);
-    } else {
-      LOG_ERROR(@"Failed importing comic \"%@\"", name);
-    }
+    CGImageRelease(imageRef);
+  }
+  if (comic) {
+    LOG_VERBOSE(@"Imported comic \"%@\" (%i)", name, comic.sqlRowID);
+  } else {
+    LOG_ERROR(@"Failed importing comic \"%@\"", name);
   }
 }
 
@@ -772,22 +776,23 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
 #else
           NSString* thumbnail = nil;
 #endif
-          if (imageRef) {
-            NSData* data = [self _thumbnailDataForCollectionWithCoverImage:imageRef name:directory];
-            if (data) {
+          if (imageRef == NULL) {
+            imageRef = CGImageRetain(_comicPlaceholderImageRef);
+          }
+          NSData* data = [self _thumbnailDataForCollectionWithCoverImage:imageRef name:directory];
+          if (data) {
 #if __STORE_THUMBNAILS_IN_DATABASE__
-              thumbnail = [[[Thumbnail alloc] init] autorelease];
-              thumbnail.data = data;
-              if (![connection insertObject:thumbnail]) {
-                thumbnail = nil;
-              }
-#else
-              thumbnail = [[[NSProcessInfo processInfo] globallyUniqueString] stringByAppendingPathExtension:@"png"];
-              if (![data writeToFile:[[LibraryConnection libraryApplicationDataPath] stringByAppendingPathComponent:thumbnail] atomically:YES]) {
-                thumbnail = nil;
-              }
-#endif
+            thumbnail = [[[Thumbnail alloc] init] autorelease];
+            thumbnail.data = data;
+            if (![connection insertObject:thumbnail]) {
+              thumbnail = nil;
             }
+#else
+            thumbnail = [[[NSProcessInfo processInfo] globallyUniqueString] stringByAppendingPathExtension:@"png"];
+            if (![data writeToFile:[[LibraryConnection libraryApplicationDataPath] stringByAppendingPathComponent:thumbnail] atomically:YES]) {
+              thumbnail = nil;
+            }
+#endif
           }
 #if __STORE_THUMBNAILS_IN_DATABASE__
           collection.thumbnail = thumbnail.sqlRowID;
