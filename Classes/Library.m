@@ -697,7 +697,8 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
           if (![collection.name isEqualToString:directory]) {
             collection.name = directory;
             [connection updateObject:collection];
-            LOG_VERBOSE(@"Updated collection \"%@\" (%i)", directory, collection.sqlRowID);
+            LOG_VERBOSE(@"Renamed collection \"%@\" (%i)", directory, collection.sqlRowID);
+            needsUpdate = YES;
           }
         }
       }
