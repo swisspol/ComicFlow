@@ -25,13 +25,30 @@
 #import "ImageUtilities.h"
 #import "Logging.h"
 
+#define __USE_LIBJPEG_TURBO__ 0
 #define __USE_RGBX_JPEG__ 0  // RGB appears a bit faster than RGBX on iPad Mini
 #define __USE_RGBA_WEBP__ 0  // RGB appears a bit faster than RGBA on iPad Mini
+
+#if __USE_LIBJPEG_TURBO__
 
 typedef struct {
   struct jpeg_error_mgr error_mgr;
   jmp_buf jmp_buffer;
 } ErrorManager;
+
+#endif
+
+BOOL IsImageFileExtensionSupported(NSString* extension) {
+  return ![extension caseInsensitiveCompare:@"jpg"] || ![extension caseInsensitiveCompare:@"jpeg"] ||
+         ![extension caseInsensitiveCompare:@"png"] || ![extension caseInsensitiveCompare:@"gif"] ||
+         ![extension caseInsensitiveCompare:@"webp"];
+}
+
+static void _ReleaseDataCallback(void* info, const void* data, size_t size) {
+  free(info);
+}
+
+#if __USE_LIBJPEG_TURBO__
 
 // Replace default implementation to log error and use longjmp() instead of simply calling exit()
 static void _ErrorExit(j_common_ptr cinfo) {
@@ -63,16 +80,6 @@ static void _EmitMessage(j_common_ptr cinfo, int msg_level) {
     (*errorManager->error_mgr.format_message)(cinfo, buffer);
     LOG_INFO(@"libjpeg message (%i): %s", errorManager->error_mgr.msg_code, buffer);
   }
-}
-
-BOOL IsImageFileExtensionSupported(NSString* extension) {
-  return ![extension caseInsensitiveCompare:@"jpg"] || ![extension caseInsensitiveCompare:@"jpeg"] ||
-         ![extension caseInsensitiveCompare:@"png"] || ![extension caseInsensitiveCompare:@"gif"] ||
-         ![extension caseInsensitiveCompare:@"webp"];
-}
-
-static void _ReleaseDataCallback(void* info, const void* data, size_t size) {
-  free(info);
 }
 
 static CGImageRef _CreateCGImageFromJPEGData(NSData* data, CGSize targetSize, BOOL fillMode) {
@@ -150,6 +157,8 @@ static CGImageRef _CreateCGImageFromJPEGData(NSData* data, CGSize targetSize, BO
   return imageRef;
 }
 
+#endif
+
 static CGImageRef _CreateCGImageFromWebPData(NSData* data) {
   static uint32_t cores = 0;
   if (cores == 0) {
@@ -225,9 +234,12 @@ static CGImageRef _CreateCGImageFromData(NSData* data) {
 CGImageRef CreateCGImageFromFileData(NSData* data, NSString* extension, CGSize targetSize, BOOL thumbnailMode) {
   CFTimeInterval time = CFAbsoluteTimeGetCurrent();
   CGImageRef imageRef = NULL;
+#if __USE_LIBJPEG_TURBO__
   if (![extension caseInsensitiveCompare:@"jpg"] || ![extension caseInsensitiveCompare:@"jpeg"]) {
     imageRef = _CreateCGImageFromJPEGData(data, targetSize, thumbnailMode);
-  } else if (![extension caseInsensitiveCompare:@"webp"]) {
+  } else
+#endif
+  if (![extension caseInsensitiveCompare:@"webp"]) {
     imageRef = _CreateCGImageFromWebPData(data);
   } else {
     imageRef = _CreateCGImageFromData(data);
