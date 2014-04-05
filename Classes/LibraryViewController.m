@@ -196,14 +196,14 @@ static void __DisplayQueueCallBack(void* info) {
   if ((self = [super init])) {
     _window = window;
     
-    _collectionImage = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Collection" ofType:@"png"]];
+    _comicImage = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Comic-Background" ofType:@"png"]];
+    CHECK(_comicImage);
+    _collectionImage = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Collection-Background" ofType:@"png"]];
     CHECK(_collectionImage);
     _newImage = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"New" ofType:@"png"]];
     CHECK(_newImage);
     _ribbonImage = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Ribbon" ofType:@"png"]];
     CHECK(_ribbonImage);
-    _comicImage = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Comic" ofType:@"png"]];
-    CHECK(_comicImage);
     
     DatabaseSQLRowID collectionID = [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_CurrentCollection];
     if (collectionID) {
