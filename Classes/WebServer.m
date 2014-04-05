@@ -100,7 +100,7 @@ static NSInteger _connectionCount = 0;
 
 - (BOOL) shouldUploadFileAtPath:(NSString*)path withTemporaryFile:(NSString*)tempPath {
   if ([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerMode] == kServerMode_Limited) {
-    LOG_ERROR(@"Web Server is in limited mode");
+    LOG_ERROR(@"Upload rejected: web server is in limited mode");
     return NO;
   }
   return YES;
