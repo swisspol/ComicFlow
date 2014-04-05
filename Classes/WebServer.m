@@ -99,7 +99,11 @@ static NSInteger _connectionCount = 0;
 }
 
 - (BOOL) shouldUploadFileAtPath:(NSString*)path withTemporaryFile:(NSString*)tempPath {
-  return ([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerMode] != kServerMode_Limited ? YES : NO);
+  if ([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerMode] == kServerMode_Limited) {
+    LOG_ERROR(@"Web Server is in limited mode");
+    return NO;
+  }
+  return YES;
 }
 
 - (void) webUploader:(GCDWebUploader*)uploader didDownloadFileAtPath:(NSString*)path {
