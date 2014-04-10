@@ -97,19 +97,12 @@
           _contents = [[NSNumber alloc] initWithInteger:CGPDFDocumentGetNumberOfPages(document)];
           CGPDFDocumentRelease(document);
         }
-      } else if (![extension caseInsensitiveCompare:@"zip"] || ![extension caseInsensitiveCompare:@"cbz"]) {
+      } else if (![extension caseInsensitiveCompare:@"zip"] || ![extension caseInsensitiveCompare:@"cbz"] || ![extension caseInsensitiveCompare:@"rar"] || ![extension caseInsensitiveCompare:@"cbr"]) {
         _type = kComicType_ZIP;
         _contents = [[MiniZip alloc] initWithArchiveAtPath:_path];
-        if (!_contents) {
+        if (_contents == nil) {
           _type = kComicType_RAR;
-          _contents = [[UnRAR alloc] initWithArchiveAtPath:_path];  // Attempt to fall back to CBR in case extension is wrong
-        }
-      } else if (![extension caseInsensitiveCompare:@"rar"] || ![extension caseInsensitiveCompare:@"cbr"]) {
-        _type = kComicType_RAR;
-        _contents = [[UnRAR alloc] initWithArchiveAtPath:_path];
-        if (!_contents) {
-          _type = kComicType_ZIP;
-          _contents = [[MiniZip alloc] initWithArchiveAtPath:_path];  // Attempt to fall back to CBZ in case extension is wrong
+          _contents = [[UnRAR alloc] initWithArchiveAtPath:_path];  // This does not actually sniff the file contrary to MiniZip so it must come second
         }
       }
     }

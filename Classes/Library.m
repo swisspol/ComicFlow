@@ -440,17 +440,9 @@ typedef enum {
       CGPDFDocumentRelease(document);
     }
   } else {
-    id archive = nil;
-    if (type == kArchiveType_ZIP) {
-      archive = [[MiniZip alloc] initWithArchiveAtPath:path];
-      if (!archive) {
-        archive = [[UnRAR alloc] initWithArchiveAtPath:path];  // Attempt to fall back to CBR in case extension is wrong
-      }
-    } else if (type == kArchiveType_RAR) {
-      archive = [[UnRAR alloc] initWithArchiveAtPath:path];
-      if (!archive) {
-        archive = [[MiniZip alloc] initWithArchiveAtPath:path];  // Attempt to fall back to CBZ in case extension is wrong
-      }
+    id archive = [[MiniZip alloc] initWithArchiveAtPath:path];
+    if (archive == nil) {
+      archive = [[UnRAR alloc] initWithArchiveAtPath:path];  // This does not actually sniff the file contrary to MiniZip so it must come second
     }
     [archive setSkipInvisibleFiles:YES];
     NSString* cover = nil;
