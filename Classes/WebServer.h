@@ -13,7 +13,11 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#if __USE_WEBDAV_SERVER__
+#import "GCDWebDAVServer.h"
+#else
 #import "GCDWebUploader.h"
+#endif
 #import "GCDWebServerConnection.h"
 
 @class WebServer;
@@ -26,7 +30,12 @@
 - (void) webServerDidDisconnect:(WebServer*)server;
 @end
 
-@interface WebServer : GCDWebUploader <GCDWebUploaderDelegate> {
+#if __USE_WEBDAV_SERVER__
+@interface WebServer : GCDWebDAVServer <GCDWebDAVServerDelegate>
+#else
+@interface WebServer : GCDWebUploader <GCDWebUploaderDelegate>
+#endif
+{
 @private
   id<WebServerDelegate> _serverDelegate;
 }

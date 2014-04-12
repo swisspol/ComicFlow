@@ -24,6 +24,8 @@
 #define __STORE_THUMBNAILS_IN_DATABASE__ 1
 #define __DISPLAY_THUMBNAILS_IN_BACKGROUND__ 1
 
+#define __USE_WEBDAV_SERVER__ 0
+
 #ifndef kCFCoreFoundationVersionNumber_iOS_7_0
 #define kCFCoreFoundationVersionNumber_iOS_7_0 847.20
 #endif

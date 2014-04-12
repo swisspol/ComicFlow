@@ -86,6 +86,7 @@ static NSInteger _connectionCount = 0;
   if ((self = [self initWithUploadDirectory:documentsPath])) {
     self.delegate = self;
     self.allowedFileExtensions = [NSArray arrayWithObjects:@"pdf", @"zip", @"cbz", @"rar", @"cbr", nil];
+#if !__USE_WEBDAV_SERVER__
     self.title = NSLocalizedString(@"SERVER_TITLE", nil);
     self.prologue = [NSString stringWithFormat:NSLocalizedString(@"SERVER_CONTENT", nil), [self.allowedFileExtensions componentsJoinedByString:@", "]];
     if ([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerMode] != kServerMode_Full) {
@@ -94,6 +95,7 @@ static NSInteger _connectionCount = 0;
     self.footer = [NSString stringWithFormat:NSLocalizedString(@"SERVER_FOOTER_FORMAT", nil),
                                              [[UIDevice currentDevice] name],
                                              [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
+#endif
   }
   return self;
 }
@@ -105,6 +107,34 @@ static NSInteger _connectionCount = 0;
   }
   return YES;
 }
+
+#if __USE_WEBDAV_SERVER__
+
+- (void) davServer:(GCDWebDAVServer*)uploader didDownloadFileAtPath:(NSString*)path {
+  [_serverDelegate webServerDidDownloadComic:self];
+}
+
+- (void) davServer:(GCDWebDAVServer*)uploader didUploadFileAtPath:(NSString*)path {
+  [_serverDelegate webServerDidUploadComic:self];
+}
+
+- (void) davServer:(GCDWebDAVServer*)uploader didMoveItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath {
+  [_serverDelegate webServerDidUpdate:self];
+}
+
+- (void) davServer:(GCDWebDAVServer*)uploader didCopyItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath {
+  [_serverDelegate webServerDidUpdate:self];
+}
+
+- (void) davServer:(GCDWebDAVServer*)uploader didDeleteItemAtPath:(NSString*)path {
+  [_serverDelegate webServerDidUpdate:self];
+}
+
+- (void) davServer:(GCDWebDAVServer*)uploader didCreateDirectoryAtPath:(NSString*)path {
+  [_serverDelegate webServerDidUpdate:self];
+}
+
+#else
 
 - (void) webUploader:(GCDWebUploader*)uploader didDownloadFileAtPath:(NSString*)path {
   [_serverDelegate webServerDidDownloadComic:self];
@@ -125,5 +155,7 @@ static NSInteger _connectionCount = 0;
 - (void) webUploader:(GCDWebUploader*)uploader didCreateDirectoryAtPath:(NSString*)path {
   [_serverDelegate webServerDidUpdate:self];
 }
+
+#endif
 
 @end
