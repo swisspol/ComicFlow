@@ -64,7 +64,7 @@
 }
 
 - (id) initWithArchiveAtPath:(NSString*)path {
-  return [self initWithUnzFile:unzOpen([path UTF8String])];
+  return [self initWithUnzFile:unzOpen([path fileSystemRepresentation])];
 }
 
 static voidpf _OpenFunction(voidpf opaque, const char* filename, int mode) {
@@ -253,13 +253,13 @@ static int _ErrorFunction(voidpf opaque, voidpf stream) {
       }
       // Otherwise extract file
       else {
-        FILE* outFile = fopen((const char*)[fullPath UTF8String], "w+");
+        FILE* outFile = fopen([fullPath fileSystemRepresentation], "w+");
         if (outFile == NULL) {
           [manager createDirectoryAtPath:[fullPath stringByDeletingLastPathComponent]
              withIntermediateDirectories:YES
                               attributes:nil
                                    error:nil];
-          outFile = fopen((const char*)[fullPath UTF8String], "w+");  // Some zip files don't contain directory alone before file
+          outFile = fopen([fullPath fileSystemRepresentation], "w+");  // Some zip files don't contain directory alone before file
         }
         if (outFile) {
           while (1) {
@@ -337,7 +337,7 @@ static int _ErrorFunction(voidpf opaque, voidpf stream) {
     
     // If file is required one, extract it
     if (![path hasSuffix:@"/"] && [path isEqualToString:inPath]) {
-      FILE* outFile = fopen((const char*)[outPath UTF8String], "w");
+      FILE* outFile = fopen([outPath fileSystemRepresentation], "w");
       if (outFile) {
         success = YES;
         while (1) {
