@@ -303,6 +303,10 @@
   _navigationControl.numberOfPages = array.count;
   _navigationControl.numberOfMarkers = MIN(array.count, 50);
   _navigationControl.currentPage = _documentView.selectedPageIndex;
+  if (array.count == 0) {
+    _navigationBar.hidden = NO;
+    _navigationControl.hidden = NO;
+  }
   [array release];
 }
 
