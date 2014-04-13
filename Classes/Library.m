@@ -442,7 +442,7 @@ typedef enum {
   } else {
     id archive = [[MiniZip alloc] initWithArchiveAtPath:path];
     if (archive == nil) {
-      archive = [[UnRAR alloc] initWithArchiveAtPath:path];  // This does not actually sniff the file contrary to MiniZip so it must come second
+      archive = [[UnRAR alloc] initWithArchiveAtPath:path];
     }
     [archive setSkipInvisibleFiles:YES];
     NSString* cover = nil;

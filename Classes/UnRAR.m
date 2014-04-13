@@ -38,6 +38,18 @@
 - (id) initWithArchiveAtPath:(NSString*)path {
   if ((self = [super init])) {
     _archivePath = [path copy];
+    
+    struct RAROpenArchiveData archiveData;
+    bzero(&archiveData, sizeof(archiveData));
+    archiveData.ArcName = (char*)[_archivePath fileSystemRepresentation];
+    archiveData.OpenMode = RAR_OM_LIST;
+    HANDLE handle = RAROpenArchive(&archiveData);
+    if (handle) {
+      RARCloseArchive(handle);
+    } else {
+      [self release];
+      return nil;
+    }
   }
   return self;
 }

@@ -102,7 +102,7 @@
         _contents = [[MiniZip alloc] initWithArchiveAtPath:_path];
         if (_contents == nil) {
           _type = kComicType_RAR;
-          _contents = [[UnRAR alloc] initWithArchiveAtPath:_path];  // This does not actually sniff the file contrary to MiniZip so it must come second
+          _contents = [[UnRAR alloc] initWithArchiveAtPath:_path];
         }
       }
     }
