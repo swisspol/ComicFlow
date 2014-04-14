@@ -126,6 +126,9 @@
 }
 
 - (void) dealloc {
+  _documentView.delegate = nil;
+  _navigationControl.delegate = nil;
+  
   [_navigationBar release];
   [_navigationControl release];
   [_contentView release];
@@ -245,6 +248,9 @@
 
 - (void) viewDidUnload {
   [super viewDidUnload];
+  
+  _documentView.delegate = nil;
+  _navigationControl.delegate = nil;
   
   [_pageLabel release];
   [_documentView release];
