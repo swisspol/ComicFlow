@@ -488,7 +488,7 @@
 				E27CFFB8168CA7A200021417 /* UnRAR-3.9.10 */,
 				E2059926121EE21400A271CC /* Resources */,
 				E2293169121E260F00484F9F /* Cooliris-ToolKit */,
-				E286901118FC943E003F9EAE /* CGDWebServer */,
+				E286901118FC943E003F9EAE /* GCDWebServer */,
 				E27664A518F5C52800A034BA /* GCDWebDAVServer */,
 				E22A08FB18EB5E6700A4FF82 /* GCDWebUploader */,
 				29B97323FDCFA39411CA2CEA /* Frameworks and Libraries */,
@@ -778,15 +778,15 @@
 			path = "UnRAR-3.9.10";
 			sourceTree = "<group>";
 		};
-		E286901118FC943E003F9EAE /* CGDWebServer */ = {
+		E286901118FC943E003F9EAE /* GCDWebServer */ = {
 			isa = PBXGroup;
 			children = (
 				E286901218FC943E003F9EAE /* Core */,
 				E286901F18FC943E003F9EAE /* Requests */,
 				E286902818FC943E003F9EAE /* Responses */,
 			);
-			name = CGDWebServer;
-			path = GCDWebServer/CGDWebServer;
+			name = GCDWebServer;
+			path = GCDWebServer/GCDWebServer;
 			sourceTree = "<group>";
 		};
 		E286901218FC943E003F9EAE /* Core */ = {
