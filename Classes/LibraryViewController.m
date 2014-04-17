@@ -73,7 +73,7 @@
 @implementation LibraryViewController
 
 @synthesize gridView=_gridView, navigationBar=_navigationBar, segmentedControl=_segmentedControl, menuView=_menuView,
-            progressView=_progressView, markReadButton=_markReadButton, markNewButton=_markNewButton, updateButton=_updateButton,
+            markReadButton=_markReadButton, markNewButton=_markNewButton, updateButton=_updateButton,
             forceUpdateButton=_forceUpdateButton, serverSwitch=_serverSwitch, addressLabel=_addressLabel,
             infoLabel=_infoLabel, versionLabel=_versionLabel, dimmingSwitch=_dimmingSwitch, purchaseButton=_purchaseButton,
             restoreButton=_restoreButton;
@@ -439,7 +439,6 @@ static void __DisplayQueueCallBack(void* info) {
   _infoLabel.text = nil;
   _versionLabel.text = [NSString stringWithFormat:NSLocalizedString(@"VERSION_FORMAT", nil),
                                                   [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
-  _progressView.progress = 1.0;
   BOOL updating = [[LibraryUpdater sharedUpdater] isUpdating];
   _markReadButton.enabled = !updating;
   _markNewButton.enabled = !updating;
@@ -469,7 +468,6 @@ static void __DisplayQueueCallBack(void* info) {
   self.navigationBar = nil;
   self.segmentedControl = nil;
   self.menuView = nil;
-  self.progressView = nil;
   self.markReadButton = nil;
   self.markNewButton = nil;
   self.updateButton = nil;
@@ -781,7 +779,6 @@ static void __DisplayQueueCallBack(void* info) {
 @implementation LibraryViewController (LibraryUpdaterDelegate)
 
 - (void) libraryUpdaterWillStart:(LibraryUpdater*)library {
-  _progressView.progress = 0.0;
   _markReadButton.enabled = NO;
   _markNewButton.enabled = NO;
   _updateButton.enabled = NO;
@@ -789,7 +786,6 @@ static void __DisplayQueueCallBack(void* info) {
 }
 
 - (void) libraryUpdaterDidContinue:(LibraryUpdater*)library progress:(float)progress {
-  _progressView.progress = progress;
   if (_menuController.popoverVisible) {
     [self _updateStatistics];
   }
@@ -802,7 +798,6 @@ static void __DisplayQueueCallBack(void* info) {
     [self _reloadCurrentCollection];
   }
   
-  _progressView.progress = 1.0;
   _markReadButton.enabled = YES;
   _markNewButton.enabled = YES;
   _updateButton.enabled = YES;

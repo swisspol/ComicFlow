@@ -24,7 +24,6 @@
   UINavigationBar* _navigationBar;
   UISegmentedControl* _segmentedControl;
   UIView* _menuView;
-  UIProgressView* _progressView;
   UIButton* _updateButton;
   UIButton* _forceUpdateButton;
   UIButton* _markReadButton;
@@ -65,7 +64,6 @@
 @property(nonatomic, retain) IBOutlet UINavigationBar* navigationBar;
 @property(nonatomic, retain) IBOutlet UISegmentedControl* segmentedControl;
 @property(nonatomic, retain) IBOutlet UIView* menuView;
-@property(nonatomic, retain) IBOutlet UIProgressView* progressView;
 @property(nonatomic, retain) IBOutlet UIButton* updateButton;
 @property(nonatomic, retain) IBOutlet UIButton* forceUpdateButton;
 @property(nonatomic, retain) IBOutlet UIButton* markReadButton;
