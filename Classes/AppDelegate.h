@@ -29,9 +29,6 @@
   NSTimer* _updateTimer;
   BOOL _needsUpdate;
   WebServer* _webServer;
-  BOOL _serverConnected;
-  BOOL _serverActive;
-  UIBackgroundTaskIdentifier _backgroundTask;
   UIWindow* _dimmingWindow;
   BOOL _purchasing;
 }

@@ -27,7 +27,6 @@
 #import "NetReachability.h"
 
 #define kUpdateDelay 1.0
-#define kDisconnectLatency 1.0
 #define kScreenDimmingOpacity 0.5
 
 @interface AppDelegate () <CrashlyticsDelegate>
@@ -196,8 +195,6 @@
 }
 
 - (void) awakeFromNib {
-  _backgroundTask = UIBackgroundTaskInvalid;
-  
   // Initialize library
   CHECK([LibraryConnection mainConnection]);
 }
@@ -364,23 +361,7 @@
 }
 
 - (void) webServerDidConnect:(WebServer*)server {
-  _serverConnected = YES;
-  
-  if (_serverActive == NO) {
-    DCHECK(_backgroundTask == UIBackgroundTaskInvalid);
-    _backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-      
-      LOG_WARNING(@"Ending background task while Web Server connected");
-      [_webServer stop];
-      [[UIApplication sharedApplication] endBackgroundTask:_backgroundTask];
-      _backgroundTask = UIBackgroundTaskInvalid;
-      
-    }];
-    [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
-    [[UIApplication sharedApplication] showNetworkActivityIndicator];
-    _serverActive = YES;
-    LOG_VERBOSE(@"Web Server did connect");
-  }
+  [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
 }
 
 - (void) webServerDidDownloadComic:(WebServer*)server {
@@ -411,50 +392,13 @@
   _needsUpdate = YES;
 }
 
-- (void) applicationDidEnterBackground:(UIApplication*)application {
-  if (_webServer && !_serverActive) {
-    [_webServer stop];  // Stop web server if not active while entering background
-  }
-  
-  [super applicationDidEnterBackground:application];
-}
-
-- (void) applicationWillEnterForeground:(UIApplication*)application {
-  [super applicationWillEnterForeground:application];
-  
-  // Restart web server if stopped previously while in background
-  if (_webServer && !_serverActive) {
-    [_webServer start];
-  }
-}
-
-- (void) _serverDidDisconnect {
-  if (_serverConnected == NO) {
-    if (_serverActive == YES) {
-      LOG_VERBOSE(@"Web Server did disconnect");
-      _serverActive = NO;
-      [[UIApplication sharedApplication] hideNetworkActivityIndicator];
-      [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
-      if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateBackground) {
-        [_webServer stop];  // If we are in background, stop server as it can't accept new connections anyway
-      }
-      if (_backgroundTask != UIBackgroundTaskInvalid) {
-        [[UIApplication sharedApplication] endBackgroundTask:_backgroundTask];
-        _backgroundTask = UIBackgroundTaskInvalid;
-      }
-      
-      if (_needsUpdate) {
-        [self _updateTimer:nil];
-        _needsUpdate = NO;
-      }
-    }
-  }
-}
-
 - (void) webServerDidDisconnect:(WebServer*)server {
-  _serverConnected = NO;
+  [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
   
-  [self performSelector:@selector(_serverDidDisconnect) withObject:nil afterDelay:kDisconnectLatency];
+  if (_needsUpdate) {
+    [self _updateTimer:nil];
+    _needsUpdate = NO;
+  }
 }
 
 - (void) disableWebServer {

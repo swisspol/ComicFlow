@@ -14,72 +14,15 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #import "AppDelegate.h"
-#import "Library.h"
 #import "Defaults.h"
 
 #import "Logging.h"
-#import "Extensions_Foundation.h"
 
-static NSString* _serverName = nil;
-static dispatch_queue_t _connectionQueue = NULL;
-static NSInteger _connectionCount = 0;
-
-@implementation WebServerConnection
-
-- (void) open {
-  [super open];
-  
-  dispatch_sync(_connectionQueue, ^{
-    DCHECK(_connectionCount >= 0);
-    if (_connectionCount == 0) {
-      WebServer* server = (WebServer*)self.server;
-      dispatch_async(dispatch_get_main_queue(), ^{
-        [server.serverDelegate webServerDidConnect:server];
-      });
-    }
-    _connectionCount += 1;
-  });
-}
-
-- (void) close {
-  dispatch_sync(_connectionQueue, ^{
-    DCHECK(_connectionCount > 0);
-    _connectionCount -= 1;
-    if (_connectionCount == 0) {
-      WebServer* server = (WebServer*)self.server;
-      dispatch_async(dispatch_get_main_queue(), ^{
-        [server.serverDelegate webServerDidDisconnect:server];
-      });
-    }
-  });
-  
-  [super close];
-}
-
-@end
+#define kDisconnectLatency 1.0
 
 @implementation WebServer
 
 @synthesize serverDelegate=_serverDelegate;
-
-+ (void) initialize {
-  if (_serverName == nil) {
-    _serverName = [[NSString alloc] initWithFormat:NSLocalizedString(@"SERVER_NAME_FORMAT", nil),
-                                                   [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"],
-                                                   [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]];
-  }
-  if (_connectionQueue == NULL) {
-    _connectionQueue = dispatch_queue_create(NULL, DISPATCH_QUEUE_SERIAL);
-  }
-}
-
-+ (Class) connectionClass {
-  return [WebServerConnection class];
-}
-
-+ (NSString*) serverName {
-  return _serverName;
-}
 
 - (id) init {
   NSString* documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
@@ -100,6 +43,16 @@ static NSInteger _connectionCount = 0;
   return self;
 }
 
+- (BOOL)startWithOptions:(NSDictionary*)options {
+  NSMutableDictionary* newOptions = [NSMutableDictionary dictionaryWithDictionary:options];
+  NSString* name = [NSString stringWithFormat:NSLocalizedString(@"SERVER_NAME_FORMAT", nil),
+                    [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"],
+                    [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]];
+  [newOptions setObject:name forKey:GCDWebServerOption_ServerName];
+  [newOptions setObject:[NSNumber numberWithDouble:kDisconnectLatency] forKey:GCDWebServerOption_ConnectedStateCoalescingInterval];
+  return [super startWithOptions:newOptions];
+}
+
 - (BOOL) shouldUploadFileAtPath:(NSString*)path withTemporaryFile:(NSString*)tempPath {
   if ([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerMode] == kServerMode_Limited) {
     LOG_ERROR(@"Upload rejected: web server is in limited mode");
@@ -108,29 +61,33 @@ static NSInteger _connectionCount = 0;
   return YES;
 }
 
+- (void) webServerDidConnect:(GCDWebServer*)server {
+  [_serverDelegate webServerDidConnect:self];
+}
+
 #if __USE_WEBDAV_SERVER__
 
-- (void) davServer:(GCDWebDAVServer*)uploader didDownloadFileAtPath:(NSString*)path {
+- (void) davServer:(GCDWebDAVServer*)server didDownloadFileAtPath:(NSString*)path {
   [_serverDelegate webServerDidDownloadComic:self];
 }
 
-- (void) davServer:(GCDWebDAVServer*)uploader didUploadFileAtPath:(NSString*)path {
+- (void) davServer:(GCDWebDAVServer*)server didUploadFileAtPath:(NSString*)path {
   [_serverDelegate webServerDidUploadComic:self];
 }
 
-- (void) davServer:(GCDWebDAVServer*)uploader didMoveItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath {
+- (void) davServer:(GCDWebDAVServer*)server didMoveItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath {
   [_serverDelegate webServerDidUpdate:self];
 }
 
-- (void) davServer:(GCDWebDAVServer*)uploader didCopyItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath {
+- (void) davServer:(GCDWebDAVServer*)server didCopyItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath {
   [_serverDelegate webServerDidUpdate:self];
 }
 
-- (void) davServer:(GCDWebDAVServer*)uploader didDeleteItemAtPath:(NSString*)path {
+- (void) davServer:(GCDWebDAVServer*)server didDeleteItemAtPath:(NSString*)path {
   [_serverDelegate webServerDidUpdate:self];
 }
 
-- (void) davServer:(GCDWebDAVServer*)uploader didCreateDirectoryAtPath:(NSString*)path {
+- (void) davServer:(GCDWebDAVServer*)server didCreateDirectoryAtPath:(NSString*)path {
   [_serverDelegate webServerDidUpdate:self];
 }
 
@@ -157,5 +114,9 @@ static NSInteger _connectionCount = 0;
 }
 
 #endif
+
+- (void) webServerDidDisconnect:(GCDWebServer*)server {
+  [_serverDelegate webServerDidDisconnect:self];
+}
 
 @end
