@@ -18,7 +18,6 @@
 #else
 #import "GCDWebUploader.h"
 #endif
-#import "GCDWebServerConnection.h"
 
 @class WebServer;
 
@@ -40,7 +39,4 @@
   id<WebServerDelegate> _serverDelegate;
 }
 @property(nonatomic, assign) id<WebServerDelegate> serverDelegate;
-@end
-
-@interface WebServerConnection : GCDWebServerConnection
 @end
