@@ -16,7 +16,7 @@
 #define kDefaultKey_LibraryVersion @"libraryVersion"
 #define kLibraryVersion 1
 
-#define kDefaultKey_ServerEnabled @"serverEnabled"
+#define kDefaultKey_ServerType @"serverType"
 #define kDefaultKey_ServerMode @"serverMode"
 typedef enum {
   kServerMode_Limited = -1,

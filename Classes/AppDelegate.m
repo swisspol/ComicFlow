@@ -173,7 +173,6 @@
   // Setup initial user defaults
   NSMutableDictionary* defaults = [[NSMutableDictionary alloc] init];
   [defaults setObject:[NSNumber numberWithInteger:0] forKey:kDefaultKey_LibraryVersion];
-  [defaults setObject:[NSNumber numberWithBool:YES] forKey:kDefaultKey_ServerEnabled];
   [defaults setObject:[NSNumber numberWithInteger:kServerMode_Trial] forKey:kDefaultKey_ServerMode];
   [defaults setObject:[NSNumber numberWithInteger:kTrialMaxUploads] forKey:kDefaultKey_UploadsRemaining];
   [defaults setObject:[NSNumber numberWithBool:NO] forKey:kDefaultKey_ScreenDimmed];
@@ -260,10 +259,8 @@
                                            repeats:YES];
   [[NSRunLoop currentRunLoop] addTimer:_updateTimer forMode:NSRunLoopCommonModes];
   
-  // Start web server if necessary
-  if ([[NSUserDefaults standardUserDefaults] boolForKey:kDefaultKey_ServerEnabled]) {
-    [self enableWebServer];
-  }
+  // Initialize web server
+  [[WebServer sharedWebServer] setDelegate:self];
   
   // Show window
   self.window.backgroundColor = nil;
@@ -304,13 +301,6 @@
   return NO;
 }
 
-- (void) applicationWillTerminate:(UIApplication*)application {
-  // Stop web server
-  [_webServer stop];
-  
-  [super applicationWillTerminate:application];
-}
-
 - (void) saveState {
   [(LibraryViewController*)self.viewController saveState];
 }
@@ -337,10 +327,6 @@
 
 @implementation AppDelegate (WebServer)
 
-- (WebServer*) webServer {
-  return _webServer;
-}
-
 - (NSString*) _serverMode {
   switch ([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerMode]) {
     case kServerMode_Limited: return @"Limited";
@@ -348,16 +334,6 @@
     case kServerMode_Full: return @"Full";
   }
   return nil;
-}
-
-- (void) enableWebServer {
-  if (_webServer == nil) {
-    _webServer = [[WebServer alloc] init];
-    _webServer.serverDelegate = self;
-    [_webServer start];
-    
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:kDefaultKey_ServerEnabled];
-  }
 }
 
 - (void) webServerDidConnect:(WebServer*)server {
@@ -398,16 +374,6 @@
   if (_needsUpdate) {
     [self _updateTimer:nil];
     _needsUpdate = NO;
-  }
-}
-
-- (void) disableWebServer {
-  if (_webServer != nil) {
-    [_webServer stop];
-    [_webServer release];
-    _webServer = nil;
-    
-    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:kDefaultKey_ServerEnabled];
   }
 }
 

@@ -20,38 +20,13 @@
 
 #define kDisconnectLatency 1.0
 
-@implementation WebServer
+@interface WebsiteServer : GCDWebUploader
+@end
 
-@synthesize serverDelegate=_serverDelegate;
+@interface WebDAVServer : GCDWebDAVServer
+@end
 
-- (id) init {
-  NSString* documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
-  if ((self = [self initWithUploadDirectory:documentsPath])) {
-    self.delegate = self;
-    self.allowedFileExtensions = [NSArray arrayWithObjects:@"pdf", @"zip", @"cbz", @"rar", @"cbr", nil];
-#if !__USE_WEBDAV_SERVER__
-    self.title = NSLocalizedString(@"SERVER_TITLE", nil);
-    self.prologue = [NSString stringWithFormat:NSLocalizedString(@"SERVER_CONTENT", nil), [self.allowedFileExtensions componentsJoinedByString:@", "]];
-    if ([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerMode] != kServerMode_Full) {
-      self.prologue = [self.prologue stringByAppendingFormat:NSLocalizedString(@"SERVER_LIMITED_CONTENT", nil), kTrialMaxUploads];
-    }
-    self.footer = [NSString stringWithFormat:NSLocalizedString(@"SERVER_FOOTER_FORMAT", nil),
-                                             [[UIDevice currentDevice] name],
-                                             [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
-#endif
-  }
-  return self;
-}
-
-- (BOOL)startWithOptions:(NSDictionary*)options {
-  NSMutableDictionary* newOptions = [NSMutableDictionary dictionaryWithDictionary:options];
-  NSString* name = [NSString stringWithFormat:NSLocalizedString(@"SERVER_NAME_FORMAT", nil),
-                    [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"],
-                    [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]];
-  [newOptions setObject:name forKey:GCDWebServerOption_ServerName];
-  [newOptions setObject:[NSNumber numberWithDouble:kDisconnectLatency] forKey:GCDWebServerOption_ConnectedStateCoalescingInterval];
-  return [super startWithOptions:newOptions];
-}
+@implementation WebsiteServer
 
 - (BOOL) shouldUploadFileAtPath:(NSString*)path withTemporaryFile:(NSString*)tempPath {
   if ([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerMode] == kServerMode_Limited) {
@@ -61,62 +36,175 @@
   return YES;
 }
 
-- (void) webServerDidConnect:(GCDWebServer*)server {
-  [_serverDelegate webServerDidConnect:self];
+@end
+
+@implementation WebDAVServer
+
+- (BOOL) shouldUploadFileAtPath:(NSString*)path withTemporaryFile:(NSString*)tempPath {
+  if ([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerMode] == kServerMode_Limited) {
+    LOG_ERROR(@"Upload rejected: web server is in limited mode");
+    return NO;
+  }
+  return YES;
 }
 
-#if __USE_WEBDAV_SERVER__
+@end
 
-- (void) davServer:(GCDWebDAVServer*)server didDownloadFileAtPath:(NSString*)path {
-  [_serverDelegate webServerDidDownloadComic:self];
+@implementation WebServer
+
+@synthesize delegate=_delegate, type=_type;
+
++ (void) initialize {
+  NSMutableDictionary* defaults = [[NSMutableDictionary alloc] init];
+  [defaults setObject:[NSNumber numberWithInteger:kWebServerType_Website] forKey:kDefaultKey_ServerType];
+  [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
+  [defaults release];
 }
 
-- (void) davServer:(GCDWebDAVServer*)server didUploadFileAtPath:(NSString*)path {
-  [_serverDelegate webServerDidUploadComic:self];
++ (WebServer*) sharedWebServer {
+  DCHECK([NSThread isMainThread]);
+  static WebServer* server = nil;
+  if (server == nil) {
+    server = [[WebServer alloc] init];
+    server.type = [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerType];
+  }
+  return server;
 }
 
-- (void) davServer:(GCDWebDAVServer*)server didMoveItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath {
-  [_serverDelegate webServerDidUpdate:self];
-}
-
-- (void) davServer:(GCDWebDAVServer*)server didCopyItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath {
-  [_serverDelegate webServerDidUpdate:self];
-}
-
-- (void) davServer:(GCDWebDAVServer*)server didDeleteItemAtPath:(NSString*)path {
-  [_serverDelegate webServerDidUpdate:self];
-}
-
-- (void) davServer:(GCDWebDAVServer*)server didCreateDirectoryAtPath:(NSString*)path {
-  [_serverDelegate webServerDidUpdate:self];
-}
-
+- (void) setType:(WebServerType)type {
+  if (type != _type) {
+    if (_type != kWebServerType_Off) {
+      [_webServer stop];
+      [_webServer release];
+      _webServer = nil;
+      _type = kWebServerType_Off;
+    }
+    if (type != kWebServerType_Off) {
+      NSString* documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+      NSArray* fileExtensions = [NSArray arrayWithObjects:@"pdf", @"zip", @"cbz", @"rar", @"cbr", nil];
+      if (type == kWebServerType_Website) {
+        _webServer = [[WebsiteServer alloc] initWithUploadDirectory:documentsPath];
+        [(WebsiteServer*)_webServer setAllowedFileExtensions:fileExtensions];
+        [(WebsiteServer*)_webServer setTitle:NSLocalizedString(@"SERVER_TITLE", nil)];
+        [(WebsiteServer*)_webServer setPrologue:[NSString stringWithFormat:NSLocalizedString(@"SERVER_CONTENT", nil), [fileExtensions componentsJoinedByString:@", "]]];
+        if ([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerMode] != kServerMode_Full) {
+          [(WebsiteServer*)_webServer setPrologue:[[(WebsiteServer*)_webServer prologue] stringByAppendingFormat:NSLocalizedString(@"SERVER_LIMITED_CONTENT", nil), kTrialMaxUploads]];
+        }
+        [(WebsiteServer*)_webServer setFooter:[NSString stringWithFormat:NSLocalizedString(@"SERVER_FOOTER_FORMAT", nil),
+                                                [[UIDevice currentDevice] name],
+                                                [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]]];
+      } else if (type == kWebServerType_WebDAV) {
+        _webServer = [[WebDAVServer alloc] initWithUploadDirectory:documentsPath];
+        [(WebDAVServer*)_webServer setAllowedFileExtensions:fileExtensions];
+      }
+      
+      if (_webServer) {
+        _webServer.delegate = self;
+        NSMutableDictionary* options = [NSMutableDictionary dictionary];
+#if TARGET_IPHONE_SIMULATOR
+        [options setObject:[NSNumber numberWithInteger:8080] forKey:GCDWebServerOption_Port];
 #else
+        [options setObject:[NSNumber numberWithInteger:80] forKey:GCDWebServerOption_Port];
+#endif
+        NSString* name = [NSString stringWithFormat:NSLocalizedString(@"SERVER_NAME_FORMAT", nil),
+                          [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"],
+                          [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]];
+        [options setObject:name forKey:GCDWebServerOption_ServerName];
+        [options setObject:[NSNumber numberWithDouble:kDisconnectLatency] forKey:GCDWebServerOption_ConnectedStateCoalescingInterval];
+        if ([_webServer startWithOptions:options]) {
+          _type = type;
+        } else {
+          [_webServer release];
+          _webServer = nil;
+        }
+      }
+    }
+    [[NSUserDefaults standardUserDefaults] setInteger:_type forKey:kDefaultKey_ServerType];
+  }
+}
+
+- (NSString*) addressLabel {
+  NSURL* serverURL = _webServer.serverURL;
+  NSURL* bonjourServerURL = _webServer.bonjourServerURL;
+  switch (_type) {
+    
+    case kWebServerType_Off:
+      break;
+    
+    case kWebServerType_Website:
+      if (serverURL) {
+        if (bonjourServerURL) {
+          return [NSString stringWithFormat:NSLocalizedString(@"ADDRESS_WEBSITE_BONJOUR", nil), [bonjourServerURL absoluteString], [serverURL absoluteString]];
+        } else {
+          return [NSString stringWithFormat:NSLocalizedString(@"ADDRESS_WEBSITE_IP", nil), [serverURL absoluteString]];
+        }
+      }
+      break;
+    
+    case kWebServerType_WebDAV:
+      if (serverURL) {
+        if (bonjourServerURL) {
+          return [NSString stringWithFormat:NSLocalizedString(@"ADDRESS_WEBDAV_BONJOUR", nil), [bonjourServerURL absoluteString], [serverURL absoluteString]];
+        } else {
+          return [NSString stringWithFormat:NSLocalizedString(@"ADDRESS_WEBDAV_IP", nil), [serverURL absoluteString]];
+        }
+      }
+      break;
+    
+  }
+  return NSLocalizedString(@"ADDRESS_UNAVAILABLE", nil);
+}
+
+- (void) webServerDidConnect:(GCDWebServer*)server {
+  [_delegate webServerDidConnect:self];
+}
+
+- (void) webServerDidDisconnect:(GCDWebServer*)server {
+  [_delegate webServerDidDisconnect:self];
+}
 
 - (void) webUploader:(GCDWebUploader*)uploader didDownloadFileAtPath:(NSString*)path {
-  [_serverDelegate webServerDidDownloadComic:self];
+  [_delegate webServerDidDownloadComic:self];
 }
 
 - (void) webUploader:(GCDWebUploader*)uploader didUploadFileAtPath:(NSString*)path {
-  [_serverDelegate webServerDidUploadComic:self];
+  [_delegate webServerDidUploadComic:self];
 }
 
 - (void) webUploader:(GCDWebUploader*)uploader didMoveItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath {
-  [_serverDelegate webServerDidUpdate:self];
+  [_delegate webServerDidUpdate:self];
 }
 
 - (void) webUploader:(GCDWebUploader*)uploader didDeleteItemAtPath:(NSString*)path {
-  [_serverDelegate webServerDidUpdate:self];
+  [_delegate webServerDidUpdate:self];
 }
 
 - (void) webUploader:(GCDWebUploader*)uploader didCreateDirectoryAtPath:(NSString*)path {
-  [_serverDelegate webServerDidUpdate:self];
+  [_delegate webServerDidUpdate:self];
 }
 
-#endif
+- (void) davServer:(GCDWebDAVServer*)server didDownloadFileAtPath:(NSString*)path {
+  [_delegate webServerDidDownloadComic:self];
+}
 
-- (void) webServerDidDisconnect:(GCDWebServer*)server {
-  [_serverDelegate webServerDidDisconnect:self];
+- (void) davServer:(GCDWebDAVServer*)server didUploadFileAtPath:(NSString*)path {
+  [_delegate webServerDidUploadComic:self];
+}
+
+- (void) davServer:(GCDWebDAVServer*)server didMoveItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath {
+  [_delegate webServerDidUpdate:self];
+}
+
+- (void) davServer:(GCDWebDAVServer*)server didCopyItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath {
+  [_delegate webServerDidUpdate:self];
+}
+
+- (void) davServer:(GCDWebDAVServer*)server didDeleteItemAtPath:(NSString*)path {
+  [_delegate webServerDidUpdate:self];
+}
+
+- (void) davServer:(GCDWebDAVServer*)server didCreateDirectoryAtPath:(NSString*)path {
+  [_delegate webServerDidUpdate:self];
 }
 
 @end

@@ -28,7 +28,7 @@
   UIButton* _forceUpdateButton;
   UIButton* _markReadButton;
   UIButton* _markNewButton;
-  UISwitch* _serverSwitch;
+  UISegmentedControl* _serverControl;
   UILabel* _addressLabel;
   UILabel* _infoLabel;
   UILabel* _versionLabel;
@@ -68,7 +68,7 @@
 @property(nonatomic, retain) IBOutlet UIButton* forceUpdateButton;
 @property(nonatomic, retain) IBOutlet UIButton* markReadButton;
 @property(nonatomic, retain) IBOutlet UIButton* markNewButton;
-@property(nonatomic, retain) IBOutlet UISwitch* serverSwitch;
+@property(nonatomic, retain) IBOutlet UISegmentedControl* serverControl;
 @property(nonatomic, retain) IBOutlet UILabel* addressLabel;
 @property(nonatomic, retain) IBOutlet UILabel* infoLabel;
 @property(nonatomic, retain) IBOutlet UILabel* versionLabel;

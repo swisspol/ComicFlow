@@ -38,9 +38,6 @@
 @end
 
 @interface AppDelegate (WebServer) <WebServerDelegate>
-@property(nonatomic, readonly) WebServer* webServer;
-- (void) enableWebServer;
-- (void) disableWebServer;
 @end
 
 @interface AppDelegate (StoreKit) <SKPaymentTransactionObserver, SKProductsRequestDelegate>

@@ -74,7 +74,7 @@
 
 @synthesize gridView=_gridView, navigationBar=_navigationBar, segmentedControl=_segmentedControl, menuView=_menuView,
             markReadButton=_markReadButton, markNewButton=_markNewButton, updateButton=_updateButton,
-            forceUpdateButton=_forceUpdateButton, serverSwitch=_serverSwitch, addressLabel=_addressLabel,
+            forceUpdateButton=_forceUpdateButton, serverControl=_serverControl, addressLabel=_addressLabel,
             infoLabel=_infoLabel, versionLabel=_versionLabel, dimmingSwitch=_dimmingSwitch, purchaseButton=_purchaseButton,
             restoreButton=_restoreButton;
 
@@ -94,27 +94,11 @@
 }
 
 - (void) _updateTimer:(NSTimer*)timer {
-  GCDWebServer* server = [(AppDelegate*)[AppDelegate sharedInstance] webServer];
   if (timer == nil) {
-    _serverSwitch.on = server ? YES : NO;
+    _serverControl.selectedSegmentIndex = [[WebServer sharedWebServer] type];
   }
-  if (server) {
-    NSURL* serverURL = server.serverURL;
-    if (serverURL) {
-      NSURL* bonjourServerURL = server.bonjourServerURL;
-      if (bonjourServerURL) {
-        _addressLabel.text = [NSString stringWithFormat:NSLocalizedString(@"ADDRESS_FORMAT_BONJOUR", nil), [bonjourServerURL absoluteString], [serverURL absoluteString]];
-      } else {
-        _addressLabel.text = [NSString stringWithFormat:NSLocalizedString(@"ADDRESS_FORMAT_IP", nil), [serverURL absoluteString]];
-      }
-    } else {
-      _addressLabel.text = NSLocalizedString(@"ADDRESS_UNAVAILABLE", nil);
-    }
-    _addressLabel.textColor = [UIColor darkGrayColor];
-  } else {
-    _addressLabel.text = NSLocalizedString(@"ADDRESS_UNAVAILABLE", nil);
-    _addressLabel.textColor = [UIColor grayColor];
-  }
+  _addressLabel.text = [[WebServer sharedWebServer] addressLabel];
+  _addressLabel.textColor = [[WebServer sharedWebServer] type] != kWebServerType_Off ? [UIColor darkGrayColor] : [UIColor grayColor];
 }
 
 #if __DISPLAY_THUMBNAILS_IN_BACKGROUND__
@@ -472,7 +456,7 @@ static void __DisplayQueueCallBack(void* info) {
   self.markNewButton = nil;
   self.updateButton = nil;
   self.forceUpdateButton = nil;
-  self.serverSwitch = nil;
+  self.serverControl = nil;
   self.addressLabel = nil;
   self.infoLabel = nil;
   self.versionLabel = nil;
@@ -955,11 +939,7 @@ static void __ArrayApplierFunction(const void* value, void* context) {
 }
 
 - (IBAction) updateServer:(id)sender {
-  if (_serverSwitch.on) {
-    [(AppDelegate*)[AppDelegate sharedInstance] enableWebServer];
-  } else {
-    [(AppDelegate*)[AppDelegate sharedInstance] disableWebServer];
-  }
+  [[WebServer sharedWebServer] setType:_serverControl.selectedSegmentIndex];
   [self _updateTimer:nil];
 }
 

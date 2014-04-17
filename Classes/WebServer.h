@@ -13,11 +13,14 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#if __USE_WEBDAV_SERVER__
 #import "GCDWebDAVServer.h"
-#else
 #import "GCDWebUploader.h"
-#endif
+
+typedef enum {
+  kWebServerType_Off = 0,
+  kWebServerType_Website = 1,
+  kWebServerType_WebDAV = 2
+} WebServerType;
 
 @class WebServer;
 
@@ -29,14 +32,14 @@
 - (void) webServerDidDisconnect:(WebServer*)server;
 @end
 
-#if __USE_WEBDAV_SERVER__
-@interface WebServer : GCDWebDAVServer <GCDWebDAVServerDelegate>
-#else
-@interface WebServer : GCDWebUploader <GCDWebUploaderDelegate>
-#endif
-{
+@interface WebServer : NSObject <GCDWebUploaderDelegate, GCDWebDAVServerDelegate> {
 @private
-  id<WebServerDelegate> _serverDelegate;
+  id<WebServerDelegate> _delegate;
+  WebServerType _type;
+  GCDWebServer* _webServer;
 }
-@property(nonatomic, assign) id<WebServerDelegate> serverDelegate;
++ (WebServer*) sharedWebServer;
+@property(nonatomic, assign) id<WebServerDelegate> delegate;
+@property(nonatomic) WebServerType type;
+@property(nonatomic, readonly) NSString* addressLabel;
 @end
