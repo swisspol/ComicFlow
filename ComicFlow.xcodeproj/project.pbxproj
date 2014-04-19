@@ -139,7 +139,7 @@
 		E286903A18FC943E003F9EAE /* GCDWebServerDataResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = E286902A18FC943E003F9EAE /* GCDWebServerDataResponse.m */; };
 		E286903B18FC943E003F9EAE /* GCDWebServerErrorResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = E286902C18FC943E003F9EAE /* GCDWebServerErrorResponse.m */; };
 		E286903C18FC943E003F9EAE /* GCDWebServerFileResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = E286902E18FC943E003F9EAE /* GCDWebServerFileResponse.m */; };
-		E286903D18FC943E003F9EAE /* GCDWebServerStreamingResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = E286903018FC943E003F9EAE /* GCDWebServerStreamingResponse.m */; };
+		E286903D18FC943E003F9EAE /* GCDWebServerStreamedResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = E286903018FC943E003F9EAE /* GCDWebServerStreamedResponse.m */; };
 		E28CF46312237F790076FB21 /* Default-Landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = E28CF46112237F790076FB21 /* Default-Landscape.png */; };
 		E28CF46412237F790076FB21 /* Default-Portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = E28CF46212237F790076FB21 /* Default-Portrait.png */; };
 		E28CF6E01223A0BC0076FB21 /* Ribbon.png in Resources */ = {isa = PBXBuildFile; fileRef = E28CF6DF1223A0BC0076FB21 /* Ribbon.png */; };
@@ -396,8 +396,8 @@
 		E286902C18FC943E003F9EAE /* GCDWebServerErrorResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerErrorResponse.m; sourceTree = "<group>"; };
 		E286902D18FC943E003F9EAE /* GCDWebServerFileResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerFileResponse.h; sourceTree = "<group>"; };
 		E286902E18FC943E003F9EAE /* GCDWebServerFileResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerFileResponse.m; sourceTree = "<group>"; };
-		E286902F18FC943E003F9EAE /* GCDWebServerStreamingResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerStreamingResponse.h; sourceTree = "<group>"; };
-		E286903018FC943E003F9EAE /* GCDWebServerStreamingResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerStreamingResponse.m; sourceTree = "<group>"; };
+		E286902F18FC943E003F9EAE /* GCDWebServerStreamedResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerStreamedResponse.h; sourceTree = "<group>"; };
+		E286903018FC943E003F9EAE /* GCDWebServerStreamedResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerStreamedResponse.m; sourceTree = "<group>"; };
 		E28CF46112237F790076FB21 /* Default-Landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Landscape.png"; sourceTree = "<group>"; };
 		E28CF46212237F790076FB21 /* Default-Portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Portrait.png"; sourceTree = "<group>"; };
 		E28CF6DF1223A0BC0076FB21 /* Ribbon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Ribbon.png; sourceTree = "<group>"; };
@@ -832,8 +832,8 @@
 				E286902C18FC943E003F9EAE /* GCDWebServerErrorResponse.m */,
 				E286902D18FC943E003F9EAE /* GCDWebServerFileResponse.h */,
 				E286902E18FC943E003F9EAE /* GCDWebServerFileResponse.m */,
-				E286902F18FC943E003F9EAE /* GCDWebServerStreamingResponse.h */,
-				E286903018FC943E003F9EAE /* GCDWebServerStreamingResponse.m */,
+				E286902F18FC943E003F9EAE /* GCDWebServerStreamedResponse.h */,
+				E286903018FC943E003F9EAE /* GCDWebServerStreamedResponse.m */,
 			);
 			path = Responses;
 			sourceTree = "<group>";
@@ -997,7 +997,7 @@
 				E27C00BF168CBBC500021417 /* OverlayView.m in Sources */,
 				E27C00C0168CBBC500021417 /* SmartDescription.m in Sources */,
 				E27C00C4168CBBC500021417 /* ZoomView.m in Sources */,
-				E286903D18FC943E003F9EAE /* GCDWebServerStreamingResponse.m in Sources */,
+				E286903D18FC943E003F9EAE /* GCDWebServerStreamedResponse.m in Sources */,
 				E27CFFB4168CA79700021417 /* ioapi.c in Sources */,
 				E27CFFB5168CA79700021417 /* mztools.c in Sources */,
 				E27CFFB6168CA79700021417 /* unzip.c in Sources */,
