@@ -111,7 +111,7 @@
                           [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]];
         [options setObject:name forKey:GCDWebServerOption_ServerName];
         [options setObject:[NSNumber numberWithDouble:kDisconnectLatency] forKey:GCDWebServerOption_ConnectedStateCoalescingInterval];
-        if ([_webServer startWithOptions:options]) {
+        if ([_webServer startWithOptions:options error:NULL]) {
           _type = type;
         } else {
           [_webServer release];
