@@ -21,6 +21,12 @@
 // http://www.rarlab.com/rar_add.htm
 // http://goahomepage.free.fr/article/2000_09_17_unrar_dll/UnRARDLL.html
 
+static NSString* _PathFromFileName(const char* filename) {
+  NSString* path = [NSString stringWithCString:filename encoding:NSASCIIStringEncoding];
+  DCHECK(path);
+  return path;
+}
+
 @implementation UnRAR
 
 @synthesize skipInvisibleFiles=_skipInvisible;
@@ -85,7 +91,7 @@
         }
         break;
       }
-      NSString* path = [NSString stringWithCString:headerData.FileName encoding:NSASCIIStringEncoding];  // TODO: Is this correct?
+      NSString* path = _PathFromFileName(headerData.FileName);
       
       // Add current file to list if necessary
       if (_skipInvisible) {
@@ -144,7 +150,7 @@
         }
         break;
       }
-      NSString* path = [NSString stringWithCString:headerData.FileName encoding:NSASCIIStringEncoding];  // TODO: Is this correct?
+      NSString* path = _PathFromFileName(headerData.FileName);
       
       // Add current file to list if necessary
       if (_skipInvisible) {
@@ -197,7 +203,7 @@
         }
         break;
       }
-      NSString* path = [NSString stringWithCString:headerData.FileName encoding:NSASCIIStringEncoding];  // TODO: Is this correct?
+      NSString* path = _PathFromFileName(headerData.FileName);
       
       // Extract if necessary and find next file
       if (headerData.FileCRC && [path isEqualToString:inPath]) {

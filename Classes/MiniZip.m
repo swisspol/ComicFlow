@@ -19,6 +19,15 @@
 
 #define kZipExtractionBufferSize 4096
 
+static NSString* _PathFromFileName(const char* filename) {
+  NSString* path = [NSString stringWithCString:filename encoding:NSUTF8StringEncoding];
+  if (path == nil) {
+    path = [NSString stringWithCString:filename encoding:NSISOLatin1StringEncoding];
+  }
+  DCHECK(path);
+  return path;
+}
+
 @implementation MiniZip
 
 @synthesize skipInvisibleFiles=_skipInvisible;
@@ -167,7 +176,7 @@ static int _ErrorFunction(voidpf opaque, voidpf stream) {
       }
     }
     filename[fileInfo.size_filename] = 0;
-    NSString* path = [NSString stringWithUTF8String:filename];
+    NSString* path = _PathFromFileName(filename);
     free(filename);
     
     // Add current file to list if necessary
@@ -228,7 +237,7 @@ static int _ErrorFunction(voidpf opaque, voidpf stream) {
       }
     }
     filename[fileInfo.size_filename] = 0;
-    NSString* path = [NSString stringWithUTF8String:filename];
+    NSString* path = _PathFromFileName(filename);
     free(filename);
     
     // Extract current file
@@ -332,7 +341,7 @@ static int _ErrorFunction(voidpf opaque, voidpf stream) {
       }
     }
     filename[fileInfo.size_filename] = 0;
-    NSString* path = [NSString stringWithUTF8String:filename];  // TODO: Is this correct?
+    NSString* path = _PathFromFileName(filename);
     free(filename);
     
     // If file is required one, extract it
