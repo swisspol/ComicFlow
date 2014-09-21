@@ -102,6 +102,10 @@
       case SKPaymentTransactionStatePurchasing:
         [self logEvent:@"iap.purchasing" withParameterName:@"product" value:productIdentifier];
         break;
+        
+      case SKPaymentTransactionStateDeferred:
+        [self logEvent:@"iap.deferred" withParameterName:@"product" value:productIdentifier];
+        break;
       
       case SKPaymentTransactionStatePurchased:
       case SKPaymentTransactionStateRestored: {
