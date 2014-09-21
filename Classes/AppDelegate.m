@@ -221,6 +221,11 @@
 - (BOOL) application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions {
   [super application:application didFinishLaunchingWithOptions:launchOptions];
   
+#if TARGET_IPHONE_SIMULATOR
+  // Log Documents folder path
+  LOG_VERBOSE(@"Documents folder location: %@", [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject]);
+#endif
+  
 #if defined(NDEBUG) && !TARGET_IPHONE_SIMULATOR
   // Start Flurry analytics
   [Flurry setAppVersion:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
