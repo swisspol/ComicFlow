@@ -31,6 +31,9 @@
 #define kRightZoneRatio 0.8
 #define kDoubleTapZoomRatio 1.5
 
+@interface ComicDocumentView : DocumentView
+@end
+
 @interface ComicPageView : ZoomView {
 @private
   NSString* _file;
@@ -38,6 +41,26 @@
 @property(nonatomic, copy) NSString* file;
 - (id) initWithTapTarget:(id)target action:(SEL)action;
 - (void) displayImage:(UIImage*)anImage;
+@end
+
+@implementation ComicDocumentView
+
+// If we are zoomed out on a page, make sure the DocumentView built-in pan gesture recognizer is allowed to work simultaneously with the UIScrollView native one
+// This is required since iOS 8
+- (BOOL) gestureRecognizer:(UIGestureRecognizer*)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer*)otherGestureRecognizer {
+  if ([otherGestureRecognizer isKindOfClass:NSClassFromString(@"UIScrollViewPanGestureRecognizer")]) {
+    ComicPageView* pageView = (ComicPageView*)self.selectedPageView;
+    if (pageView) {
+      if (pageView.zoomScale <= pageView.minimumZoomScale) {
+        return YES;
+      }
+    } else {
+      DNOT_REACHED();
+    }
+  }
+  return NO;
+}
+
 @end
 
 @implementation ComicPageView
@@ -233,7 +256,7 @@
   _navigationControl.hidden = YES;
   _contentView.backgroundColor = nil;
   
-  _documentView = [[DocumentView alloc] initWithFrame:_contentView.bounds];
+  _documentView = [[ComicDocumentView alloc] initWithFrame:_contentView.bounds];
   _documentView.delegate = self;
   _documentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
   [_contentView addSubview:_documentView];
