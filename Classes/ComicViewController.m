@@ -350,12 +350,6 @@
   [[AppDelegate sharedInstance] hideSpinner:YES];
 }
 
-- (void) viewWillDisappear:(BOOL)animated {
-  [super viewWillDisappear:animated];
-  
-  [self saveState];
-}
-
 - (void) viewDidDisappear:(BOOL)animated {
   [super viewDidDisappear:animated];
   

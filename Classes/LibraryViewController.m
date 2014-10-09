@@ -567,6 +567,12 @@ static void __DisplayQueueCallBack(void* info) {
 - (void) dismissModalViewControllerAnimated:(BOOL)animated {
   [super dismissModalViewControllerAnimated:animated];
   
+  if ([self.modalViewController isKindOfClass:[ComicViewController class]]) {
+    [(ComicViewController*)self.modalViewController saveState];
+  } else {
+    DNOT_REACHED();
+  }
+  
   if (([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_SortingMode] == kSortingMode_ByStatus) && !_gridView.empty) {
     [self _reloadCurrentCollection];
   } else if (_currentComic) {
