@@ -552,16 +552,10 @@ static void __DisplayQueueCallBack(void* info) {
 - (void) _presentComic:(Comic*)comic {
   ComicViewController* viewController = [[ComicViewController alloc] initWithComic:comic];
   if (viewController) {
-    [CATransaction begin];
-    [[AppDelegate sharedInstance] showSpinnerWithMessage:NSLocalizedString(@"SPINNER_MESSAGE", nil) fullScreen:NO animated:YES];
-    [CATransaction commit];
-    
     viewController.modalPresentationStyle = UIModalPresentationFullScreen;
     viewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     [self presentModalViewController:viewController animated:YES];
     [viewController release];
-    
-    [[AppDelegate sharedInstance] hideSpinner:YES];
     
     if (comic != _currentComic) {
       [_currentComic release];

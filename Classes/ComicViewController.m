@@ -306,6 +306,11 @@
 - (void) viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
   
+  [CATransaction begin];
+  [[AppDelegate sharedInstance] showSpinnerWithMessage:NSLocalizedString(@"SPINNER_MESSAGE", nil) fullScreen:NO animated:YES];
+  [CATransaction flush];
+  [CATransaction commit];
+  
   NSMutableArray* array = [[NSMutableArray alloc] init];
   if (_type == kComicType_PDF) {
     NSUInteger count = [(NSNumber*)_contents integerValue];
@@ -337,6 +342,12 @@
     _navigationControl.hidden = NO;
   }
   [array release];
+}
+
+- (void) viewDidAppear:(BOOL)animated {
+  [super viewDidAppear:animated];
+  
+  [[AppDelegate sharedInstance] hideSpinner:YES];
 }
 
 - (void) viewWillDisappear:(BOOL)animated {
