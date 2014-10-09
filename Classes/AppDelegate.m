@@ -277,7 +277,7 @@
   [self.window makeKeyAndVisible];
   
   // Initialize dimming window
-  _dimmingWindow = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+  _dimmingWindow = [[UIWindow alloc] initWithFrame:([UIScreen instancesRespondToSelector:@selector(nativeBounds)] ? [[UIScreen mainScreen] nativeBounds] : [[UIScreen mainScreen] bounds])];
   _dimmingWindow.userInteractionEnabled = NO;
   _dimmingWindow.windowLevel = UIWindowLevelStatusBar;
   _dimmingWindow.backgroundColor = [UIColor blackColor];
