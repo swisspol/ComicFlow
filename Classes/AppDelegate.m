@@ -226,13 +226,13 @@
   LOG_VERBOSE(@"Documents folder location: %@", [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject]);
 #endif
   
-#if defined(NDEBUG) && !TARGET_IPHONE_SIMULATOR
+#if !DEBUG && !TARGET_IPHONE_SIMULATOR
   // Start Flurry analytics
   [Flurry setAppVersion:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
   [Flurry startSession:@"2ZSSCCWQY2Z36J78MTTZ" withOptions:launchOptions];
 #endif
 
-#if defined(NDEBUG)
+#if !DEBUG
   // Start Crashlytics
   [Crashlytics startWithAPIKey:@"936a419a4a141683e2eb17db02a13b72ee02b362" delegate:self];
 #endif

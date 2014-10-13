@@ -19,10 +19,10 @@
 #import "WebServer.h"
 
 #define kStoreKitProductIdentifier @"web_uploader"
-#ifdef NDEBUG
-#define kTrialMaxUploads 50
-#else
+#if DEBUG
 #define kTrialMaxUploads 5
+#else
+#define kTrialMaxUploads 50
 #endif
 
 @interface AppDelegate : ApplicationDelegate {
