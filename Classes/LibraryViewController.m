@@ -568,8 +568,6 @@ static void __DisplayQueueCallBack(void* info) {
   
   if ([self.modalViewController isKindOfClass:[ComicViewController class]]) {
     [(ComicViewController*)self.modalViewController saveState];
-  } else {
-    XLOG_DEBUG_UNREACHABLE();
   }
   
   if (([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_SortingMode] == kSortingMode_ByStatus) && !_gridView.empty) {

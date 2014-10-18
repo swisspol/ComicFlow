@@ -146,19 +146,8 @@ static ApplicationDelegate* _sharedInstance = nil;
   [_databaseLogger purgeAllRecords];
 }
 
-- (UIViewController*) _findTopViewController:(BOOL)skipLastModal {
-  UIViewController* controller = _window.rootViewController;
-  if (controller == nil) {
-    controller = _viewController;
-  }
-  while (controller.modalViewController && (!skipLastModal || controller.modalViewController.modalViewController)) {
-    controller = controller.modalViewController;
-  }
-  return controller;
-}
-
 - (void) _logViewControllerDone:(id)sender {
-  [[self _findTopViewController:YES] dismissModalViewControllerAnimated:YES];
+  [_viewController dismissModalViewControllerAnimated:YES];
 }
 
 - (void) showLogViewController {
@@ -182,7 +171,7 @@ static ApplicationDelegate* _sharedInstance = nil;
                                                                                                     target:self
                                                                                                     action:@selector(_logViewControllerDone:)] autorelease];
   UINavigationController* navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
-  [[self _findTopViewController:NO] presentModalViewController:navigationController animated:YES];
+  [_viewController presentModalViewController:navigationController animated:YES];
   [navigationController release];
   [viewController release];
   
