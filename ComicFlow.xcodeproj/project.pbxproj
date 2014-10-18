@@ -41,7 +41,7 @@
 		E21F982418060E3000A9B745 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E21F982318060E3000A9B745 /* Security.framework */; };
 		E2240677129275BC007E5296 /* Comic-Screen.png in Resources */ = {isa = PBXBuildFile; fileRef = E2240675129275BC007E5296 /* Comic-Screen.png */; };
 		E22A08FF18EB5E6700A4FF82 /* GCDWebUploader.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E22A08FC18EB5E6700A4FF82 /* GCDWebUploader.bundle */; };
-		E22A090018EB5E6700A4FF82 /* GCDWebUploader.m in Sources */ = {isa = PBXBuildFile; fileRef = E22A08FE18EB5E6700A4FF82 /* GCDWebUploader.m */; };
+		E22A090018EB5E6700A4FF82 /* GCDWebUploader.m in Sources */ = {isa = PBXBuildFile; fileRef = E22A08FE18EB5E6700A4FF82 /* GCDWebUploader.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		E22A090318EB5F3200A4FF82 /* WebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = E22A090218EB5F3200A4FF82 /* WebServer.m */; };
 		E24036BE1891A1880098F028 /* Icon_72x72.png in Resources */ = {isa = PBXBuildFile; fileRef = E24036BA1891A1880098F028 /* Icon_72x72.png */; };
 		E24036BF1891A1880098F028 /* Icon_72x72@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E24036BB1891A1880098F028 /* Icon_72x72@2x.png */; };
@@ -62,7 +62,8 @@
 		E267037D1228D7D0009C4EBB /* OverlayView-Arrow-Right.png in Resources */ = {isa = PBXBuildFile; fileRef = E26703761228D7D0009C4EBB /* OverlayView-Arrow-Right.png */; };
 		E267037E1228D7D0009C4EBB /* OverlayView-Arrow-Top.png in Resources */ = {isa = PBXBuildFile; fileRef = E26703771228D7D0009C4EBB /* OverlayView-Arrow-Top.png */; };
 		E267037F1228D7D0009C4EBB /* OverlayView-Contents.png in Resources */ = {isa = PBXBuildFile; fileRef = E26703781228D7D0009C4EBB /* OverlayView-Contents.png */; };
-		E27664A818F5C52800A034BA /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = E27664A718F5C52800A034BA /* GCDWebDAVServer.m */; };
+		E2704CAF19F2D090003CA755 /* GCDWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = E286901418FC943E003F9EAE /* GCDWebServer.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E27664A818F5C52800A034BA /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = E27664A718F5C52800A034BA /* GCDWebDAVServer.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		E27664AA18F5C55600A034BA /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E27664A918F5C55600A034BA /* libxml2.dylib */; };
 		E27C0038168CA7A200021417 /* archive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E27CFFBA168CA7A200021417 /* archive.cpp */; settings = {COMPILER_FLAGS = "-Wno-all"; }; };
 		E27C0039168CA7A200021417 /* arcread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E27CFFBC168CA7A200021417 /* arcread.cpp */; settings = {COMPILER_FLAGS = "-Wno-all"; }; };
@@ -106,7 +107,6 @@
 		E27C0072168CA7A200021417 /* unicode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E27C0028168CA7A200021417 /* unicode.cpp */; settings = {COMPILER_FLAGS = "-Wno-all"; }; };
 		E27C0074168CA7A200021417 /* unpack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E27C002B168CA7A200021417 /* unpack.cpp */; settings = {COMPILER_FLAGS = "-Wno-all"; }; };
 		E27C007A168CA7A200021417 /* volume.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E27C0033168CA7A200021417 /* volume.cpp */; settings = {COMPILER_FLAGS = "-Wno-all"; }; };
-		E27C00B3168CBBC500021417 /* ApplicationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E26649581230D4A500BC13C1 /* ApplicationDelegate.m */; };
 		E27C00B4168CBBC500021417 /* BasicAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = E2CAA9EC1222961400A4D85A /* BasicAnimation.m */; };
 		E27C00B5168CBBC500021417 /* Database.m in Sources */ = {isa = PBXBuildFile; fileRef = E2FE180B128ADD67005B17EC /* Database.m */; };
 		E27C00B6168CBBC500021417 /* DocumentView.m in Sources */ = {isa = PBXBuildFile; fileRef = E2CAA9E0122295F100A4D85A /* DocumentView.m */; };
@@ -114,7 +114,6 @@
 		E27C00B8168CBBC500021417 /* Extensions_UIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = E2BC918F1223FDFA008FB376 /* Extensions_UIKit.m */; };
 		E27C00B9168CBBC500021417 /* GridView.m in Sources */ = {isa = PBXBuildFile; fileRef = E209D54812218C3400B1077B /* GridView.m */; };
 		E27C00BB168CBBC500021417 /* ImageUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = E2059554121E723000A271CC /* ImageUtilities.m */; };
-		E27C00BC168CBBC500021417 /* Logging.m in Sources */ = {isa = PBXBuildFile; fileRef = E229317E121E260F00484F9F /* Logging.m */; };
 		E27C00BD168CBBC500021417 /* NavigationControl.m in Sources */ = {isa = PBXBuildFile; fileRef = E267036D1228D7C0009C4EBB /* NavigationControl.m */; };
 		E27C00BE168CBBC500021417 /* NetReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = E20893DA12FA163F001F1D2F /* NetReachability.m */; };
 		E27C00BF168CBBC500021417 /* OverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = E267036F1228D7C0009C4EBB /* OverlayView.m */; };
@@ -127,24 +126,41 @@
 		E27CFFB6168CA79700021417 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = E27CFFB0168CA79700021417 /* unzip.c */; settings = {COMPILER_FLAGS = "-Wno-all"; }; };
 		E27CFFB7168CA79700021417 /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = E27CFFB2168CA79700021417 /* zip.c */; settings = {COMPILER_FLAGS = "-Wno-all"; }; };
 		E2832F3018E48757004868E1 /* ImageDecompression.m in Sources */ = {isa = PBXBuildFile; fileRef = E2832F2F18E48757004868E1 /* ImageDecompression.m */; };
-		E286903118FC943E003F9EAE /* GCDWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = E286901418FC943E003F9EAE /* GCDWebServer.m */; };
-		E286903218FC943E003F9EAE /* GCDWebServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = E286901618FC943E003F9EAE /* GCDWebServerConnection.m */; };
-		E286903318FC943E003F9EAE /* GCDWebServerFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = E286901818FC943E003F9EAE /* GCDWebServerFunctions.m */; };
-		E286903418FC943E003F9EAE /* GCDWebServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E286901C18FC943E003F9EAE /* GCDWebServerRequest.m */; };
-		E286903518FC943E003F9EAE /* GCDWebServerResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = E286901E18FC943E003F9EAE /* GCDWebServerResponse.m */; };
-		E286903618FC943E003F9EAE /* GCDWebServerDataRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E286902118FC943E003F9EAE /* GCDWebServerDataRequest.m */; };
-		E286903718FC943E003F9EAE /* GCDWebServerFileRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E286902318FC943E003F9EAE /* GCDWebServerFileRequest.m */; };
-		E286903818FC943E003F9EAE /* GCDWebServerMultiPartFormRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E286902518FC943E003F9EAE /* GCDWebServerMultiPartFormRequest.m */; };
-		E286903918FC943E003F9EAE /* GCDWebServerURLEncodedFormRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E286902718FC943E003F9EAE /* GCDWebServerURLEncodedFormRequest.m */; };
-		E286903A18FC943E003F9EAE /* GCDWebServerDataResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = E286902A18FC943E003F9EAE /* GCDWebServerDataResponse.m */; };
-		E286903B18FC943E003F9EAE /* GCDWebServerErrorResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = E286902C18FC943E003F9EAE /* GCDWebServerErrorResponse.m */; };
-		E286903C18FC943E003F9EAE /* GCDWebServerFileResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = E286902E18FC943E003F9EAE /* GCDWebServerFileResponse.m */; };
-		E286903D18FC943E003F9EAE /* GCDWebServerStreamedResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = E286903018FC943E003F9EAE /* GCDWebServerStreamedResponse.m */; };
+		E286903218FC943E003F9EAE /* GCDWebServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = E286901618FC943E003F9EAE /* GCDWebServerConnection.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E286903318FC943E003F9EAE /* GCDWebServerFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = E286901818FC943E003F9EAE /* GCDWebServerFunctions.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E286903418FC943E003F9EAE /* GCDWebServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E286901C18FC943E003F9EAE /* GCDWebServerRequest.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E286903518FC943E003F9EAE /* GCDWebServerResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = E286901E18FC943E003F9EAE /* GCDWebServerResponse.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E286903618FC943E003F9EAE /* GCDWebServerDataRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E286902118FC943E003F9EAE /* GCDWebServerDataRequest.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E286903718FC943E003F9EAE /* GCDWebServerFileRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E286902318FC943E003F9EAE /* GCDWebServerFileRequest.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E286903818FC943E003F9EAE /* GCDWebServerMultiPartFormRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E286902518FC943E003F9EAE /* GCDWebServerMultiPartFormRequest.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E286903918FC943E003F9EAE /* GCDWebServerURLEncodedFormRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E286902718FC943E003F9EAE /* GCDWebServerURLEncodedFormRequest.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E286903A18FC943E003F9EAE /* GCDWebServerDataResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = E286902A18FC943E003F9EAE /* GCDWebServerDataResponse.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E286903B18FC943E003F9EAE /* GCDWebServerErrorResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = E286902C18FC943E003F9EAE /* GCDWebServerErrorResponse.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E286903C18FC943E003F9EAE /* GCDWebServerFileResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = E286902E18FC943E003F9EAE /* GCDWebServerFileResponse.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E286903D18FC943E003F9EAE /* GCDWebServerStreamedResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = E286903018FC943E003F9EAE /* GCDWebServerStreamedResponse.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		E28CF46312237F790076FB21 /* Default-Landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = E28CF46112237F790076FB21 /* Default-Landscape.png */; };
 		E28CF46412237F790076FB21 /* Default-Portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = E28CF46212237F790076FB21 /* Default-Portrait.png */; };
 		E28CF6E01223A0BC0076FB21 /* Ribbon.png in Resources */ = {isa = PBXBuildFile; fileRef = E28CF6DF1223A0BC0076FB21 /* Ribbon.png */; };
 		E28CF80A1223BFD40076FB21 /* New.png in Resources */ = {isa = PBXBuildFile; fileRef = E28CF8091223BFD40076FB21 /* New.png */; };
 		E2B680E516915033001CF037 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2B680E416915033001CF037 /* StoreKit.framework */; };
+		E2C73E7F19F2068C00BEC354 /* XLASLLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C73E5419F2068C00BEC354 /* XLASLLogger.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E2C73E8019F2068C00BEC354 /* XLCallbackLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C73E5619F2068C00BEC354 /* XLCallbackLogger.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E2C73E8119F2068C00BEC354 /* XLFacility.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C73E5819F2068C00BEC354 /* XLFacility.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E2C73E8219F2068C00BEC354 /* XLFileLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C73E5C19F2068C00BEC354 /* XLFileLogger.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E2C73E8319F2068C00BEC354 /* XLFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C73E5E19F2068C00BEC354 /* XLFunctions.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E2C73E8419F2068C00BEC354 /* XLLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C73E6019F2068C00BEC354 /* XLLogger.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E2C73E8519F2068C00BEC354 /* XLLogRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C73E6219F2068C00BEC354 /* XLLogRecord.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E2C73E8619F2068C00BEC354 /* XLStandardLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C73E6519F2068C00BEC354 /* XLStandardLogger.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E2C73E8719F2068C00BEC354 /* XLDatabaseLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C73E6819F2068C00BEC354 /* XLDatabaseLogger.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E2C73E8819F2068C00BEC354 /* XLHTTPServerLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C73E6A19F2068C00BEC354 /* XLHTTPServerLogger.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E2C73E8919F2068C00BEC354 /* XLTCPClientLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C73E6C19F2068C00BEC354 /* XLTCPClientLogger.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E2C73E8A19F2068C00BEC354 /* XLTCPServerLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C73E6E19F2068C00BEC354 /* XLTCPServerLogger.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E2C73E8B19F2068C00BEC354 /* XLTelnetServerLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C73E7019F2068C00BEC354 /* XLTelnetServerLogger.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E2C73E8C19F2068C00BEC354 /* XLTCPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C73E7319F2068C00BEC354 /* XLTCPClient.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E2C73E8D19F2068C00BEC354 /* XLTCPConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C73E7519F2068C00BEC354 /* XLTCPConnection.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E2C73E8E19F2068C00BEC354 /* XLTCPPeer.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C73E7719F2068C00BEC354 /* XLTCPPeer.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E2C73E8F19F2068C00BEC354 /* XLTCPServer.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C73E7919F2068C00BEC354 /* XLTCPServer.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		E2C73E9519F2090300BEC354 /* ApplicationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C73E9419F2090300BEC354 /* ApplicationDelegate.m */; };
 		E2CAA9E4122295F800A4D85A /* DocumentView-Shadow-Left.png in Resources */ = {isa = PBXBuildFile; fileRef = E2CAA9E2122295F800A4D85A /* DocumentView-Shadow-Left.png */; };
 		E2CAA9E5122295F800A4D85A /* DocumentView-Shadow-Right.png in Resources */ = {isa = PBXBuildFile; fileRef = E2CAA9E3122295F800A4D85A /* DocumentView-Shadow-Right.png */; };
 		E2E50D3A18920DEC00908424 /* ComicViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2E50D3418920DEC00908424 /* ComicViewController.xib */; };
@@ -205,8 +221,6 @@
 		E21F01EB18EBB0A600051CA8 /* Comic-Placeholder@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Comic-Placeholder@2x.png"; sourceTree = "<group>"; };
 		E21F982318060E3000A9B745 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		E2240675129275BC007E5296 /* Comic-Screen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Comic-Screen.png"; sourceTree = "<group>"; };
-		E229317D121E260F00484F9F /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
-		E229317E121E260F00484F9F /* Logging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Logging.m; sourceTree = "<group>"; };
 		E229318D121E260F00484F9F /* SmartDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartDescription.h; sourceTree = "<group>"; };
 		E229318E121E260F00484F9F /* SmartDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SmartDescription.m; sourceTree = "<group>"; };
 		E229344C121E285200484F9F /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -227,8 +241,6 @@
 		E266110A1532125B0045E707 /* Default-Portrait@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Portrait@2x.png"; sourceTree = "<group>"; };
 		E2661110153213730045E707 /* Comic-Screen@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Comic-Screen@2x.png"; sourceTree = "<group>"; };
 		E2661115153214090045E707 /* Collection-Screen@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Collection-Screen@2x.png"; sourceTree = "<group>"; };
-		E26649571230D4A500BC13C1 /* ApplicationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationDelegate.h; sourceTree = "<group>"; };
-		E26649581230D4A500BC13C1 /* ApplicationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApplicationDelegate.m; sourceTree = "<group>"; };
 		E267036C1228D7C0009C4EBB /* NavigationControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationControl.h; sourceTree = "<group>"; };
 		E267036D1228D7C0009C4EBB /* NavigationControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavigationControl.m; sourceTree = "<group>"; };
 		E267036E1228D7C0009C4EBB /* OverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OverlayView.h; sourceTree = "<group>"; };
@@ -405,6 +417,45 @@
 		E2B680E416915033001CF037 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		E2BC918E1223FDFA008FB376 /* Extensions_UIKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Extensions_UIKit.h; sourceTree = "<group>"; };
 		E2BC918F1223FDFA008FB376 /* Extensions_UIKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Extensions_UIKit.m; sourceTree = "<group>"; };
+		E2C73E5319F2068C00BEC354 /* XLASLLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLASLLogger.h; sourceTree = "<group>"; };
+		E2C73E5419F2068C00BEC354 /* XLASLLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLASLLogger.m; sourceTree = "<group>"; };
+		E2C73E5519F2068C00BEC354 /* XLCallbackLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLCallbackLogger.h; sourceTree = "<group>"; };
+		E2C73E5619F2068C00BEC354 /* XLCallbackLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLCallbackLogger.m; sourceTree = "<group>"; };
+		E2C73E5719F2068C00BEC354 /* XLFacility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLFacility.h; sourceTree = "<group>"; };
+		E2C73E5819F2068C00BEC354 /* XLFacility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLFacility.m; sourceTree = "<group>"; };
+		E2C73E5919F2068C00BEC354 /* XLFacilityCMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLFacilityCMacros.h; sourceTree = "<group>"; };
+		E2C73E5A19F2068C00BEC354 /* XLFacilityMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLFacilityMacros.h; sourceTree = "<group>"; };
+		E2C73E5B19F2068C00BEC354 /* XLFileLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLFileLogger.h; sourceTree = "<group>"; };
+		E2C73E5C19F2068C00BEC354 /* XLFileLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLFileLogger.m; sourceTree = "<group>"; };
+		E2C73E5D19F2068C00BEC354 /* XLFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLFunctions.h; sourceTree = "<group>"; };
+		E2C73E5E19F2068C00BEC354 /* XLFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLFunctions.m; sourceTree = "<group>"; };
+		E2C73E5F19F2068C00BEC354 /* XLLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLLogger.h; sourceTree = "<group>"; };
+		E2C73E6019F2068C00BEC354 /* XLLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLLogger.m; sourceTree = "<group>"; };
+		E2C73E6119F2068C00BEC354 /* XLLogRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLLogRecord.h; sourceTree = "<group>"; };
+		E2C73E6219F2068C00BEC354 /* XLLogRecord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLLogRecord.m; sourceTree = "<group>"; };
+		E2C73E6319F2068C00BEC354 /* XLPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLPrivate.h; sourceTree = "<group>"; };
+		E2C73E6419F2068C00BEC354 /* XLStandardLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLStandardLogger.h; sourceTree = "<group>"; };
+		E2C73E6519F2068C00BEC354 /* XLStandardLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLStandardLogger.m; sourceTree = "<group>"; };
+		E2C73E6719F2068C00BEC354 /* XLDatabaseLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLDatabaseLogger.h; sourceTree = "<group>"; };
+		E2C73E6819F2068C00BEC354 /* XLDatabaseLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLDatabaseLogger.m; sourceTree = "<group>"; };
+		E2C73E6919F2068C00BEC354 /* XLHTTPServerLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLHTTPServerLogger.h; sourceTree = "<group>"; };
+		E2C73E6A19F2068C00BEC354 /* XLHTTPServerLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLHTTPServerLogger.m; sourceTree = "<group>"; };
+		E2C73E6B19F2068C00BEC354 /* XLTCPClientLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLTCPClientLogger.h; sourceTree = "<group>"; };
+		E2C73E6C19F2068C00BEC354 /* XLTCPClientLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLTCPClientLogger.m; sourceTree = "<group>"; };
+		E2C73E6D19F2068C00BEC354 /* XLTCPServerLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLTCPServerLogger.h; sourceTree = "<group>"; };
+		E2C73E6E19F2068C00BEC354 /* XLTCPServerLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLTCPServerLogger.m; sourceTree = "<group>"; };
+		E2C73E6F19F2068C00BEC354 /* XLTelnetServerLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLTelnetServerLogger.h; sourceTree = "<group>"; };
+		E2C73E7019F2068C00BEC354 /* XLTelnetServerLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLTelnetServerLogger.m; sourceTree = "<group>"; };
+		E2C73E7219F2068C00BEC354 /* XLTCPClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLTCPClient.h; sourceTree = "<group>"; };
+		E2C73E7319F2068C00BEC354 /* XLTCPClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLTCPClient.m; sourceTree = "<group>"; };
+		E2C73E7419F2068C00BEC354 /* XLTCPConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLTCPConnection.h; sourceTree = "<group>"; };
+		E2C73E7519F2068C00BEC354 /* XLTCPConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLTCPConnection.m; sourceTree = "<group>"; };
+		E2C73E7619F2068C00BEC354 /* XLTCPPeer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLTCPPeer.h; sourceTree = "<group>"; };
+		E2C73E7719F2068C00BEC354 /* XLTCPPeer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLTCPPeer.m; sourceTree = "<group>"; };
+		E2C73E7819F2068C00BEC354 /* XLTCPServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLTCPServer.h; sourceTree = "<group>"; };
+		E2C73E7919F2068C00BEC354 /* XLTCPServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLTCPServer.m; sourceTree = "<group>"; };
+		E2C73E9319F2090300BEC354 /* ApplicationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationDelegate.h; sourceTree = "<group>"; };
+		E2C73E9419F2090300BEC354 /* ApplicationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApplicationDelegate.m; sourceTree = "<group>"; };
 		E2CAA9DF122295F100A4D85A /* DocumentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentView.h; sourceTree = "<group>"; };
 		E2CAA9E0122295F100A4D85A /* DocumentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocumentView.m; sourceTree = "<group>"; };
 		E2CAA9E2122295F800A4D85A /* DocumentView-Shadow-Left.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DocumentView-Shadow-Left.png"; sourceTree = "<group>"; };
@@ -450,6 +501,8 @@
 			children = (
 				1D3623240D0F684500981E51 /* AppDelegate.h */,
 				1D3623250D0F684500981E51 /* AppDelegate.m */,
+				E2C73E9319F2090300BEC354 /* ApplicationDelegate.h */,
+				E2C73E9419F2090300BEC354 /* ApplicationDelegate.m */,
 				E2059D64121F7D7C00A271CC /* ComicViewController.h */,
 				E2059D65121F7D7C00A271CC /* ComicViewController.m */,
 				E2832F2E18E48757004868E1 /* ImageDecompression.h */,
@@ -491,6 +544,7 @@
 				E286901118FC943E003F9EAE /* GCDWebServer */,
 				E27664A518F5C52800A034BA /* GCDWebDAVServer */,
 				E22A08FB18EB5E6700A4FF82 /* GCDWebUploader */,
+				E2C73E5119F2068C00BEC354 /* XLFacility */,
 				29B97323FDCFA39411CA2CEA /* Frameworks and Libraries */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 			);
@@ -590,8 +644,6 @@
 		E229316A121E260F00484F9F /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				E26649571230D4A500BC13C1 /* ApplicationDelegate.h */,
-				E26649581230D4A500BC13C1 /* ApplicationDelegate.m */,
 				E2CAA9EB1222961400A4D85A /* BasicAnimation.h */,
 				E2CAA9EC1222961400A4D85A /* BasicAnimation.m */,
 				E2FE180A128ADD67005B17EC /* Database.h */,
@@ -606,8 +658,6 @@
 				E209D54812218C3400B1077B /* GridView.m */,
 				E2059553121E723000A271CC /* ImageUtilities.h */,
 				E2059554121E723000A271CC /* ImageUtilities.m */,
-				E229317D121E260F00484F9F /* Logging.h */,
-				E229317E121E260F00484F9F /* Logging.m */,
 				E267036C1228D7C0009C4EBB /* NavigationControl.h */,
 				E267036D1228D7C0009C4EBB /* NavigationControl.m */,
 				E20893D912FA163F001F1D2F /* NetReachability.h */,
@@ -838,6 +888,75 @@
 			path = Responses;
 			sourceTree = "<group>";
 		};
+		E2C73E5119F2068C00BEC354 /* XLFacility */ = {
+			isa = PBXGroup;
+			children = (
+				E2C73E5219F2068C00BEC354 /* Core */,
+				E2C73E6619F2068C00BEC354 /* Extensions */,
+				E2C73E7119F2068C00BEC354 /* Networking */,
+			);
+			name = XLFacility;
+			path = XLFacility/XLFacility;
+			sourceTree = "<group>";
+		};
+		E2C73E5219F2068C00BEC354 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				E2C73E5319F2068C00BEC354 /* XLASLLogger.h */,
+				E2C73E5419F2068C00BEC354 /* XLASLLogger.m */,
+				E2C73E5519F2068C00BEC354 /* XLCallbackLogger.h */,
+				E2C73E5619F2068C00BEC354 /* XLCallbackLogger.m */,
+				E2C73E5719F2068C00BEC354 /* XLFacility.h */,
+				E2C73E5819F2068C00BEC354 /* XLFacility.m */,
+				E2C73E5919F2068C00BEC354 /* XLFacilityCMacros.h */,
+				E2C73E5A19F2068C00BEC354 /* XLFacilityMacros.h */,
+				E2C73E5B19F2068C00BEC354 /* XLFileLogger.h */,
+				E2C73E5C19F2068C00BEC354 /* XLFileLogger.m */,
+				E2C73E5D19F2068C00BEC354 /* XLFunctions.h */,
+				E2C73E5E19F2068C00BEC354 /* XLFunctions.m */,
+				E2C73E5F19F2068C00BEC354 /* XLLogger.h */,
+				E2C73E6019F2068C00BEC354 /* XLLogger.m */,
+				E2C73E6119F2068C00BEC354 /* XLLogRecord.h */,
+				E2C73E6219F2068C00BEC354 /* XLLogRecord.m */,
+				E2C73E6319F2068C00BEC354 /* XLPrivate.h */,
+				E2C73E6419F2068C00BEC354 /* XLStandardLogger.h */,
+				E2C73E6519F2068C00BEC354 /* XLStandardLogger.m */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		E2C73E6619F2068C00BEC354 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				E2C73E6719F2068C00BEC354 /* XLDatabaseLogger.h */,
+				E2C73E6819F2068C00BEC354 /* XLDatabaseLogger.m */,
+				E2C73E6919F2068C00BEC354 /* XLHTTPServerLogger.h */,
+				E2C73E6A19F2068C00BEC354 /* XLHTTPServerLogger.m */,
+				E2C73E6B19F2068C00BEC354 /* XLTCPClientLogger.h */,
+				E2C73E6C19F2068C00BEC354 /* XLTCPClientLogger.m */,
+				E2C73E6D19F2068C00BEC354 /* XLTCPServerLogger.h */,
+				E2C73E6E19F2068C00BEC354 /* XLTCPServerLogger.m */,
+				E2C73E6F19F2068C00BEC354 /* XLTelnetServerLogger.h */,
+				E2C73E7019F2068C00BEC354 /* XLTelnetServerLogger.m */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		E2C73E7119F2068C00BEC354 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				E2C73E7219F2068C00BEC354 /* XLTCPClient.h */,
+				E2C73E7319F2068C00BEC354 /* XLTCPClient.m */,
+				E2C73E7419F2068C00BEC354 /* XLTCPConnection.h */,
+				E2C73E7519F2068C00BEC354 /* XLTCPConnection.m */,
+				E2C73E7619F2068C00BEC354 /* XLTCPPeer.h */,
+				E2C73E7719F2068C00BEC354 /* XLTCPPeer.m */,
+				E2C73E7819F2068C00BEC354 /* XLTCPServer.h */,
+				E2C73E7919F2068C00BEC354 /* XLTCPServer.m */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -971,24 +1090,30 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E2704CAF19F2D090003CA755 /* GCDWebServer.m in Sources */,
+				E2C73E8E19F2068C00BEC354 /* XLTCPPeer.m in Sources */,
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
+				E2C73E8D19F2068C00BEC354 /* XLTCPConnection.m in Sources */,
 				1D3623260D0F684500981E51 /* AppDelegate.m in Sources */,
 				E2059499121E66A300A271CC /* Library.m in Sources */,
 				E2059D67121F7D7C00A271CC /* ComicViewController.m in Sources */,
 				E2059D74121F7E0E00A271CC /* LibraryViewController.m in Sources */,
 				E27CFFA8168CA75900021417 /* MiniZip.m in Sources */,
+				E2C73E8319F2068C00BEC354 /* XLFunctions.m in Sources */,
 				E27CFFA9168CA75900021417 /* UnRAR.m in Sources */,
-				E27C00B3168CBBC500021417 /* ApplicationDelegate.m in Sources */,
 				E27C00B4168CBBC500021417 /* BasicAnimation.m in Sources */,
+				E2C73E7F19F2068C00BEC354 /* XLASLLogger.m in Sources */,
 				E27C00B5168CBBC500021417 /* Database.m in Sources */,
 				E27C00B6168CBBC500021417 /* DocumentView.m in Sources */,
 				E27664A818F5C52800A034BA /* GCDWebDAVServer.m in Sources */,
 				E27C00B7168CBBC500021417 /* Extensions_Foundation.m in Sources */,
+				E2C73E8A19F2068C00BEC354 /* XLTCPServerLogger.m in Sources */,
+				E2C73E8F19F2068C00BEC354 /* XLTCPServer.m in Sources */,
+				E2C73E8519F2068C00BEC354 /* XLLogRecord.m in Sources */,
 				E27C00B8168CBBC500021417 /* Extensions_UIKit.m in Sources */,
 				E27C00B9168CBBC500021417 /* GridView.m in Sources */,
 				E27C00BB168CBBC500021417 /* ImageUtilities.m in Sources */,
 				E286903218FC943E003F9EAE /* GCDWebServerConnection.m in Sources */,
-				E27C00BC168CBBC500021417 /* Logging.m in Sources */,
 				E286903A18FC943E003F9EAE /* GCDWebServerDataResponse.m in Sources */,
 				E27C00BD168CBBC500021417 /* NavigationControl.m in Sources */,
 				E286903418FC943E003F9EAE /* GCDWebServerRequest.m in Sources */,
@@ -1002,6 +1127,8 @@
 				E27CFFB5168CA79700021417 /* mztools.c in Sources */,
 				E27CFFB6168CA79700021417 /* unzip.c in Sources */,
 				E286903918FC943E003F9EAE /* GCDWebServerURLEncodedFormRequest.m in Sources */,
+				E2C73E8119F2068C00BEC354 /* XLFacility.m in Sources */,
+				E2C73E8019F2068C00BEC354 /* XLCallbackLogger.m in Sources */,
 				E27CFFB7168CA79700021417 /* zip.c in Sources */,
 				E27C0038168CA7A200021417 /* archive.cpp in Sources */,
 				E27C0039168CA7A200021417 /* arcread.cpp in Sources */,
@@ -1029,30 +1156,38 @@
 				E27C004E168CA7A200021417 /* isnt.cpp in Sources */,
 				E27C0050168CA7A200021417 /* list.cpp in Sources */,
 				E27C0057168CA7A200021417 /* match.cpp in Sources */,
+				E2C73E8219F2068C00BEC354 /* XLFileLogger.m in Sources */,
 				E286903818FC943E003F9EAE /* GCDWebServerMultiPartFormRequest.m in Sources */,
 				E27C005A168CA7A200021417 /* options.cpp in Sources */,
 				E27C005C168CA7A200021417 /* pathfn.cpp in Sources */,
+				E2C73E9519F2090300BEC354 /* ApplicationDelegate.m in Sources */,
 				E27C005F168CA7A200021417 /* rarvm.cpp in Sources */,
+				E2C73E8419F2068C00BEC354 /* XLLogger.m in Sources */,
 				E27C0061168CA7A200021417 /* rawread.cpp in Sources */,
 				E27C0062168CA7A200021417 /* rdwrfn.cpp in Sources */,
+				E2C73E8C19F2068C00BEC354 /* XLTCPClient.m in Sources */,
 				E27C0064168CA7A200021417 /* recvol.cpp in Sources */,
 				E27C0065168CA7A200021417 /* resource.cpp in Sources */,
 				E27C0066168CA7A200021417 /* rijndael.cpp in Sources */,
+				E2C73E8619F2068C00BEC354 /* XLStandardLogger.m in Sources */,
 				E27C0067168CA7A200021417 /* rs.cpp in Sources */,
 				E27C0068168CA7A200021417 /* savepos.cpp in Sources */,
 				E286903318FC943E003F9EAE /* GCDWebServerFunctions.m in Sources */,
+				E2C73E8719F2068C00BEC354 /* XLDatabaseLogger.m in Sources */,
 				E27C0069168CA7A200021417 /* scantree.cpp in Sources */,
+				E2C73E8819F2068C00BEC354 /* XLHTTPServerLogger.m in Sources */,
 				E27C006A168CA7A200021417 /* sha1.cpp in Sources */,
 				E286903B18FC943E003F9EAE /* GCDWebServerErrorResponse.m in Sources */,
 				E27C006B168CA7A200021417 /* smallfn.cpp in Sources */,
 				E27C006C168CA7A200021417 /* strfn.cpp in Sources */,
+				E2C73E8919F2068C00BEC354 /* XLTCPClientLogger.m in Sources */,
 				E27C006D168CA7A200021417 /* strlist.cpp in Sources */,
 				E27C006F168CA7A200021417 /* system.cpp in Sources */,
 				E27C0070168CA7A200021417 /* timefn.cpp in Sources */,
 				E27C0071168CA7A200021417 /* ulinks.cpp in Sources */,
 				E27C0072168CA7A200021417 /* unicode.cpp in Sources */,
-				E286903118FC943E003F9EAE /* GCDWebServer.m in Sources */,
 				E27C0074168CA7A200021417 /* unpack.cpp in Sources */,
+				E2C73E8B19F2068C00BEC354 /* XLTelnetServerLogger.m in Sources */,
 				E27C007A168CA7A200021417 /* volume.cpp in Sources */,
 				E22A090018EB5E6700A4FF82 /* GCDWebUploader.m in Sources */,
 			);

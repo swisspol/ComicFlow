@@ -16,8 +16,6 @@
 #import "AppDelegate.h"
 #import "Defaults.h"
 
-#import "Logging.h"
-
 #define kDisconnectLatency 1.0
 
 @interface WebsiteServer : GCDWebUploader
@@ -30,7 +28,7 @@
 
 - (BOOL) shouldUploadFileAtPath:(NSString*)path withTemporaryFile:(NSString*)tempPath {
   if ([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerMode] == kServerMode_Limited) {
-    LOG_ERROR(@"Upload rejected: web server is in limited mode");
+    XLOG_ERROR(@"Upload rejected: web server is in limited mode");
     return NO;
   }
   return YES;
@@ -42,7 +40,7 @@
 
 - (BOOL) shouldUploadFileAtPath:(NSString*)path withTemporaryFile:(NSString*)tempPath {
   if ([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerMode] == kServerMode_Limited) {
-    LOG_ERROR(@"Upload rejected: web server is in limited mode");
+    XLOG_ERROR(@"Upload rejected: web server is in limited mode");
     return NO;
   }
   return YES;
@@ -62,7 +60,7 @@
 }
 
 + (WebServer*) sharedWebServer {
-  DCHECK([NSThread isMainThread]);
+  XLOG_DEBUG_CHECK([NSThread isMainThread]);
   static WebServer* server = nil;
   if (server == nil) {
     server = [[WebServer alloc] init];
@@ -115,7 +113,7 @@
         BOOL success = [_webServer startWithOptions:options error:&error];
 #if !TARGET_IPHONE_SIMULATOR
         if (!success && [error.domain isEqualToString:NSPOSIXErrorDomain] && (error.code == 48)) {
-          LOG_WARNING(@"Server port 80 is busy, trying alternate port 8080");
+          XLOG_WARNING(@"Server port 80 is busy, trying alternate port 8080");
           [options setObject:@8080 forKey:GCDWebServerOption_Port];
           success = [_webServer startWithOptions:options error:&error];
         }

@@ -15,8 +15,6 @@
 #import "MiniZip.h"
 #import "unzip.h"
 
-#import "Logging.h"
-
 #define kZipExtractionBufferSize 4096
 
 static NSString* _PathFromFileName(const char* filename) {
@@ -24,7 +22,7 @@ static NSString* _PathFromFileName(const char* filename) {
   if (path == nil) {
     path = [NSString stringWithCString:filename encoding:NSISOLatin1StringEncoding];
   }
-  DCHECK(path);
+  XLOG_DEBUG_CHECK(path);
   return path;
 }
 
@@ -153,7 +151,7 @@ static int _ErrorFunction(voidpf opaque, voidpf stream) {
     }
     if (result != UNZ_OK) {
       if (result != UNZ_END_OF_LIST_OF_FILE) {
-        LOG_ERROR(@"MiniZip returned error %i", result);
+        XLOG_ERROR(@"MiniZip returned error %i", result);
         array = nil;
       }
       break;
@@ -164,7 +162,7 @@ static int _ErrorFunction(voidpf opaque, voidpf stream) {
     result = unzGetCurrentFileInfo(_unzFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
     if (result != UNZ_OK) {
       unzCloseCurrentFile(_unzFile);
-      LOG_ERROR(@"MiniZip returned error %i", result);
+      XLOG_ERROR(@"MiniZip returned error %i", result);
       array = nil;
       break;
     }
@@ -214,7 +212,7 @@ static int _ErrorFunction(voidpf opaque, voidpf stream) {
     }
     if (result != UNZ_OK) {
       if (result != UNZ_END_OF_LIST_OF_FILE) {
-        LOG_ERROR(@"MiniZip returned error %i", result);
+        XLOG_ERROR(@"MiniZip returned error %i", result);
         success = NO;
       }
       break;
@@ -225,7 +223,7 @@ static int _ErrorFunction(voidpf opaque, voidpf stream) {
     result = unzGetCurrentFileInfo(_unzFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
     if (result != UNZ_OK) {
       unzCloseCurrentFile(_unzFile);
-      LOG_ERROR(@"MiniZip returned error %i", result);
+      XLOG_ERROR(@"MiniZip returned error %i", result);
       success = NO;
       break;
     }
@@ -256,7 +254,7 @@ static int _ErrorFunction(voidpf opaque, voidpf stream) {
       if ([path hasSuffix:@"/"]) {
         NSError* error = nil;
         if (![manager createDirectoryAtPath:fullPath withIntermediateDirectories:YES attributes:nil error:&error]) {
-          LOG_ERROR(@"Failed creating directory \"%@\" from ZIP archive: %@", path, error);
+          XLOG_ERROR(@"Failed creating directory \"%@\" from ZIP archive: %@", path, error);
           success = NO;
         }
       }
@@ -276,12 +274,12 @@ static int _ErrorFunction(voidpf opaque, voidpf stream) {
             int read = unzReadCurrentFile(_unzFile, buffer, kZipExtractionBufferSize);
             if (read > 0) {
               if (fwrite(buffer, read, 1, outFile) != 1) {
-                 LOG_ERROR(@"Failed writing \"%@\" from ZIP archive", path);
+                 XLOG_ERROR(@"Failed writing \"%@\" from ZIP archive", path);
                  success = NO;
                  break;
               }
             } else if (read < 0) {
-              LOG_ERROR(@"Failed reading \"%@\" from ZIP archive", path);
+              XLOG_ERROR(@"Failed reading \"%@\" from ZIP archive", path);
               success = NO;
               break;
             }
@@ -291,7 +289,7 @@ static int _ErrorFunction(voidpf opaque, voidpf stream) {
           }
           fclose(outFile);
         } else {
-          LOG_ERROR(@"Failed creating file \"%@\" from ZIP archive (%s)", fullPath, strerror(errno));
+          XLOG_ERROR(@"Failed creating file \"%@\" from ZIP archive (%s)", fullPath, strerror(errno));
           success = NO;
         }
       }
@@ -320,7 +318,7 @@ static int _ErrorFunction(voidpf opaque, voidpf stream) {
     }
     if (result != UNZ_OK) {
       if (result != UNZ_END_OF_LIST_OF_FILE) {
-        LOG_ERROR(@"MiniZip returned error %i", result);
+        XLOG_ERROR(@"MiniZip returned error %i", result);
       }
       break;
     }
@@ -330,7 +328,7 @@ static int _ErrorFunction(voidpf opaque, voidpf stream) {
     result = unzGetCurrentFileInfo(_unzFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
     if (result != UNZ_OK) {
       unzCloseCurrentFile(_unzFile);
-      LOG_ERROR(@"MiniZip returned error %i", result);
+      XLOG_ERROR(@"MiniZip returned error %i", result);
       break;
     }
     char* filename = (char*)malloc(fileInfo.size_filename + 1);
@@ -354,12 +352,12 @@ static int _ErrorFunction(voidpf opaque, voidpf stream) {
           int read = unzReadCurrentFile(_unzFile, buffer, kZipExtractionBufferSize);
           if (read > 0) {
             if (fwrite(buffer, read, 1, outFile) != 1) {
-               LOG_ERROR(@"Failed writing \"%@\" from ZIP archive", path);
+               XLOG_ERROR(@"Failed writing \"%@\" from ZIP archive", path);
                success = NO;
                break;
             }
           } else if (read < 0) {
-            LOG_ERROR(@"Failed reading \"%@\" from ZIP archive", path);
+            XLOG_ERROR(@"Failed reading \"%@\" from ZIP archive", path);
             success = NO;
             break;
           }
@@ -369,7 +367,7 @@ static int _ErrorFunction(voidpf opaque, voidpf stream) {
         }
         fclose(outFile);
       } else {
-        LOG_ERROR(@"Failed creating \"%@\" from ZIP archive", path);
+        XLOG_ERROR(@"Failed creating \"%@\" from ZIP archive", path);
       }
       unzCloseCurrentFile(_unzFile);
       break;

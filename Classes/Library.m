@@ -21,7 +21,6 @@
 #import "MiniZip.h"
 #import "UnRAR.h"
 #import "Extensions_Foundation.h"
-#import "Logging.h"
 #import "ImageDecompression.h"
 
 #define kInboxDirectoryName @"Inbox"
@@ -130,7 +129,7 @@ typedef enum {
 @implementation LibraryConnection
 
 + (DatabaseConnection*) defaultDatabaseConnection {
-  DNOT_REACHED();
+  XLOG_DEBUG_UNREACHABLE();
   return nil;
 }
 
@@ -241,19 +240,19 @@ typedef enum {
     _screenScale = [[UIScreen mainScreen] scale];
     _comicPlaceholderImageRef = CGImageRetain([[UIImage imageWithContentsOfFile:
                                               [[NSBundle mainBundle] pathForResource:@"Comic-Placeholder" ofType:@"png"]] CGImage]);
-    CHECK(_comicPlaceholderImageRef);
+    XLOG_CHECK(_comicPlaceholderImageRef);
     _comicBackgroundImageRef = CGImageRetain([[UIImage imageWithContentsOfFile:
                                              [[NSBundle mainBundle] pathForResource:@"Comic-Background" ofType:@"png"]] CGImage]);
-    CHECK(_comicBackgroundImageRef);
+    XLOG_CHECK(_comicBackgroundImageRef);
     _comicScreenImageRef = CGImageRetain([[UIImage imageWithContentsOfFile:
                                          [[NSBundle mainBundle] pathForResource:@"Comic-Screen" ofType:@"png"]] CGImage]);
-    CHECK(_comicScreenImageRef);
+    XLOG_CHECK(_comicScreenImageRef);
     _collectionBackgroundImageRef = CGImageRetain([[UIImage imageWithContentsOfFile:
                                                   [[NSBundle mainBundle] pathForResource:@"Collection-Background" ofType:@"png"]] CGImage]);
-    CHECK(_collectionBackgroundImageRef);
+    XLOG_CHECK(_collectionBackgroundImageRef);
     _collectionScreenImageRef = CGImageRetain([[UIImage imageWithContentsOfFile:
                                               [[NSBundle mainBundle] pathForResource:@"Collection-Screen" ofType:@"png"]] CGImage]);
-    CHECK(_collectionScreenImageRef);
+    XLOG_CHECK(_collectionScreenImageRef);
     
     DatabaseSQLRowID fakeRowID = kFakeRowID;
     _fakeData = [[NSData alloc] initWithBytes:&fakeRowID length:sizeof(DatabaseSQLRowID)];
@@ -263,7 +262,7 @@ typedef enum {
 
 - (void) update:(BOOL)force {
   if (_updating == NO) {
-    LOG_VERBOSE(force ? @"Force updating library" : @"Updating library");
+    XLOG_VERBOSE(force ? @"Force updating library" : @"Updating library");
     [_delegate libraryUpdaterWillStart:self];
     
     if (force) {
@@ -274,7 +273,7 @@ typedef enum {
       [[LibraryConnection mainConnection] deleteAllObjectsOfClass:[Comic class]];
       [[LibraryConnection mainConnection] deleteAllObjectsOfClass:[Collection class]];
       [[LibraryConnection mainConnection] vacuum];
-      LOG_INFO(@"Reset library in %.1f seconds", CFAbsoluteTimeGetCurrent() - time);
+      XLOG_INFO(@"Reset library in %.1f seconds", CFAbsoluteTimeGetCurrent() - time);
     }
     
     _updating = YES;
@@ -287,7 +286,7 @@ typedef enum {
         [[NSUserDefaults standardUserDefaults] synchronize];
         [_delegate libraryUpdaterDidFinish:self];
         _updating = NO;
-        LOG_VERBOSE(@"Done updating library");
+        XLOG_VERBOSE(@"Done updating library");
       });
       
       [pool release];
@@ -485,7 +484,7 @@ typedef enum {
     if (data.length == sizeof(DatabaseSQLRowID)) {
       DatabaseSQLRowID rowID = *((DatabaseSQLRowID*)data.bytes);
       if (rowID == kFakeRowID) {
-        LOG_WARNING(@"Skipping comic \"%@\"", name);  // We started processing this comic but never finished - Assume it's corrupted
+        XLOG_WARNING(@"Skipping comic \"%@\"", name);  // We started processing this comic but never finished - Assume it's corrupted
         return;
       } else {
         comic = (Comic*)CFDictionaryGetValue(zombieComics, (void*)rowID);
@@ -500,7 +499,7 @@ typedef enum {
       comic.collection = collection.sqlRowID;
       comic.name = name;
       [connection updateObject:comic];
-      LOG_VERBOSE(@"Updated comic \"%@\" (%i)", name, comic.sqlRowID);
+      XLOG_VERBOSE(@"Updated comic \"%@\" (%i)", name, comic.sqlRowID);
     }
   }
   // Otherwise process and add comic to library
@@ -550,9 +549,9 @@ typedef enum {
     CGImageRelease(imageRef);
   }
   if (comic) {
-    LOG_VERBOSE(@"Imported comic \"%@\" (%i)", name, comic.sqlRowID);
+    XLOG_VERBOSE(@"Imported comic \"%@\" (%i)", name, comic.sqlRowID);
   } else {
-    LOG_ERROR(@"Failed importing comic \"%@\"", name);
+    XLOG_ERROR(@"Failed importing comic \"%@\"", name);
   }
 }
 
@@ -573,13 +572,13 @@ static inline void _ZombieRemoveFunction(LibraryConnection* connection, Database
 }
 
 static void _ZombieCollectionsRemoveFunction(const void* key, const void* value, void* context) {
-  LOG_VERBOSE(@"Removed collection \"%@\" (%i)", [(Collection*)value name], (DatabaseSQLRowID)key);
+  XLOG_VERBOSE(@"Removed collection \"%@\" (%i)", [(Collection*)value name], (DatabaseSQLRowID)key);
   _ZombieRemoveFunction((LibraryConnection*)context, (DatabaseObject*)value);
 }
 
 static void _ZombieComicsRemoveFunction(const void* key, const void* value, void* context) {
   if (!isnan([(Comic*)value time])) {
-    LOG_VERBOSE(@"Removed comic \"%@\" (%i)", [(Comic*)value name], (DatabaseSQLRowID)key);
+    XLOG_VERBOSE(@"Removed comic \"%@\" (%i)", [(Comic*)value name], (DatabaseSQLRowID)key);
     _ZombieRemoveFunction((LibraryConnection*)context, (DatabaseObject*)value);
   }
 }
@@ -594,7 +593,7 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
 - (id) _updateLibrary:(BOOL)force {
   LibraryConnection* connection = [[LibraryConnection alloc] initWithDatabaseAtPath:[LibraryConnection libraryDatabasePath]];
   if (connection == nil) {
-    DNOT_REACHED();
+    XLOG_DEBUG_UNREACHABLE();
     return nil;
   }
   NSString* rootPath = [LibraryConnection libraryRootPath];
@@ -687,7 +686,7 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
           if (![collection.name isEqualToString:directory]) {
             collection.name = directory;
             [connection updateObject:collection];
-            LOG_VERBOSE(@"Renamed collection \"%@\" (%i)", directory, collection.sqlRowID);
+            XLOG_VERBOSE(@"Renamed collection \"%@\" (%i)", directory, collection.sqlRowID);
             needsUpdate = YES;
           }
         }
@@ -703,10 +702,10 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
                                                                                   length:sizeof(DatabaseSQLRowID)]
                                                           withName:kLibraryExtendedAttribute
                                                      forFileAtPath:fullPath];
-          LOG_VERBOSE(@"Imported collection \"%@\" (%i)", directory, collection.sqlRowID);
+          XLOG_VERBOSE(@"Imported collection \"%@\" (%i)", directory, collection.sqlRowID);
           needsUpdate = YES;
         } else {
-          LOG_ERROR(@"Failed importing collection \"%@\"", directory);
+          XLOG_ERROR(@"Failed importing collection \"%@\"", directory);
         }
       }
       // Handle special root collection
@@ -722,9 +721,9 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
       NSArray* files = [directories objectForKey:directory];
       if (needsUpdate) {
         if (collection) {
-          LOG_VERBOSE(@"Scanning collection \"%@\" (%i)", directory, collection.sqlRowID);
+          XLOG_VERBOSE(@"Scanning collection \"%@\" (%i)", directory, collection.sqlRowID);
         } else {
-          LOG_VERBOSE(@"Scanning root collection");
+          XLOG_VERBOSE(@"Scanning root collection");
         }
         CGImageRef imageRef = NULL;
         for (NSString* file in files) {
@@ -746,11 +745,11 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
                            connection:connection
                                 force:force];
             if (collection && !imageRef) {
-              LOG_VERBOSE(@"Using comic \"%@\" to generate thumbnail for collection \"%@\"", file, directory);
+              XLOG_VERBOSE(@"Using comic \"%@\" to generate thumbnail for collection \"%@\"", file, directory);
               imageRef = [self _copyCoverImageFromComicAtPath:path withArchiveType:type forSize:CGSizeMake(kCollectionCoverWidth, kCollectionCoverHeight)];
             }
           } else {
-            LOG_INFO(@"Ignoring unknown type comic \"%@\"", file);
+            XLOG_INFO(@"Ignoring unknown type comic \"%@\"", file);
           }
           
           currentProgress += 1.0;
@@ -811,7 +810,7 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
       
       [pool release];
     }
-    DCHECK(currentProgress <= maximumProgress);
+    XLOG_DEBUG_CHECK(currentProgress <= maximumProgress);
   }
   
   // Remove zombies

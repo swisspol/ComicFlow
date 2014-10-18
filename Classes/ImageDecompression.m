@@ -23,7 +23,6 @@
 
 #import "ImageDecompression.h"
 #import "ImageUtilities.h"
-#import "Logging.h"
 
 #define __USE_LIBJPEG_TURBO__ 0
 #define __USE_RGBX_JPEG__ 0  // RGB appears a bit faster than RGBX on iPad Mini
@@ -56,7 +55,7 @@ static void _ErrorExit(j_common_ptr cinfo) {
   
   char buffer[JMSG_LENGTH_MAX];
   (*errorManager->error_mgr.format_message)(cinfo, buffer);
-  LOG_ERROR(@"libjpeg error (%i): %s", errorManager->error_mgr.msg_code, buffer);
+  XLOG_ERROR(@"libjpeg error (%i): %s", errorManager->error_mgr.msg_code, buffer);
   
   if (cinfo->err->msg_code != JERR_UNKNOWN_MARKER) {
     longjmp(errorManager->jmp_buffer, 1);
@@ -69,7 +68,7 @@ static void _EmitMessage(j_common_ptr cinfo, int msg_level) {
   if (msg_level < 0) {  // Indicates a corrupt-data warning
     char buffer[JMSG_LENGTH_MAX];
     (*errorManager->error_mgr.format_message)(cinfo, buffer);
-    LOG_WARNING(@"libjpeg warning (%i): %s", errorManager->error_mgr.msg_code, buffer);
+    XLOG_WARNING(@"libjpeg warning (%i): %s", errorManager->error_mgr.msg_code, buffer);
     if ((errorManager->error_mgr.msg_code == JWRN_EXTRANEOUS_DATA) && (errorManager->error_mgr.msg_parm.i[1] == 0xD9)) {
       // Extraneous bytes before EOI marker should be acceptable (e.g. Sony Ericsson P990i)
     } else {
@@ -78,7 +77,7 @@ static void _EmitMessage(j_common_ptr cinfo, int msg_level) {
   } else if (msg_level == 0) {  // Indicates an advisory message
     char buffer[JMSG_LENGTH_MAX];
     (*errorManager->error_mgr.format_message)(cinfo, buffer);
-    LOG_INFO(@"libjpeg message (%i): %s", errorManager->error_mgr.msg_code, buffer);
+    XLOG_INFO(@"libjpeg message (%i): %s", errorManager->error_mgr.msg_code, buffer);
   }
 }
 
@@ -123,7 +122,7 @@ static CGImageRef _CreateCGImageFromJPEGData(NSData* data, CGSize targetSize, BO
   size_t size = dinfo.output_height * rowBytes;
   buffer = malloc(size);
   if (buffer == NULL) {
-    LOG_ERROR(@"Failed allocating memory for JPEG buffer");
+    XLOG_ERROR(@"Failed allocating memory for JPEG buffer");
     jpeg_destroy_decompress(&dinfo);
     return NULL;
   }
@@ -172,7 +171,7 @@ static CGImageRef _CreateCGImageFromWebPData(NSData* data) {
   WebPInitDecoderConfig(&config);
   VP8StatusCode status = WebPGetFeatures(data.bytes, data.length, &config.input);
   if (status != VP8_STATUS_OK) {
-    LOG_ERROR(@"Failed retrieving WebP image features (%i)", status);
+    XLOG_ERROR(@"Failed retrieving WebP image features (%i)", status);
     return NULL;
   }
 #if __USE_RGBA_WEBP__
@@ -186,7 +185,7 @@ static CGImageRef _CreateCGImageFromWebPData(NSData* data) {
   size_t size = config.input.height * rowBytes;
   void* buffer = malloc(size);
   if (buffer == NULL) {
-    LOG_ERROR(@"Failed allocating memory for WebP buffer");
+    XLOG_ERROR(@"Failed allocating memory for WebP buffer");
     return NULL;
   }
   config.options.bypass_filtering = 1;
@@ -203,7 +202,7 @@ static CGImageRef _CreateCGImageFromWebPData(NSData* data) {
   config.output.u.RGBA.size = size;
   status = WebPDecode(data.bytes, data.length, &config);
   if (status != VP8_STATUS_OK) {
-    LOG_ERROR(@"Failed decoding WebP image (%i)", status);
+    XLOG_ERROR(@"Failed decoding WebP image (%i)", status);
     free(buffer);
     return NULL;
   }
@@ -248,14 +247,14 @@ CGImageRef CreateCGImageFromFileData(NSData* data, NSString* extension, CGSize t
     if (thumbnailMode || (CGImageGetWidth(imageRef) > (size_t)targetSize.width) || (CGImageGetHeight(imageRef) > (size_t)targetSize.height)) {
       CGImageRef scaledImageRef = CreateScaledImage(imageRef, targetSize, thumbnailMode ? kImageScalingMode_AspectFill : kImageScalingMode_AspectFit, [[UIColor blackColor] CGColor]);
       if (scaledImageRef) {
-        LOG_VERBOSE(@"Decompressed '%@' image of %ix%i pixels and rescaled to %ix%i pixels in %.3f seconds", [extension lowercaseString],
-                    CGImageGetWidth(imageRef), CGImageGetHeight(imageRef), CGImageGetWidth(scaledImageRef), CGImageGetHeight(scaledImageRef), CFAbsoluteTimeGetCurrent() - time);
+        XLOG_VERBOSE(@"Decompressed '%@' image of %ix%i pixels and rescaled to %ix%i pixels in %.3f seconds", [extension lowercaseString],
+                     (int)CGImageGetWidth(imageRef), (int)CGImageGetHeight(imageRef), (int)CGImageGetWidth(scaledImageRef), (int)CGImageGetHeight(scaledImageRef), CFAbsoluteTimeGetCurrent() - time);
       }
       CGImageRelease(imageRef);
       imageRef = scaledImageRef;
     } else {
-      LOG_VERBOSE(@"Decompressed '%@' image of %ix%i pixels in %.3f seconds", [extension lowercaseString],
-                  CGImageGetWidth(imageRef), CGImageGetHeight(imageRef), CFAbsoluteTimeGetCurrent() - time);
+      XLOG_VERBOSE(@"Decompressed '%@' image of %ix%i pixels in %.3f seconds", [extension lowercaseString],
+                   (int)CGImageGetWidth(imageRef), (int)CGImageGetHeight(imageRef), CFAbsoluteTimeGetCurrent() - time);
     }
   }
   return imageRef;

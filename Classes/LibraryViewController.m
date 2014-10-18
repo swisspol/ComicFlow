@@ -23,7 +23,6 @@
 #import "Extensions_Foundation.h"
 #import "Extensions_UIKit.h"
 #import "NetReachability.h"
-#import "Logging.h"
 
 #define kBackgroundOffset 6.0
 
@@ -181,13 +180,13 @@ static void __DisplayQueueCallBack(void* info) {
     _window = window;
     
     _comicImage = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Comic-Background" ofType:@"png"]];
-    CHECK(_comicImage);
+    XLOG_CHECK(_comicImage);
     _collectionImage = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Collection-Background" ofType:@"png"]];
-    CHECK(_collectionImage);
+    XLOG_CHECK(_collectionImage);
     _newImage = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"New" ofType:@"png"]];
-    CHECK(_newImage);
+    XLOG_CHECK(_newImage);
     _ribbonImage = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Ribbon" ofType:@"png"]];
-    CHECK(_ribbonImage);
+    XLOG_CHECK(_ribbonImage);
     
     DatabaseSQLRowID collectionID = [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_CurrentCollection];
     if (collectionID) {
@@ -201,7 +200,7 @@ static void __DisplayQueueCallBack(void* info) {
 #if __DISPLAY_THUMBNAILS_IN_BACKGROUND__
 #if __STORE_THUMBNAILS_IN_DATABASE__
     _displayConnection = [[LibraryConnection alloc] initWithDatabaseAtPath:[LibraryConnection libraryDatabasePath]];
-    CHECK(_displayConnection);
+    XLOG_CHECK(_displayConnection);
 #endif
     pthread_mutexattr_t attributes;
     pthread_mutexattr_init(&attributes);
@@ -301,7 +300,7 @@ static void __DisplayQueueCallBack(void* info) {
     [_selectedItem release];
     _selectedItem = nil;
   } else {
-    DNOT_REACHED();
+    XLOG_DEBUG_UNREACHABLE();
   }
 }
 
@@ -322,20 +321,20 @@ static void __DisplayQueueCallBack(void* info) {
       if ([[NSFileManager defaultManager] removeItemAtPath:[[LibraryConnection mainConnection] pathForComic:(Comic*)_selectedItem] error:&error]) {
         [(AppDelegate*)[AppDelegate sharedInstance] updateLibrary];
       } else {
-        LOG_ERROR(@"Failed deleting comic \"%@\": %@", [(Comic*)_selectedItem name], error);
+        XLOG_ERROR(@"Failed deleting comic \"%@\": %@", [(Comic*)_selectedItem name], error);
       }
     } else {
       NSError* error = nil;
       if ([[NSFileManager defaultManager] removeItemAtPath:[[LibraryConnection mainConnection] pathForCollection:(Collection*)_selectedItem] error:&error]) {
         [(AppDelegate*)[AppDelegate sharedInstance] updateLibrary];
       } else {
-        LOG_ERROR(@"Failed deleting comic \"%@\": %@", [(Collection*)_selectedItem name], error);
+        XLOG_ERROR(@"Failed deleting comic \"%@\": %@", [(Collection*)_selectedItem name], error);
       }
     }
     [_selectedItem release];
     _selectedItem = nil;
   } else {
-    DNOT_REACHED();
+    XLOG_DEBUG_UNREACHABLE();
   }
   [[AppDelegate sharedDelegate] logEvent:@"menu.delete"];
 }
@@ -435,7 +434,7 @@ static void __DisplayQueueCallBack(void* info) {
     [_restoreButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
   }
   
-  DCHECK(_updateTimer == nil);
+  XLOG_DEBUG_CHECK(_updateTimer == nil);
   _updateTimer = [[NSTimer alloc] initWithFireDate:[NSDate distantFuture] interval:kUpdateTimerInterval target:self selector:@selector(_updateTimer:) userInfo:nil repeats:YES];
   [[NSRunLoop mainRunLoop] addTimer:_updateTimer forMode:NSRunLoopCommonModes];
 }
@@ -443,7 +442,7 @@ static void __DisplayQueueCallBack(void* info) {
 - (void) viewDidUnload {
   [super viewDidUnload];
 
-  DCHECK(_updateTimer != nil);
+  XLOG_DEBUG_CHECK(_updateTimer != nil);
   [_updateTimer invalidate];
   [_updateTimer release];
   _updateTimer = nil;
@@ -469,7 +468,7 @@ static void __DisplayQueueCallBack(void* info) {
 }
 
 - (void) _reloadCurrentCollection {
-  LOG_VERBOSE(@"Reloading current collection");
+  XLOG_VERBOSE(@"Reloading current collection");
   NSInteger scrolling = _currentCollection ? _currentCollection.scrolling
                                            : [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_RootScrolling];
   if ((scrolling < 0) || (scrolling == NSNotFound)) {
@@ -570,7 +569,7 @@ static void __DisplayQueueCallBack(void* info) {
   if ([self.modalViewController isKindOfClass:[ComicViewController class]]) {
     [(ComicViewController*)self.modalViewController saveState];
   } else {
-    DNOT_REACHED();
+    XLOG_DEBUG_UNREACHABLE();
   }
   
   if (([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_SortingMode] == kSortingMode_ByStatus) && !_gridView.empty) {
@@ -581,7 +580,7 @@ static void __DisplayQueueCallBack(void* info) {
       [[LibraryConnection mainConnection] refetchObject:comic];
       [self _updateThumbnailViewForItem:comic];
     } else {
-      DNOT_REACHED();
+      XLOG_DEBUG_UNREACHABLE();
     }
   }
   
@@ -673,7 +672,7 @@ static void __DisplayQueueCallBack(void* info) {
 - (void) _viewDidReallyAppear {
   BOOL needLibraryUpdate = [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_LibraryVersion] != kLibraryVersion;
   if (needLibraryUpdate) {
-    LOG_VERBOSE(@"Library is outdated at version %i", [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_LibraryVersion]);
+    XLOG_VERBOSE(@"Library is outdated at version %i", [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_LibraryVersion]);
     [_currentComic release];
     _currentComic = nil;
   }
@@ -705,7 +704,7 @@ static void __DisplayQueueCallBack(void* info) {
       [[UIApplication sharedApplication] beginIgnoringInteractionEvents];
       [self performSelector:@selector(_showRatingScreen) withObject:nil afterDelay:kShowRatingDelay];
     } else {
-      LOG_VERBOSE(@"Launch count is now %i", [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_LaunchCount]);
+      XLOG_VERBOSE(@"Launch count is now %i", [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_LaunchCount]);
     }
   }
   
@@ -752,7 +751,7 @@ static void __DisplayQueueCallBack(void* info) {
 }
 
 - (void) _forceUpdate {
-  LoggingPurgeHistory(0.0);
+  [[AppDelegate sharedDelegate] purgeLogHistory];
   [[LibraryUpdater sharedUpdater] update:YES];
   [self _updateStatistics];
   [self _setCurrentCollection:nil];
@@ -978,7 +977,7 @@ static void __ArrayApplierFunction(const void* value, void* context) {
 - (IBAction) showLog:(id)sender {
   [_menuController dismissPopoverAnimated:YES];
   [_updateTimer setFireDate:[NSDate distantFuture]];
-  [[AppDelegate sharedInstance] showLogViewControllerWithTitle:NSLocalizedString(@"LOG_TITLE", nil)];
+  [[AppDelegate sharedInstance] showLogViewController];
 }
 
 - (IBAction) toggleDimming:(id)sender {

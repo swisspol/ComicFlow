@@ -23,7 +23,6 @@
 #import "ZoomView.h"
 #import "MiniZip.h"
 #import "UnRAR.h"
-#import "Logging.h"
 #import "ImageDecompression.h"
 
 #define kMaxPageSize 1500.0
@@ -55,7 +54,7 @@
         return YES;
       }
     } else {
-      DNOT_REACHED();
+      XLOG_DEBUG_UNREACHABLE();
     }
   }
   return NO;
@@ -106,7 +105,7 @@
 @synthesize navigationBar=_navigationBar, navigationControl=_navigationControl, contentView=_contentView;
 
 - (id) initWithComic:(Comic*)comic {
-  DCHECK(comic.sqlRowID);
+  XLOG_DEBUG_CHECK(comic.sqlRowID);
   if ((self = [super init])) {
     _comic = [comic retain];
     _path = [[[LibraryConnection mainConnection] pathForComic:_comic] copy];
@@ -130,7 +129,7 @@
       }
     }
     if (!_contents) {
-      LOG_ERROR(@"Failed loading comic at \"%@\"", _path);
+      XLOG_ERROR(@"Failed loading comic at \"%@\"", _path);
       [self release];
       return nil;
     }

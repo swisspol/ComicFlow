@@ -23,7 +23,6 @@
 #import "Defaults.h"
 #import "Extensions_Foundation.h"
 #import "Extensions_UIKit.h"
-#import "Logging.h"
 #import "NetReachability.h"
 
 #define kUpdateDelay 1.0
@@ -41,14 +40,14 @@
 }
 
 - (void) _finishPurchase {
-  DCHECK(_purchasing);
+  XLOG_DEBUG_CHECK(_purchasing);
   self.window.userInteractionEnabled = YES;
   [self hideSpinner:YES];
   _purchasing = NO;
 }
 
 - (void) purchase {
-  DCHECK([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerMode] != kServerMode_Full);
+  XLOG_DEBUG_CHECK([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerMode] != kServerMode_Full);
   if (![[NetReachability sharedNetReachability] state]) {
     [self showAlertWithTitle:NSLocalizedString(@"OFFLINE_ALERT_TITLE", nil) message:NSLocalizedString(@"OFFLINE_ALERT_MESSAGE", nil) button:NSLocalizedString(@"OFFLINE_ALERT_BUTTON", nil)];
     return;
@@ -68,13 +67,13 @@
 }
 
 - (void) restore {
-  DCHECK([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerMode] != kServerMode_Full);
+  XLOG_DEBUG_CHECK([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerMode] != kServerMode_Full);
   [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
   [self _startPurchase];
 }
 
 - (void) request:(SKRequest*)request didFailWithError:(NSError*)error {
-  LOG_ERROR(@"App Store request failed: %@", error);
+  XLOG_ERROR(@"App Store request failed: %@", error);
   [self showAlertWithTitle:NSLocalizedString(@"FAILED_ALERT_TITLE", nil) message:NSLocalizedString(@"FAILED_ALERT_MESSAGE", nil) button:NSLocalizedString(@"FAILED_ALERT_BUTTON", nil)];
   [self _finishPurchase];
 }
@@ -85,7 +84,7 @@
     SKPayment* payment = [SKPayment paymentWithProduct:product];
     [[SKPaymentQueue defaultQueue] addPayment:payment];
   } else {
-    LOG_WARNING(@"Invalid App Store products: %@", response.invalidProductIdentifiers);
+    XLOG_WARNING(@"Invalid App Store products: %@", response.invalidProductIdentifiers);
     [self showAlertWithTitle:NSLocalizedString(@"FAILED_ALERT_TITLE", nil) message:NSLocalizedString(@"FAILED_ALERT_MESSAGE", nil) button:NSLocalizedString(@"FAILED_ALERT_BUTTON", nil)];
     [self _finishPurchase];
   }
@@ -93,10 +92,10 @@
 
 // This can be called in response to a purchase request or on app cold launch if there are unfinished transactions still pending
 - (void) paymentQueue:(SKPaymentQueue*)queue updatedTransactions:(NSArray*)transactions {
-  LOG_VERBOSE(@"%i App Store transactions updated", transactions.count);
+  XLOG_VERBOSE(@"%i App Store transactions updated", transactions.count);
   for (SKPaymentTransaction* transaction in transactions) {
     NSString* productIdentifier = transaction.payment.productIdentifier;
-    DCHECK(productIdentifier);
+    XLOG_DEBUG_CHECK(productIdentifier);
     switch (transaction.transactionState) {
       
       case SKPaymentTransactionStatePurchasing:
@@ -109,15 +108,15 @@
       
       case SKPaymentTransactionStatePurchased:
       case SKPaymentTransactionStateRestored: {
-        LOG_VERBOSE(@"Processing App Store transaction '%@' from %@", transaction.transactionIdentifier, transaction.transactionDate);
+        XLOG_VERBOSE(@"Processing App Store transaction '%@' from %@", transaction.transactionIdentifier, transaction.transactionDate);
         if ([productIdentifier isEqualToString:kStoreKitProductIdentifier]) {
           NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
           [defaults setInteger:kServerMode_Full forKey:kDefaultKey_ServerMode];
           [defaults removeObjectForKey:kDefaultKey_UploadsRemaining];
           [defaults synchronize];
         } else {
-          LOG_ERROR(@"Unexpected App Store product \"%@\"", productIdentifier);
-          DNOT_REACHED();
+          XLOG_ERROR(@"Unexpected App Store product \"%@\"", productIdentifier);
+          XLOG_DEBUG_UNREACHABLE();
         }
         [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
         if (transaction.transactionState == SKPaymentTransactionStatePurchased) {
@@ -126,7 +125,7 @@
           [self _finishPurchase];
           [self logEvent:@"iap.purchased" withParameterName:@"product" value:productIdentifier];
         } else {
-          DCHECK(_purchasing == NO);
+          XLOG_DEBUG_CHECK(_purchasing == NO);
           [self logEvent:@"iap.restored" withParameterName:@"product" value:productIdentifier];
         }
         break;
@@ -135,10 +134,10 @@
       case SKPaymentTransactionStateFailed: {
         NSError* error = transaction.error;
         if ([error.domain isEqualToString:SKErrorDomain] && (error.code == SKErrorPaymentCancelled)) {
-          LOG_VERBOSE(@"App Store transaction cancelled");
+          XLOG_VERBOSE(@"App Store transaction cancelled");
           [self logEvent:@"iap.cancelled" withParameterName:@"product" value:productIdentifier];
         } else {
-          LOG_ERROR(@"App Store transaction failed: %@", error);
+          XLOG_ERROR(@"App Store transaction failed: %@", error);
           [self showAlertWithTitle:NSLocalizedString(@"FAILED_ALERT_TITLE", nil) message:NSLocalizedString(@"FAILED_ALERT_MESSAGE", nil) button:NSLocalizedString(@"FAILED_ALERT_BUTTON", nil)];
           [self logEvent:@"iap.failed" withParameterName:@"product" value:productIdentifier];
         }
@@ -152,20 +151,20 @@
 }
 
 - (void) paymentQueue:(SKPaymentQueue*)queue removedTransactions:(NSArray*)transactions {
-  LOG_VERBOSE(@"%i App Store transactions removed", transactions.count);
+  XLOG_VERBOSE(@"%i App Store transactions removed", transactions.count);
 }
 
 - (void) paymentQueue:(SKPaymentQueue*)queue restoreCompletedTransactionsFailedWithError:(NSError*)error {
   if ([error.domain isEqualToString:SKErrorDomain] && (error.code == SKErrorPaymentCancelled)) {
-    LOG_VERBOSE(@"App Store transaction restoration cancelled");
+    XLOG_VERBOSE(@"App Store transaction restoration cancelled");
   } else {
-    LOG_ERROR(@"App Store transaction restoration failed: %@", error);
+    XLOG_ERROR(@"App Store transaction restoration failed: %@", error);
   }
   [self _finishPurchase];
 }
 
 - (void) paymentQueueRestoreCompletedTransactionsFinished:(SKPaymentQueue*)queue {
-  LOG_VERBOSE(@"App Store transactions restored");
+  XLOG_VERBOSE(@"App Store transactions restored");
   [self _finishPurchase];
 }
 
@@ -199,7 +198,7 @@
 
 - (void) awakeFromNib {
   // Initialize library
-  CHECK([LibraryConnection mainConnection]);
+  XLOG_CHECK([LibraryConnection mainConnection]);
 }
 
 - (void) _updateTimer:(NSTimer*)timer {
@@ -215,7 +214,7 @@
 }
 
 - (void) crashlytics:(Crashlytics*)crashlytics didDetectCrashDuringPreviousExecution:(id<CLSCrashReport>)crash {
-  LOG_WARNING(@"Crashlytics did detect previous crash on %@", crash.crashedOnDate);
+  XLOG_WARNING(@"Crashlytics did detect previous crash on %@", crash.crashedOnDate);
 }
 
 - (BOOL) application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions {
@@ -223,7 +222,7 @@
   
 #if TARGET_IPHONE_SIMULATOR
   // Log Documents folder path
-  LOG_VERBOSE(@"Documents folder location: %@", [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject]);
+  XLOG_VERBOSE(@"Documents folder location: %@", [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject]);
 #endif
   
 #if !DEBUG && !TARGET_IPHONE_SIMULATOR
@@ -242,7 +241,7 @@
   u_int8_t value = 1;
   int result = setxattr([documentsPath fileSystemRepresentation], "com.apple.MobileBackup", &value, sizeof(value), 0, 0);
   if (result) {
-    LOG_ERROR(@"Failed setting do-not-backup attribute on \"%@\": %s (%i)", documentsPath, strerror(result), result);
+    XLOG_ERROR(@"Failed setting do-not-backup attribute on \"%@\": %s (%i)", documentsPath, strerror(result), result);
   }
   
   // Create root view controller
@@ -294,7 +293,7 @@
 }
 
 - (BOOL) application:(UIApplication*)application openURL:(NSURL*)url sourceApplication:(NSString*)sourceApplication annotation:(id)annotation {
-  LOG_VERBOSE(@"Opening \"%@\"", url);
+  XLOG_VERBOSE(@"Opening \"%@\"", url);
   if ([url isFileURL]) {
     NSString* file = [[url path] lastPathComponent];
     NSString* destinationPath = [[LibraryConnection libraryRootPath] stringByAppendingPathComponent:file];
@@ -362,12 +361,12 @@
     NSUInteger count = [defaults integerForKey:kDefaultKey_UploadsRemaining];
     count = count - 1;
     if (count > 0) {
-      LOG_VERBOSE(@"Web Server trial has %i uploads left", count);
+      XLOG_VERBOSE(@"Web Server trial has %i uploads left", count);
       [defaults setInteger:count forKey:kDefaultKey_UploadsRemaining];
     } else {
       [defaults setInteger:kServerMode_Limited forKey:kDefaultKey_ServerMode];
       [defaults removeObjectForKey:kDefaultKey_UploadsRemaining];
-      LOG_VERBOSE(@"Web Server trial has ended");
+      XLOG_VERBOSE(@"Web Server trial has ended");
     }
     [defaults synchronize];
   }
@@ -396,16 +395,16 @@
 
 - (void) logEvent:(NSString*)event withParameterName:(NSString*)name value:(NSString*)value {
   if (name && value) {
-    LOG_VERBOSE(@"<EVENT> %@ ('%@' = '%@')", event, name, value);
+    XLOG_VERBOSE(@"<EVENT> %@ ('%@' = '%@')", event, name, value);
     [Flurry logEvent:event withParameters:[NSDictionary dictionaryWithObject:value forKey:name]];
   } else {
-    LOG_VERBOSE(@"<EVENT> %@", event);
+    XLOG_VERBOSE(@"<EVENT> %@", event);
     [Flurry logEvent:event];
   }
 }
 
 - (void) logPageView {
-  LOG_VERBOSE(@"<PAGE VIEW>");
+  XLOG_VERBOSE(@"<PAGE VIEW>");
   [Flurry logPageView];
 }
 

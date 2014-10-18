@@ -16,14 +16,12 @@
 #import "raros.hpp"
 #import "dll.hpp"
 
-#import "Logging.h"
-
 // http://www.rarlab.com/rar_add.htm
 // http://goahomepage.free.fr/article/2000_09_17_unrar_dll/UnRARDLL.html
 
 static NSString* _PathFromFileName(const char* filename) {
   NSString* path = [NSString stringWithCString:filename encoding:NSASCIIStringEncoding];
-  DCHECK(path);
+  XLOG_DEBUG_CHECK(path);
   return path;
 }
 
@@ -86,7 +84,7 @@ static NSString* _PathFromFileName(const char* filename) {
       int result = RARReadHeader(handle, &headerData);
       if (result != 0) {
         if (result != ERAR_END_ARCHIVE) {
-          LOG_ERROR(@"UnRAR returned error %i", result);
+          XLOG_ERROR(@"UnRAR returned error %i", result);
           array = nil;
         }
         break;
@@ -109,7 +107,7 @@ static NSString* _PathFromFileName(const char* filename) {
       // Find next file
       result = RARProcessFile(handle, RAR_SKIP, NULL, NULL);
       if (result != 0) {
-        LOG_ERROR(@"UnRAR returned error %i", result);
+        XLOG_ERROR(@"UnRAR returned error %i", result);
         array = nil;
         break;
       }
@@ -118,7 +116,7 @@ static NSString* _PathFromFileName(const char* filename) {
     // Close archive
     RARCloseArchive(handle);
   } else {
-    LOG_ERROR(@"UnRAR failed opening archive");
+    XLOG_ERROR(@"UnRAR failed opening archive");
   }
   
   return array;
@@ -145,7 +143,7 @@ static NSString* _PathFromFileName(const char* filename) {
       int result = RARReadHeader(handle, &headerData);
       if (result != 0) {
         if (result != ERAR_END_ARCHIVE) {
-          LOG_ERROR(@"UnRAR returned error %i", result);
+          XLOG_ERROR(@"UnRAR returned error %i", result);
           success = NO;
         }
         break;
@@ -165,7 +163,7 @@ static NSString* _PathFromFileName(const char* filename) {
       // Extract and find next file
       result = RARProcessFile(handle, path && headerData.FileCRC ? RAR_EXTRACT : RAR_SKIP, (char*)destination, NULL);
       if (result != 0) {
-        LOG_ERROR(@"UnRAR returned error %i", result);
+        XLOG_ERROR(@"UnRAR returned error %i", result);
         success = NO;
         break;
       }
@@ -174,7 +172,7 @@ static NSString* _PathFromFileName(const char* filename) {
     // Close archive
     RARCloseArchive(handle);
   } else {
-    LOG_ERROR(@"UnRAR failed opening archive");
+    XLOG_ERROR(@"UnRAR failed opening archive");
   }
   
   return success;
@@ -199,7 +197,7 @@ static NSString* _PathFromFileName(const char* filename) {
       int result = RARReadHeader(handle, &headerData);
       if (result != 0) {
         if (result != ERAR_END_ARCHIVE) {
-          LOG_ERROR(@"UnRAR returned error %i", result);
+          XLOG_ERROR(@"UnRAR returned error %i", result);
         }
         break;
       }
@@ -209,7 +207,7 @@ static NSString* _PathFromFileName(const char* filename) {
       if (headerData.FileCRC && [path isEqualToString:inPath]) {
         result = RARProcessFile(handle, RAR_EXTRACT, NULL, (char*)[outPath fileSystemRepresentation]);
         if (result != 0) {
-          LOG_ERROR(@"UnRAR returned error %i", result);
+          XLOG_ERROR(@"UnRAR returned error %i", result);
         } else {
           success = YES;
         }
@@ -217,7 +215,7 @@ static NSString* _PathFromFileName(const char* filename) {
       } else {
         result = RARProcessFile(handle, RAR_SKIP, NULL, NULL);
         if (result != 0) {
-          LOG_ERROR(@"UnRAR returned error %i", result);
+          XLOG_ERROR(@"UnRAR returned error %i", result);
           break;
         }
       }
@@ -226,7 +224,7 @@ static NSString* _PathFromFileName(const char* filename) {
     // Close archive
     RARCloseArchive(handle);
   } else {
-    LOG_ERROR(@"UnRAR failed opening archive");
+    XLOG_ERROR(@"UnRAR failed opening archive");
   }
   
   return success;
