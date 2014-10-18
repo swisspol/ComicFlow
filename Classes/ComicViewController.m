@@ -105,6 +105,11 @@
 @synthesize navigationBar=_navigationBar, navigationControl=_navigationControl, contentView=_contentView;
 
 - (id) initWithComic:(Comic*)comic {
+  [CATransaction begin];
+  [[AppDelegate sharedInstance] showSpinnerWithMessage:NSLocalizedString(@"SPINNER_MESSAGE", nil) fullScreen:NO animated:YES];
+  [CATransaction flush];
+  [CATransaction commit];
+  
   XLOG_DEBUG_CHECK(comic.sqlRowID);
   if ((self = [super init])) {
     _comic = [comic retain];
@@ -160,6 +165,8 @@
   [_contents release];
   [_path release];
   [_comic release];
+  
+  [[AppDelegate sharedInstance] hideSpinner:NO];  // Just in case
   
   [super dealloc];
 }
@@ -304,11 +311,6 @@
 
 - (void) viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
-  
-  [CATransaction begin];
-  [[AppDelegate sharedInstance] showSpinnerWithMessage:NSLocalizedString(@"SPINNER_MESSAGE", nil) fullScreen:NO animated:YES];
-  [CATransaction flush];
-  [CATransaction commit];
   
   NSMutableArray* array = [[NSMutableArray alloc] init];
   if (_type == kComicType_PDF) {
