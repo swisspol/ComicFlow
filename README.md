@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://raw2.github.com/swisspol/ComicFlow/master/Resources/Default-Landscape.png">
+<img src="https://raw.github.com/swisspol/ComicFlow/master/Resources/Default-Landscape.png">
 </p>
 
 Overview
