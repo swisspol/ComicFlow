@@ -81,7 +81,8 @@ static ApplicationDelegate* _sharedInstance = nil;
   // Configure logging
   [XLSharedFacility setLogsUncaughtExceptions:YES];
   [XLSharedFacility setLogsInitializedExceptions:YES];
-  _databaseLogger = (XLDatabaseLogger*)[XLSharedFacility addLogger:[[XLDatabaseLogger alloc] init]];
+  _databaseLogger = [[XLDatabaseLogger alloc] init];
+  [XLSharedFacility addLogger:_databaseLogger];
 #if DEBUG
   [XLSharedFacility addLogger:[[XLTelnetServerLogger alloc] init]];
 #endif
