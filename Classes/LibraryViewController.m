@@ -24,6 +24,10 @@
 #import "Extensions_UIKit.h"
 #import "NetReachability.h"
 
+#define kAppStoreAppID @"409290355"
+#define kiOSAppStoreURLFormat @"itms-apps://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%@"
+#define kiOS7AppStoreURLFormat @"itms-apps://itunes.apple.com/app/id%@"
+
 #define kBackgroundOffset 6.0
 
 #define kGridMargin 10.0
@@ -641,7 +645,14 @@ static void __DisplayQueueCallBack(void* info) {
   [[AppDelegate sharedDelegate] logEvent:@"rating.now"];
   [[NSUserDefaults standardUserDefaults] setInteger:-1 forKey:kDefaultKey_LaunchCount];
   
-  [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"iTunesURL"]]];
+  NSString* appURL;
+  float version = [[UIDevice currentDevice].systemVersion floatValue];
+  if (version >= 7.0 && version < 7.1) {
+    appURL = [NSString stringWithFormat:kiOS7AppStoreURLFormat, kAppStoreAppID];
+  } else {
+    appURL = [NSString stringWithFormat:kiOSAppStoreURLFormat, kAppStoreAppID];
+  }
+  [[UIApplication sharedApplication] openURL:[NSURL URLWithString:appURL]];
 }
 
 - (void) _rateLater:(id)argument {
