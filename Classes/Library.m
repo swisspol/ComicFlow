@@ -22,6 +22,7 @@
 #import "UnRAR.h"
 #import "Extensions_Foundation.h"
 #import "ImageDecompression.h"
+#import "XLFacilityMacros.h"
 
 #define kInboxDirectoryName @"Inbox"
 

@@ -24,6 +24,7 @@
 #import "MiniZip.h"
 #import "UnRAR.h"
 #import "ImageDecompression.h"
+#import "XLFacilityMacros.h"
 
 #define kMaxPageSize 1500.0
 #define kLeftZoneRatio 0.2
