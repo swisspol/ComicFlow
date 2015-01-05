@@ -176,7 +176,10 @@ typedef enum {
 }
 
 - (NSArray*) fetchAllComicsByName {
-  return [self fetchObjectsOfClass:[Comic class] withSQLWhereClause:@"1 ORDER BY name ASC" limit:0];
+  NSArray* results = [self fetchObjectsOfClass:[Comic class] withSQLWhereClause:@"1 ORDER BY name ASC" limit:0];
+  return [results sortedArrayUsingComparator:^NSComparisonResult(Comic* comic1, Comic* comic2) {
+    return [comic1.name localizedStandardCompare:comic2.name];
+  }];
 }
 
 - (NSArray*) fetchAllComicsByDate {
@@ -184,17 +187,21 @@ typedef enum {
 }
 
 - (NSArray*) fetchAllComicsByStatus {
-  return [self fetchObjectsOfClass:[Comic class] withSQLWhereClause:@"1 ORDER BY status>0 DESC, status==-1 DESC, name ASC" limit:0];
+  return [self fetchObjectsOfClass:[Comic class] withSQLWhereClause:@"1 ORDER BY status>0 DESC, status==-1 DESC, time DESC" limit:0];
 }
 
 - (NSArray*) fetchComicsInCollection:(Collection*)collection {
-  return [self fetchObjectsOfClass:[Comic class]
-                withSQLWhereClause:[NSString stringWithFormat:@"collection=%i ORDER BY name ASC", collection.sqlRowID]
-                             limit:0];
+  NSArray* results = [self fetchObjectsOfClass:[Comic class] withSQLWhereClause:[NSString stringWithFormat:@"collection=%i", collection.sqlRowID] limit:0];
+  return [results sortedArrayUsingComparator:^NSComparisonResult(Comic* comic1, Comic* comic2) {
+    return [comic1.name localizedStandardCompare:comic2.name];
+  }];
 }
 
 - (NSArray*) fetchAllCollectionsByName {
-  return [self fetchObjectsOfClass:[Collection class] withSQLWhereClause:@"1 ORDER BY name ASC" limit:0];
+  NSArray* results = [self fetchObjectsOfClass:[Collection class] withSQLWhereClause:@"1" limit:0];
+  return [results sortedArrayUsingComparator:^NSComparisonResult(Collection* collection1, Collection* collection2) {
+    return [collection1.name localizedStandardCompare:collection2.name];
+  }];
 }
 
 - (BOOL) updateStatus:(int)status forComicsInCollection:(Collection*)collection {
