@@ -54,7 +54,6 @@
 #endif
 @property(nonatomic) NSTimeInterval time;
 @property(nonatomic) int status;  // -1: new, 0: normal, 1+: reading
-//Dropbox code
 @property (nonatomic) BOOL isDownloading;
 @property (nonatomic) CGFloat progress;
 @end
@@ -76,9 +75,7 @@
 @end
 
 @interface LibraryConnection : DatabaseConnection
-
 @property (retain, nonatomic) NSMutableArray* comicsBeingDownloaded;
-
 + (NSString*) libraryRootPath;
 + (NSString*) libraryApplicationDataPath;
 + (NSString*) libraryDatabasePath;
@@ -92,22 +89,20 @@
 - (BOOL) updateStatusForAllComics:(int)status;
 - (NSString*) pathForComic:(Comic*)comic;
 - (NSString*) pathForCollection:(Collection*)collection;
-
 - (void)downloadFileAtUrl:(NSURL*)url withFileName:(NSString*)filename;
-- (void)finishedDownloading:(Comic*)comic;
 @end
 
 @interface LibraryUpdater : NSObject {
 @private
-    id<LibraryUpdaterDelegate> _delegate;
-    CGFloat _screenScale;
-    CGImageRef _comicPlaceholderImageRef;
-    CGImageRef _comicBackgroundImageRef;
-    CGImageRef _comicScreenImageRef;
-    CGImageRef _collectionBackgroundImageRef;
-    CGImageRef _collectionScreenImageRef;
-    NSData* _fakeData;
-    BOOL _updating;
+  id<LibraryUpdaterDelegate> _delegate;
+  CGFloat _screenScale;
+  CGImageRef _comicPlaceholderImageRef;
+  CGImageRef _comicBackgroundImageRef;
+  CGImageRef _comicScreenImageRef;
+  CGImageRef _collectionBackgroundImageRef;
+  CGImageRef _collectionScreenImageRef;
+  NSData* _fakeData;
+  BOOL _updating;
 }
 @property(nonatomic, readonly, getter=isUpdating) BOOL updating;
 @property(nonatomic, assign) id<LibraryUpdaterDelegate> delegate;
