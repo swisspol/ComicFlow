@@ -55,7 +55,7 @@ typedef enum {
 } ArchiveType;
 
 @interface LibraryUpdater (Updating)
-- (id)_updateLibrary:(BOOL)force;
+- (id) _updateLibrary:(BOOL)force;
 @end
 
 #if __STORE_THUMBNAILS_IN_DATABASE__
@@ -64,13 +64,11 @@ typedef enum {
 
 @dynamic data;
 
-+ (NSString*)sqlTableName
-{
++ (NSString*) sqlTableName {
     return @"thumbnails";
 }
 
-+ (DatabaseSQLColumnOptions)sqlColumnOptionsForProperty:(NSString*)property
-{
++ (DatabaseSQLColumnOptions) sqlColumnOptionsForProperty:(NSString*)property {
     if ([property isEqualToString:@"data"]) {
         return kDatabaseSQLColumnOption_NotNull;
     }
@@ -85,15 +83,13 @@ typedef enum {
 
 @dynamic collection, name, thumbnail, time, status;
 
-+ (NSString*)sqlTableName
-{
++ (NSString*) sqlTableName {
     return @"comics";
 }
 
 #if TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR
 
-+ (DatabaseSQLColumnOptions)sqlColumnOptionsForProperty:(NSString*)property
-{
++ (DatabaseSQLColumnOptions) sqlColumnOptionsForProperty:(NSString*)property {
     if ([property isEqualToString:@"name"]) {
         return kDatabaseSQLColumnOption_CaseInsensitive_UTF8;
     }
@@ -120,7 +116,6 @@ typedef enum {
 
     // Actual progress is self.receivedBytes / self.totalBytes
     self.progress = (CGFloat)receivedBytes / (CGFloat)totalBytes;
-    //    [_progressBar setProgress:self.progress];
     if (gridToUpdate != nil) {
         ThumbnailView* view = (ThumbnailView*)[gridToUpdate viewForItem:self];
         [view.progressBar setProgress:self.progress];
@@ -162,15 +157,13 @@ typedef enum {
 @dynamic name, thumbnail, time, status, scrolling;
 @synthesize comics;
 
-+ (NSString*)sqlTableName
-{
++ (NSString*) sqlTableName {
     return @"collections";
 }
 
 #if TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR
 
-+ (DatabaseSQLColumnOptions)sqlColumnOptionsForProperty:(NSString*)property
-{
++ (DatabaseSQLColumnOptions) sqlColumnOptionsForProperty:(NSString*)property {
     if ([property isEqualToString:@"name"]) {
         return kDatabaseSQLColumnOption_CaseInsensitive_UTF8;
     }
@@ -179,10 +172,9 @@ typedef enum {
 
 #endif
 
-- (void)dealloc
-{
+- (void) dealloc {
     [comics release];
-
+    
     [super dealloc];
 }
 
@@ -190,14 +182,12 @@ typedef enum {
 
 @implementation LibraryConnection
 
-+ (DatabaseConnection*)defaultDatabaseConnection
-{
++ (DatabaseConnection*) defaultDatabaseConnection {
     XLOG_DEBUG_UNREACHABLE();
     return nil;
 }
 
-+ (NSString*)libraryRootPath
-{
++ (NSString*) libraryRootPath {
     static NSString* path = nil;
     if (path == nil) {
         path = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] copy];
@@ -205,8 +195,7 @@ typedef enum {
     return path;
 }
 
-+ (NSString*)libraryApplicationDataPath
-{
++ (NSString*) libraryApplicationDataPath {
     static NSString* path = nil;
     if (path == nil) {
         path = [[[self libraryRootPath] stringByAppendingPathComponent:@".library"] copy];
@@ -214,8 +203,7 @@ typedef enum {
     return path;
 }
 
-+ (NSString*)libraryDatabasePath
-{
++ (NSString*) libraryDatabasePath {
     static NSString* path = nil;
     if (path == nil) {
         path = [[[self libraryApplicationDataPath] stringByAppendingPathComponent:@"database.db"] copy];
@@ -223,85 +211,73 @@ typedef enum {
     return path;
 }
 
-+ (LibraryConnection*)mainConnection
-{
++ (LibraryConnection*) mainConnection {
     static LibraryConnection* connection = nil;
     if (connection == nil) {
         NSString* statements = @"CREATE TRIGGER IF NOT EXISTS update_collection_status_insert AFTER INSERT ON comics BEGIN UPDATE collections SET status=(SELECT (CASE WHEN MAX(status)>0 THEN 1 ELSE (CASE WHEN MIN(status) < 0 THEN -1 ELSE 0 END) END) FROM comics WHERE collection=new.collection) WHERE _id_=new.collection; END;\n"
-                                "CREATE TRIGGER IF NOT EXISTS update_collection_status_update AFTER UPDATE OF status ON comics BEGIN UPDATE collections SET status=(SELECT (CASE WHEN MAX(status)>0 THEN 1 ELSE (CASE WHEN MIN(status) < 0 THEN -1 ELSE 0 END) END) FROM comics WHERE collection=new.collection) WHERE _id_=new.collection; END;\n"
-                                "CREATE TRIGGER IF NOT EXISTS update_collection_status_delete AFTER DELETE ON comics BEGIN UPDATE collections SET status=(SELECT (CASE WHEN MAX(status)>0 THEN 1 ELSE (CASE WHEN MIN(status) < 0 THEN -1 ELSE 0 END) END) FROM comics WHERE collection=old.collection) WHERE _id_=old.collection; END";
+        "CREATE TRIGGER IF NOT EXISTS update_collection_status_update AFTER UPDATE OF status ON comics BEGIN UPDATE collections SET status=(SELECT (CASE WHEN MAX(status)>0 THEN 1 ELSE (CASE WHEN MIN(status) < 0 THEN -1 ELSE 0 END) END) FROM comics WHERE collection=new.collection) WHERE _id_=new.collection; END;\n"
+        "CREATE TRIGGER IF NOT EXISTS update_collection_status_delete AFTER DELETE ON comics BEGIN UPDATE collections SET status=(SELECT (CASE WHEN MAX(status)>0 THEN 1 ELSE (CASE WHEN MIN(status) < 0 THEN -1 ELSE 0 END) END) FROM comics WHERE collection=old.collection) WHERE _id_=old.collection; END";
         if ([[NSFileManager defaultManager] createDirectoryAtPath:[self libraryApplicationDataPath]
                                       withIntermediateDirectories:YES
                                                        attributes:nil
                                                             error:NULL]) {
             if ([LibraryConnection initializeDatabaseAtPath:[self libraryDatabasePath] usingObjectClasses:nil extraSQLStatements:statements]) {
                 connection = [[LibraryConnection alloc] initWithDatabaseAtPath:[self libraryDatabasePath]];
-                connection.comicsBeingDownloaded = [[NSMutableArray alloc] init];
             }
         }
+        connection.comicsBeingDownloaded = [[NSMutableArray alloc] init];
     }
     return connection;
 }
 
-- (NSArray*)fetchAllComicsByName
-{
+- (NSArray*) fetchAllComicsByName {
     NSArray* dbResults = [self fetchObjectsOfClass:[Comic class] withSQLWhereClause:@"1 ORDER BY name ASC" limit:0];
     NSArray* results = [self.comicsBeingDownloaded arrayByAddingObjectsFromArray:dbResults];
-
+    
     return [results sortedArrayUsingComparator:^NSComparisonResult(Comic* comic1, Comic* comic2) {
-    return [comic1.name localizedStandardCompare:comic2.name];
+        return [comic1.name localizedStandardCompare:comic2.name];
     }];
 }
 
-- (NSArray*)fetchAllComicsByDate
-{
+- (NSArray*) fetchAllComicsByDate {
     NSArray* dbResults = [self fetchObjectsOfClass:[Comic class] withSQLWhereClause:@"1 ORDER BY time DESC" limit:0];
     NSArray* results = [self.comicsBeingDownloaded arrayByAddingObjectsFromArray:dbResults];
 
     return results;
 }
 
-- (NSArray*)fetchAllComicsByStatus
-{
+- (NSArray*) fetchAllComicsByStatus {
     NSArray* dbResults = [self fetchObjectsOfClass:[Comic class] withSQLWhereClause:@"1 ORDER BY status>0 DESC, status==-1 DESC, time DESC" limit:0];
     NSArray* results = [self.comicsBeingDownloaded arrayByAddingObjectsFromArray:dbResults];
 
     return results;
 }
 
-- (NSArray*)fetchComicsInCollection:(Collection*)collection
-{
-    NSArray* dbResults = [self fetchObjectsOfClass:[Comic class] withSQLWhereClause:[NSString stringWithFormat:@"collection=%i", collection.sqlRowID] limit:0];
-
-    NSArray* results = [self.comicsBeingDownloaded arrayByAddingObjectsFromArray:dbResults];
-
+- (NSArray*) fetchComicsInCollection:(Collection*)collection {
+    NSArray* results = [self fetchObjectsOfClass:[Comic class] withSQLWhereClause:[NSString stringWithFormat:@"collection=%i", collection.sqlRowID] limit:0];
     return [results sortedArrayUsingComparator:^NSComparisonResult(Comic* comic1, Comic* comic2) {
-    return [comic1.name localizedStandardCompare:comic2.name];
+        return [comic1.name localizedStandardCompare:comic2.name];
     }];
 }
 
-- (NSArray*)fetchAllCollectionsByName
-{
+- (NSArray*) fetchAllCollectionsByName {
     NSArray* results = [self fetchObjectsOfClass:[Collection class] withSQLWhereClause:@"1" limit:0];
     return [results sortedArrayUsingComparator:^NSComparisonResult(Collection* collection1, Collection* collection2) {
-    return [collection1.name localizedStandardCompare:collection2.name];
+        return [collection1.name localizedStandardCompare:collection2.name];
     }];
 }
 
-- (BOOL)updateStatus:(int)status forComicsInCollection:(Collection*)collection
-{
+- (BOOL) updateStatus:(int)status forComicsInCollection:(Collection*)collection {
     NSString* statement = [NSString stringWithFormat:@"UPDATE comics SET status=%i WHERE collection=%i", status, collection.sqlRowID];
     return [self executeRawSQLStatements:statement];
 }
 
-- (BOOL)updateStatusForAllComics:(int)status
-{
+- (BOOL) updateStatusForAllComics:(int)status {
     NSString* statement = [NSString stringWithFormat:@"UPDATE comics SET status=%i", status];
     return [self executeRawSQLStatements:statement];
 }
 
-- (NSString*)pathForComic:(Comic*)comic
-{
+- (NSString*) pathForComic:(Comic*)comic {
     NSString* path = [LibraryConnection libraryRootPath];
     if (comic.collection) {
         Collection* collection = [self fetchObjectOfClass:[Collection class] withSQLRowID:comic.collection];
@@ -310,13 +286,12 @@ typedef enum {
     return [path stringByAppendingPathComponent:comic.name];
 }
 
-- (NSString*)pathForCollection:(Collection*)collection
-{
+- (NSString*) pathForCollection:(Collection*)collection {
     NSString* path = [LibraryConnection libraryRootPath];
     return [path stringByAppendingPathComponent:collection.name];
 }
 
-- (void)downloadFileAtUrl:(NSURL*)url withFileName:(NSString*)filename //updateGrid:(GridView*)gridView
+- (void)downloadFileAtUrl:(NSURL*)url withFileName:(NSString*)filename
 {
     //Valid file extensions
     NSArray* fileExtensions = [NSArray arrayWithObjects:@"pdf", @"zip", @"cbz", @"rar", @"cbr", nil];
@@ -344,10 +319,9 @@ typedef enum {
 
 @implementation LibraryUpdater
 
-@synthesize delegate = _delegate, updating = _updating;
+@synthesize delegate=_delegate, updating=_updating;
 
-+ (LibraryUpdater*)sharedUpdater
-{
++ (LibraryUpdater*) sharedUpdater {
     static LibraryUpdater* updater = nil;
     if (updater == nil) {
         updater = [[LibraryUpdater alloc] init];
@@ -355,38 +329,36 @@ typedef enum {
     return updater;
 }
 
-- (id)init
-{
+- (id) init {
     if ((self = [super init])) {
         _screenScale = [[UIScreen mainScreen] scale];
         _comicPlaceholderImageRef = CGImageRetain([[UIImage imageWithContentsOfFile:
-                                                                [[NSBundle mainBundle] pathForResource:@"Comic-Placeholder" ofType:@"png"]] CGImage]);
+                                                    [[NSBundle mainBundle] pathForResource:@"Comic-Placeholder" ofType:@"png"]] CGImage]);
         XLOG_CHECK(_comicPlaceholderImageRef);
         _comicBackgroundImageRef = CGImageRetain([[UIImage imageWithContentsOfFile:
-                                                               [[NSBundle mainBundle] pathForResource:@"Comic-Background" ofType:@"png"]] CGImage]);
+                                                   [[NSBundle mainBundle] pathForResource:@"Comic-Background" ofType:@"png"]] CGImage]);
         XLOG_CHECK(_comicBackgroundImageRef);
         _comicScreenImageRef = CGImageRetain([[UIImage imageWithContentsOfFile:
-                                                           [[NSBundle mainBundle] pathForResource:@"Comic-Screen" ofType:@"png"]] CGImage]);
+                                               [[NSBundle mainBundle] pathForResource:@"Comic-Screen" ofType:@"png"]] CGImage]);
         XLOG_CHECK(_comicScreenImageRef);
         _collectionBackgroundImageRef = CGImageRetain([[UIImage imageWithContentsOfFile:
-                                                                    [[NSBundle mainBundle] pathForResource:@"Collection-Background" ofType:@"png"]] CGImage]);
+                                                        [[NSBundle mainBundle] pathForResource:@"Collection-Background" ofType:@"png"]] CGImage]);
         XLOG_CHECK(_collectionBackgroundImageRef);
         _collectionScreenImageRef = CGImageRetain([[UIImage imageWithContentsOfFile:
-                                                                [[NSBundle mainBundle] pathForResource:@"Collection-Screen" ofType:@"png"]] CGImage]);
+                                                    [[NSBundle mainBundle] pathForResource:@"Collection-Screen" ofType:@"png"]] CGImage]);
         XLOG_CHECK(_collectionScreenImageRef);
-
+        
         DatabaseSQLRowID fakeRowID = kFakeRowID;
         _fakeData = [[NSData alloc] initWithBytes:&fakeRowID length:sizeof(DatabaseSQLRowID)];
     }
     return self;
 }
 
-- (void)update:(BOOL)force
-{
+- (void) update:(BOOL)force {
     if (_updating == NO) {
         XLOG_VERBOSE(force ? @"Force updating library" : @"Updating library");
         [_delegate libraryUpdaterWillStart:self];
-
+        
         if (force) {
             CFTimeInterval time = CFAbsoluteTimeGetCurrent();
 #if __STORE_THUMBNAILS_IN_DATABASE__
@@ -397,21 +369,21 @@ typedef enum {
             [[LibraryConnection mainConnection] vacuum];
             XLOG_INFO(@"Reset library in %.1f seconds", CFAbsoluteTimeGetCurrent() - time);
         }
-
+        
         _updating = YES;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-      NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-      
-      [self _updateLibrary:force];
-      
-      dispatch_async(dispatch_get_main_queue(), ^{
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        [_delegate libraryUpdaterDidFinish:self];
-        _updating = NO;
-        XLOG_VERBOSE(@"Done updating library");
-      });
-      
-      [pool release];
+            NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+            
+            [self _updateLibrary:force];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[NSUserDefaults standardUserDefaults] synchronize];
+                [_delegate libraryUpdaterDidFinish:self];
+                _updating = NO;
+                XLOG_VERBOSE(@"Done updating library");
+            });
+            
+            [pool release];
         });
     }
 }
@@ -421,28 +393,27 @@ typedef enum {
 @implementation LibraryUpdater (Updating)
 
 // Called from GCD thread
-- (NSData*)_thumbnailDataForComicWithCoverImage:(CGImageRef)imageRef
-{
+- (NSData*) _thumbnailDataForComicWithCoverImage:(CGImageRef)imageRef {
     size_t contextWidth = _screenScale * kLibraryThumbnailWidth;
     size_t contextHeight = _screenScale * kLibraryThumbnailHeight;
-
+    
     CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
     CGContextRef context = CGBitmapContextCreate(NULL, contextWidth, contextHeight, 8, 0, colorspace,
-        kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
+                                                 kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
     CGContextClearRect(context, CGRectMake(0, 0, contextWidth, contextHeight));
     CGContextScaleCTM(context, _screenScale, _screenScale);
-
+    
     CGContextSetBlendMode(context, kCGBlendModeCopy);
     CGContextDrawImage(context, CGRectMake(0, 0, kLibraryThumbnailWidth, kLibraryThumbnailHeight), _comicBackgroundImageRef);
-
+    
     CGContextSaveGState(context);
     CGContextClipToRect(context, CGRectMake(kComicCoverX, kComicCoverY, kComicCoverWidth, kComicCoverHeight));
     CGContextDrawImage(context, CGRectMake(kComicCoverX - kComicCoverInset, kComicCoverY - kComicCoverInset, kComicCoverWidth + 2 * kComicCoverInset, kComicCoverHeight + 2 * kComicCoverInset), imageRef);
     CGContextRestoreGState(context);
-
+    
     CGContextSetBlendMode(context, kCGBlendModeScreen);
     CGContextDrawImage(context, CGRectMake(0, 0, kLibraryThumbnailWidth, kLibraryThumbnailHeight), _comicScreenImageRef);
-
+    
     imageRef = CGBitmapContextCreateImage(context);
     UIImage* image = [[UIImage alloc] initWithCGImage:imageRef];
     NSData* data = UIImagePNGRepresentation(image);
@@ -454,30 +425,29 @@ typedef enum {
 }
 
 // Called from GCD thread
-- (NSData*)_thumbnailDataForCollectionWithCoverImage:(CGImageRef)imageRef name:(NSString*)name
-{
+- (NSData*) _thumbnailDataForCollectionWithCoverImage:(CGImageRef)imageRef name:(NSString*)name {
     size_t contextWidth = _screenScale * kLibraryThumbnailWidth;
     size_t contextHeight = _screenScale * kLibraryThumbnailHeight;
-
+    
     CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
     CGContextRef context = CGBitmapContextCreate(NULL, contextWidth, contextHeight, 8, 0, colorspace,
-        kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
+                                                 kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
     CGContextClearRect(context, CGRectMake(0, 0, contextWidth, contextHeight));
     CGContextScaleCTM(context, _screenScale, _screenScale);
-
+    
     CGContextSetBlendMode(context, kCGBlendModeCopy);
     CGContextDrawImage(context, CGRectMake(0, 0, kLibraryThumbnailWidth, kLibraryThumbnailHeight), _collectionBackgroundImageRef);
-
+    
     CGContextSetBlendMode(context, kCGBlendModeLuminosity);
     CGContextSaveGState(context);
     CGContextClipToRect(context, CGRectMake(kCollectionCoverX, kCollectionCoverY, kCollectionCoverWidth, kCollectionCoverHeight));
     CGContextSetAlpha(context, kCollectionCoverOpacity);
     CGContextDrawImage(context, CGRectMake(kCollectionCoverX - kCollectionCoverInset, kCollectionCoverY - kCollectionCoverInset, kCollectionCoverWidth + 2 * kCollectionCoverInset, kCollectionCoverHeight + 2 * kCollectionCoverInset), imageRef);
     CGContextRestoreGState(context);
-
+    
     CGContextSetBlendMode(context, kCGBlendModeScreen);
     CGContextDrawImage(context, CGRectMake(0, 0, kLibraryThumbnailWidth, kLibraryThumbnailHeight), _collectionScreenImageRef);
-
+    
     CGContextSetBlendMode(context, kCGBlendModeNormal);
     static NSMutableDictionary* attributes = nil;
     if (attributes == nil) {
@@ -491,8 +461,8 @@ typedef enum {
         CTTextAlignment alignment = kCTCenterTextAlignment;
         CTLineBreakMode lineBreaking = kCTLineBreakByWordWrapping;
         CTParagraphStyleSetting settings[] = {
-            { kCTParagraphStyleSpecifierAlignment, sizeof(alignment), &alignment },
-            { kCTParagraphStyleSpecifierLineBreakMode, sizeof(lineBreaking), &lineBreaking }
+            {kCTParagraphStyleSpecifierAlignment, sizeof(alignment), &alignment},
+            {kCTParagraphStyleSpecifierLineBreakMode, sizeof(lineBreaking), &lineBreaking}
         };
         CTParagraphStyleRef style = CTParagraphStyleCreate(settings, sizeof(settings) / sizeof(CTParagraphStyleSetting));
         if (style) {
@@ -521,7 +491,7 @@ typedef enum {
 #if TARGET_IPHONE_SIMULATOR
                 CGContextSetShouldSmoothFonts(context, false);
 #endif
-
+                
                 CGContextSetRGBFillColor(context, 0.25, 0.25, 0.25, 1.0);
                 CGContextSetTextMatrix(context, CGAffineTransformIdentity);
                 CTFrameDraw(frame, context);
@@ -536,7 +506,7 @@ typedef enum {
         }
         CFRelease(string);
     }
-
+    
     imageRef = CGBitmapContextCreateImage(context);
     UIImage* image = [[UIImage alloc] initWithCGImage:imageRef];
     NSData* data = UIImagePNGRepresentation(image);
@@ -547,8 +517,7 @@ typedef enum {
     return data;
 }
 
-- (CGImageRef)_copyCoverImageFromComicAtPath:(NSString*)path withArchiveType:(ArchiveType)type forSize:(CGSize)size
-{
+- (CGImageRef) _copyCoverImageFromComicAtPath:(NSString*)path withArchiveType:(ArchiveType)type forSize:(CGSize)size {
     size.width *= _screenScale;
     size.height *= _screenScale;
     CGImageRef imageRef = NULL;
@@ -563,8 +532,7 @@ typedef enum {
             }
             CGPDFDocumentRelease(document);
         }
-    }
-    else {
+    } else {
         id archive = [[MiniZip alloc] initWithArchiveAtPath:path];
         if (archive == nil) {
             archive = [[UnRAR alloc] initWithArchiveAtPath:path];
@@ -595,15 +563,14 @@ typedef enum {
 }
 
 // Called from GCD thread
-- (void)_updateComicForPath:(NSString*)path
-                       type:(ArchiveType)type
-                 collection:(Collection*)collection // May be nil
-               zombieComics:(CFMutableDictionaryRef)zombieComics
-                 connection:(LibraryConnection*)connection
-                      force:(BOOL)force
-{
-    NSString* name = [path lastPathComponent]; // TODO: Improve this
-
+- (void) _updateComicForPath:(NSString*)path
+                        type:(ArchiveType)type
+                  collection:(Collection*)collection  // May be nil
+                zombieComics:(CFMutableDictionaryRef)zombieComics
+                  connection:(LibraryConnection*)connection
+                       force:(BOOL)force {
+    NSString* name = [path lastPathComponent];  // TODO: Improve this
+    
     // Check if this comic has already been processed
     Comic* comic = nil;
     if (force == NO) {
@@ -611,15 +578,14 @@ typedef enum {
         if (data.length == sizeof(DatabaseSQLRowID)) {
             DatabaseSQLRowID rowID = *((DatabaseSQLRowID*)data.bytes);
             if (rowID == kFakeRowID) {
-                XLOG_WARNING(@"Skipping comic \"%@\"", name); // We started processing this comic but never finished - Assume it's corrupted
+                XLOG_WARNING(@"Skipping comic \"%@\"", name);  // We started processing this comic but never finished - Assume it's corrupted
                 return;
-            }
-            else {
+            } else {
                 comic = (Comic*)CFDictionaryGetValue(zombieComics, (void*)rowID);
             }
         }
     }
-
+    
     // If yes, update comic
     if (comic) {
         CFDictionaryRemoveValue(zombieComics, (void*)comic.sqlRowID);
@@ -633,7 +599,7 @@ typedef enum {
     // Otherwise process and add comic to library
     else {
         [[NSFileManager defaultManager] setExtendedAttributeData:_fakeData withName:kLibraryExtendedAttribute forFileAtPath:path];
-
+        
         // Process comic
         CGImageRef imageRef = [self _copyCoverImageFromComicAtPath:path withArchiveType:type forSize:CGSizeMake(kComicCoverWidth, kComicCoverHeight)];
         if (imageRef == NULL) {
@@ -669,8 +635,7 @@ typedef enum {
                     [[NSFileManager defaultManager] setExtendedAttributeData:[NSData dataWithBytes:&rowID length:sizeof(DatabaseSQLRowID)]
                                                                     withName:kLibraryExtendedAttribute
                                                                forFileAtPath:path];
-                }
-                else {
+                } else {
                     comic = nil;
                 }
             }
@@ -679,14 +644,12 @@ typedef enum {
     }
     if (comic) {
         XLOG_VERBOSE(@"Imported comic \"%@\" (%i)", name, comic.sqlRowID);
-    }
-    else {
+    } else {
         XLOG_ERROR(@"Failed importing comic \"%@\"", name);
     }
 }
 
-static inline void _ZombieRemoveFunction(LibraryConnection* connection, DatabaseObject* object)
-{
+static inline void _ZombieRemoveFunction(LibraryConnection* connection, DatabaseObject* object) {
 #if __STORE_THUMBNAILS_IN_DATABASE__
     DatabaseSQLRowID rowID = [(id)object thumbnail];
     if (rowID > 0) {
@@ -702,37 +665,33 @@ static inline void _ZombieRemoveFunction(LibraryConnection* connection, Database
     [connection deleteObject:object];
 }
 
-static void _ZombieCollectionsRemoveFunction(const void* key, const void* value, void* context)
-{
+static void _ZombieCollectionsRemoveFunction(const void* key, const void* value, void* context) {
     XLOG_VERBOSE(@"Removed collection \"%@\" (%i)", [(Collection*)value name], (DatabaseSQLRowID)key);
     _ZombieRemoveFunction((LibraryConnection*)context, (DatabaseObject*)value);
 }
 
-static void _ZombieComicsRemoveFunction(const void* key, const void* value, void* context)
-{
+static void _ZombieComicsRemoveFunction(const void* key, const void* value, void* context) {
     if (!isnan([(Comic*)value time])) {
         XLOG_VERBOSE(@"Removed comic \"%@\" (%i)", [(Comic*)value name], (DatabaseSQLRowID)key);
         _ZombieRemoveFunction((LibraryConnection*)context, (DatabaseObject*)value);
     }
 }
 
-static void _ZombieComicsMarkFunction(const void* key, const void* value, void* context)
-{
+static void _ZombieComicsMarkFunction(const void* key, const void* value, void* context) {
     if ([(Comic*)value collection] == (DatabaseSQLRowID)context) {
         [(Comic*)value setTime:NAN];
     }
 }
 
 // Called from GCD thread
-- (id)_updateLibrary:(BOOL)force
-{
+- (id) _updateLibrary:(BOOL)force {
     LibraryConnection* connection = [[LibraryConnection alloc] initWithDatabaseAtPath:[LibraryConnection libraryDatabasePath]];
     if (connection == nil) {
         XLOG_DEBUG_UNREACHABLE();
         return nil;
     }
     NSString* rootPath = [LibraryConnection libraryRootPath];
-
+    
     // Build list of all collections and comics currently in library as potential zombies
     CFMutableDictionaryRef zombieCollections = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
     for (Collection* collection in [connection fetchAllObjectsOfClass:[Collection class]]) {
@@ -742,7 +701,7 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
     for (Comic* comic in [connection fetchAllObjectsOfClass:[Comic class]]) {
         CFDictionarySetValue(zombieComics, (void*)comic.sqlRowID, comic);
     }
-
+    
     // Build list of all directories and files in root directory
     float maximumProgress = 0.0;
     NSMutableDictionary* directories = [[NSMutableDictionary alloc] init];
@@ -766,8 +725,7 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
                 }
                 [array addObject:path];
                 maximumProgress += 1.0;
-            }
-            else if ([type isEqualToString:NSFileTypeDirectory] && ![path isEqualToString:kInboxDirectoryName]) {
+            } else if ([type isEqualToString:NSFileTypeDirectory] && ![path isEqualToString:kInboxDirectoryName]) {
                 NSMutableArray* array = [[NSMutableArray alloc] init];
                 for (NSString* subpath in [[NSFileManager defaultManager] contentsOfDirectoryAtPath:fullPath error:NULL]) {
                     if ([subpath hasPrefix:@"."]) {
@@ -786,7 +744,7 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
         }
         [pool release];
     }
-
+    
     // Process directories
     {
         float currentProgress = 0.0;
@@ -800,7 +758,7 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
             NSDictionary* attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:fullPath error:NULL];
             NSTimeInterval time = [[attributes fileModificationDate] timeIntervalSinceReferenceDate];
             BOOL needsUpdate = NO;
-
+            
             // Check if this collection has already been processed
             Collection* collection = nil;
             if (directory.length && !force) {
@@ -811,14 +769,13 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
                     collection = (Collection*)CFDictionaryGetValue(zombieCollections, (void*)rowID);
                 }
             }
-
+            
             // If yes, update collection
             if (collection) {
                 CFDictionaryRemoveValue(zombieCollections, (void*)collection.sqlRowID);
                 if (time != collection.time) {
                     needsUpdate = YES;
-                }
-                else {
+                } else {
                     CFDictionaryApplyFunction(zombieComics, _ZombieComicsMarkFunction, (void*)collection.sqlRowID);
                     if (![collection.name isEqualToString:directory]) {
                         collection.name = directory;
@@ -841,8 +798,7 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
                                                                forFileAtPath:fullPath];
                     XLOG_VERBOSE(@"Imported collection \"%@\" (%i)", directory, collection.sqlRowID);
                     needsUpdate = YES;
-                }
-                else {
+                } else {
                     XLOG_ERROR(@"Failed importing collection \"%@\"", directory);
                 }
             }
@@ -850,19 +806,17 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
             else {
                 if (force || (time != [[NSUserDefaults standardUserDefaults] doubleForKey:kDefaultKey_RootTimestamp])) {
                     needsUpdate = YES;
-                }
-                else {
+                } else {
                     CFDictionaryApplyFunction(zombieComics, _ZombieComicsMarkFunction, (void*)0);
                 }
             }
-
+            
             // Process comics in collection
             NSArray* files = [directories objectForKey:directory];
             if (needsUpdate) {
                 if (collection) {
                     XLOG_VERBOSE(@"Scanning collection \"%@\" (%i)", directory, collection.sqlRowID);
-                }
-                else {
+                } else {
                     XLOG_VERBOSE(@"Scanning root collection");
                 }
                 CGImageRef imageRef = NULL;
@@ -871,11 +825,9 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
                     NSString* extension = [file pathExtension];
                     if (![extension caseInsensitiveCompare:@"zip"] || ![extension caseInsensitiveCompare:@"cbz"]) {
                         type = kArchiveType_ZIP;
-                    }
-                    else if (![extension caseInsensitiveCompare:@"rar"] || ![extension caseInsensitiveCompare:@"cbr"]) {
+                    } else if (![extension caseInsensitiveCompare:@"rar"] || ![extension caseInsensitiveCompare:@"cbr"]) {
                         type = kArchiveType_RAR;
-                    }
-                    else if (![extension caseInsensitiveCompare:@"pdf"]) {
+                    } else if (![extension caseInsensitiveCompare:@"pdf"]) {
                         type = kArchiveType_PDF;
                     }
                     if (type != kArchiveType_Unknown) {
@@ -890,16 +842,15 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
                             XLOG_VERBOSE(@"Using comic \"%@\" to generate thumbnail for collection \"%@\"", file, directory);
                             imageRef = [self _copyCoverImageFromComicAtPath:path withArchiveType:type forSize:CGSizeMake(kCollectionCoverWidth, kCollectionCoverHeight)];
                         }
-                    }
-                    else {
+                    } else {
                         XLOG_INFO(@"Ignoring unknown type comic \"%@\"", file);
                     }
-
+                    
                     currentProgress += 1.0;
                     float progress = currentProgress / maximumProgress;
                     if (roundf(progress * 250.0) != roundf(lastProgress * 250.0)) {
                         dispatch_async(dispatch_get_main_queue(), ^{
-              [_delegate libraryUpdaterDidContinue:self progress:progress];
+                            [_delegate libraryUpdaterDidContinue:self progress:progress];
                         });
                         lastProgress = progress;
                     }
@@ -936,32 +887,30 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
                     collection.name = directory;
                     collection.time = time;
                     [connection updateObject:collection];
-                }
-                else {
+                } else {
                     [[NSUserDefaults standardUserDefaults] setDouble:time forKey:kDefaultKey_RootTimestamp];
                 }
                 CGImageRelease(imageRef);
-            }
-            else {
+            } else {
                 currentProgress += files.count;
                 float progress = currentProgress / maximumProgress;
                 if (roundf(progress * 250.0) != roundf(lastProgress * 250.0)) {
                     dispatch_async(dispatch_get_main_queue(), ^{
-            [_delegate libraryUpdaterDidContinue:self progress:progress];
+                        [_delegate libraryUpdaterDidContinue:self progress:progress];
                     });
                     lastProgress = progress;
                 }
             }
-
+            
             [pool release];
         }
         XLOG_DEBUG_CHECK(currentProgress <= maximumProgress);
     }
-
+    
     // Remove zombies
     CFDictionaryApplyFunction(zombieCollections, _ZombieCollectionsRemoveFunction, connection);
     CFDictionaryApplyFunction(zombieComics, _ZombieComicsRemoveFunction, connection);
-
+    
     [directories release];
     CFRelease(zombieComics);
     CFRelease(zombieCollections);

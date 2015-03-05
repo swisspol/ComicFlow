@@ -23,15 +23,15 @@
 @class LibraryUpdater;
 
 @protocol LibraryUpdaterDelegate <NSObject>
-- (void)libraryUpdaterWillStart:(LibraryUpdater*)library;
-- (void)libraryUpdaterDidContinue:(LibraryUpdater*)library progress:(float)progress;
-- (void)libraryUpdaterDidFinish:(LibraryUpdater*)library;
+- (void) libraryUpdaterWillStart:(LibraryUpdater*)library;
+- (void) libraryUpdaterDidContinue:(LibraryUpdater*)library progress:(float)progress;
+- (void) libraryUpdaterDidFinish:(LibraryUpdater*)library;
 @end
 
 #if __STORE_THUMBNAILS_IN_DATABASE__
 
 @interface Thumbnail : DatabaseObject
-@property (nonatomic, copy) NSData* data;
+@property(nonatomic, copy) NSData* data;
 @end
 
 #endif
@@ -45,61 +45,56 @@
     NSURLConnection* connection;
     GridView* gridToUpdate;
 }
-@property (nonatomic) DatabaseSQLRowID collection; // May be 0
-@property (nonatomic, copy) NSString* name;
+@property(nonatomic) DatabaseSQLRowID collection;  // May be 0
+@property(nonatomic, copy) NSString* name;
 #if __STORE_THUMBNAILS_IN_DATABASE__
-@property (nonatomic) DatabaseSQLRowID thumbnail;
+@property(nonatomic) DatabaseSQLRowID thumbnail;
 #else
-@property (nonatomic, copy) NSString* thumbnail;
+@property(nonatomic, copy) NSString* thumbnail;
 #endif
-@property (nonatomic) NSTimeInterval time;
-@property (nonatomic) int status; // -1: new, 0: normal, 1+: reading
-
+@property(nonatomic) NSTimeInterval time;
+@property(nonatomic) int status;  // -1: new, 0: normal, 1+: reading
 //Dropbox code
 @property (nonatomic) BOOL isDownloading;
 @property (nonatomic) CGFloat progress;
-
-- (void)startDownloading:(NSURL*)url fileName:(NSString*)filename;
 @end
 
 @interface Collection : DatabaseObject
-@property (nonatomic, copy) NSString* name;
+@property(nonatomic, copy) NSString* name;
 #if __STORE_THUMBNAILS_IN_DATABASE__
-@property (nonatomic) DatabaseSQLRowID thumbnail;
+@property(nonatomic) DatabaseSQLRowID thumbnail;
 #else
-@property (nonatomic, copy) NSString* thumbnail;
+@property(nonatomic, copy) NSString* thumbnail;
 #endif
-@property (nonatomic) NSTimeInterval time;
-@property (nonatomic, readonly) int status; // -1: new, 0: normal, 1+: reading
-@property (nonatomic) int scrolling;
+@property(nonatomic) NSTimeInterval time;
+@property(nonatomic, readonly) int status;  // -1: new, 0: normal, 1+: reading
+@property(nonatomic) int scrolling;
 @end
 
 @interface Collection ()
-@property (nonatomic, retain) NSArray* comics;
+@property(nonatomic, retain) NSArray* comics;
 @end
 
 @interface LibraryConnection : DatabaseConnection
 
 @property (retain, nonatomic) NSMutableArray* comicsBeingDownloaded;
 
-+ (NSString*)libraryRootPath;
-+ (NSString*)libraryApplicationDataPath;
-+ (NSString*)libraryDatabasePath;
-+ (LibraryConnection*)mainConnection; // For main thread only
-- (NSArray*)fetchAllComicsByName;
-- (NSArray*)fetchAllComicsByDate;
-- (NSArray*)fetchAllComicsByStatus;
-- (NSArray*)fetchComicsInCollection:(Collection*)collection;
-- (NSArray*)fetchAllCollectionsByName;
-- (BOOL)updateStatus:(int)status forComicsInCollection:(Collection*)collection;
-- (BOOL)updateStatusForAllComics:(int)status;
-- (NSString*)pathForComic:(Comic*)comic;
-- (NSString*)pathForCollection:(Collection*)collection;
++ (NSString*) libraryRootPath;
++ (NSString*) libraryApplicationDataPath;
++ (NSString*) libraryDatabasePath;
++ (LibraryConnection*) mainConnection;  // For main thread only
+- (NSArray*) fetchAllComicsByName;
+- (NSArray*) fetchAllComicsByDate;
+- (NSArray*) fetchAllComicsByStatus;
+- (NSArray*) fetchComicsInCollection:(Collection*)collection;
+- (NSArray*) fetchAllCollectionsByName;
+- (BOOL) updateStatus:(int)status forComicsInCollection:(Collection*)collection;
+- (BOOL) updateStatusForAllComics:(int)status;
+- (NSString*) pathForComic:(Comic*)comic;
+- (NSString*) pathForCollection:(Collection*)collection;
 
 - (void)downloadFileAtUrl:(NSURL*)url withFileName:(NSString*)filename;
-//updateGrid:(GridView*)gridView
 - (void)finishedDownloading:(Comic*)comic;
-
 @end
 
 @interface LibraryUpdater : NSObject {
@@ -114,8 +109,8 @@
     NSData* _fakeData;
     BOOL _updating;
 }
-@property (nonatomic, readonly, getter=isUpdating) BOOL updating;
-@property (nonatomic, assign) id<LibraryUpdaterDelegate> delegate;
-+ (LibraryUpdater*)sharedUpdater;
-- (void)update:(BOOL)force; // Does nothing if already updating
+@property(nonatomic, readonly, getter=isUpdating) BOOL updating;
+@property(nonatomic, assign) id<LibraryUpdaterDelegate> delegate;
++ (LibraryUpdater*) sharedUpdater;
+- (void) update:(BOOL)force;  // Does nothing if already updating
 @end

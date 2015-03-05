@@ -62,31 +62,28 @@
 
 @implementation LibraryViewController
 
-@synthesize gridView = _gridView, navigationBar = _navigationBar, segmentedControl = _segmentedControl, menuView = _menuView,
-            markReadButton = _markReadButton, markNewButton = _markNewButton, updateButton = _updateButton,
-            forceUpdateButton = _forceUpdateButton, serverControl = _serverControl, addressLabel = _addressLabel,
-            infoLabel = _infoLabel, versionLabel = _versionLabel, dimmingSwitch = _dimmingSwitch, purchaseButton = _purchaseButton,
-            restoreButton = _restoreButton;
+@synthesize gridView=_gridView, navigationBar=_navigationBar, segmentedControl=_segmentedControl, menuView=_menuView,
+markReadButton=_markReadButton, markNewButton=_markNewButton, updateButton=_updateButton,
+forceUpdateButton=_forceUpdateButton, serverControl=_serverControl, addressLabel=_addressLabel,
+infoLabel=_infoLabel, versionLabel=_versionLabel, dimmingSwitch=_dimmingSwitch, purchaseButton=_purchaseButton,
+restoreButton=_restoreButton;
 
-- (void)updatePurchase
-{
+- (void) updatePurchase {
     BOOL enabled = [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerMode] != kServerMode_Full ? YES : NO;
     _purchaseButton.enabled = enabled;
     _restoreButton.enabled = enabled;
 }
 
-- (void)_updateStatistics
-{
+- (void) _updateStatistics {
     NSDictionary* attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:[LibraryConnection libraryDatabasePath]
                                                                                 error:nil];
     _infoLabel.text = [NSString stringWithFormat:NSLocalizedString(@"INFO_FORMAT", nil),
-                                [[LibraryConnection mainConnection] countObjectsOfClass:[Comic class]],
-                                [[LibraryConnection mainConnection] countObjectsOfClass:[Collection class]],
-                                ceil((double)[attributes fileSize] / (1024.0 * 1024.0))];
+                       [[LibraryConnection mainConnection] countObjectsOfClass:[Comic class]],
+                       [[LibraryConnection mainConnection] countObjectsOfClass:[Collection class]],
+                       ceil((double)[attributes fileSize] / (1024.0 * 1024.0))];
 }
 
-- (void)_updateTimer:(NSTimer*)timer
-{
+- (void) _updateTimer:(NSTimer*)timer {
     if (timer == nil) {
         _serverControl.selectedSegmentIndex = [[WebServer sharedWebServer] type];
     }
@@ -97,8 +94,7 @@
 #if __DISPLAY_THUMBNAILS_IN_BACKGROUND__
 
 // Called from main thread or display thread
-static void __DisplayQueueApplierFunction(const void* key, const void* value, void* context)
-{
+static void __DisplayQueueApplierFunction(const void* key, const void* value, void* context) {
     ThumbnailView* view = (ThumbnailView*)key;
     DatabaseObject* item = (DatabaseObject*)value;
     void** params = (void**)context;
@@ -129,44 +125,40 @@ static void __DisplayQueueApplierFunction(const void* key, const void* value, vo
 }
 
 // Called from main thread or display thread
-- (void)_processDisplayQueue:(BOOL)inBackground
-{
+- (void) _processDisplayQueue:(BOOL)inBackground {
 #if __STORE_THUMBNAILS_IN_DATABASE__
-    void** params[] = { inBackground ? (void*)self : NULL,
-        inBackground ? (void*)_displayConnection : (void*)[LibraryConnection mainConnection] };
+    void** params[] = {inBackground ? (void*)self : NULL,
+        inBackground ? (void*)_displayConnection : (void*)[LibraryConnection mainConnection]};
 #else
-    void** params[] = { inBackground ? (void*)self : NULL, [LibraryConnection libraryApplicationDataPath] };
+    void** params[] = {inBackground ? (void*)self : NULL, [LibraryConnection libraryApplicationDataPath]};
 #endif
     while (1) {
         CFDictionaryRef dictionary = NULL;
-
+        
         pthread_mutex_lock(&_displayMutex);
         if (CFArrayGetCount(_displayQueue)) {
             dictionary = CFRetain(CFArrayGetValueAtIndex(_displayQueue, 0));
             CFArrayRemoveValueAtIndex(_displayQueue, 0);
         }
         pthread_mutex_unlock(&_displayMutex);
-
+        
         if (dictionary) {
             NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
             CFDictionaryApplyFunction(dictionary, __DisplayQueueApplierFunction, params);
             [pool release];
             CFRelease(dictionary);
-        }
-        else {
+        } else {
             break;
         }
     }
 }
 
 // Called from display thread
-static void __DisplayQueueCallBack(void* info)
-{
+static void __DisplayQueueCallBack(void* info) {
     [(LibraryViewController*)info _processDisplayQueue:YES];
 }
 
-- (void)_displayQueueThread:(id)argument
-{
+- (void) _displayQueueThread:(id)argument {
     _displayRunLoop = CFRunLoopGetCurrent();
     CFRunLoopAddSource(_displayRunLoop, _displaySource, kCFRunLoopCommonModes);
     CFRunLoopRun();
@@ -174,11 +166,10 @@ static void __DisplayQueueCallBack(void* info)
 
 #endif
 
-- (id)initWithWindow:(UIWindow*)window
-{
+- (id) initWithWindow:(UIWindow*)window {
     if ((self = [super init])) {
         _window = window;
-
+        
         _comicImage = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Comic-Background" ofType:@"png"]];
         XLOG_CHECK(_comicImage);
         _collectionImage = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Collection-Background" ofType:@"png"]];
@@ -187,7 +178,7 @@ static void __DisplayQueueCallBack(void* info)
         XLOG_CHECK(_newImage);
         _ribbonImage = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Ribbon" ofType:@"png"]];
         XLOG_CHECK(_ribbonImage);
-
+        
         DatabaseSQLRowID collectionID = [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_CurrentCollection];
         if (collectionID) {
             _currentCollection = [[[LibraryConnection mainConnection] fetchObjectOfClass:[Collection class] withSQLRowID:collectionID] retain];
@@ -196,7 +187,7 @@ static void __DisplayQueueCallBack(void* info)
         if (comicID) {
             _currentComic = [[[LibraryConnection mainConnection] fetchObjectOfClass:[Comic class] withSQLRowID:comicID] retain];
         }
-
+        
 #if __DISPLAY_THUMBNAILS_IN_BACKGROUND__
 #if __STORE_THUMBNAILS_IN_DATABASE__
         _displayConnection = [[LibraryConnection alloc] initWithDatabaseAtPath:[LibraryConnection libraryDatabasePath]];
@@ -208,39 +199,34 @@ static void __DisplayQueueCallBack(void* info)
         pthread_mutex_init(&_displayMutex, &attributes);
         pthread_mutexattr_destroy(&attributes);
         _displayQueue = CFArrayCreateMutable(kCFAllocatorDefault, 0, &kCFTypeArrayCallBacks);
-        CFRunLoopSourceContext context = { 0, self, NULL, NULL, NULL, NULL, NULL, NULL, NULL, __DisplayQueueCallBack };
+        CFRunLoopSourceContext context = {0, self, NULL, NULL, NULL, NULL, NULL, NULL, NULL, __DisplayQueueCallBack};
         _displaySource = CFRunLoopSourceCreate(kCFAllocatorDefault, 0, &context);
         [NSThread detachNewThreadSelector:@selector(_displayQueueThread:) toTarget:self withObject:nil];
         do {
-            usleep(100000); // Make sure background thread has started
+            usleep(100000);  // Make sure background thread has started
         } while (_displayRunLoop == NULL);
 #endif
     }
     return self;
 }
 
-- (BOOL)canBecomeFirstResponder
-{
+- (BOOL) canBecomeFirstResponder {
     return YES;
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
+- (BOOL) shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     return YES;
 }
 
-- (void)popoverControllerDidDismissPopover:(UIPopoverController*)popoverController
-{
+- (void) popoverControllerDidDismissPopover:(UIPopoverController*)popoverController {
     [_updateTimer setFireDate:[NSDate distantFuture]];
 }
 
-- (void)_toggleMenu:(id)sender
-{
+- (void) _toggleMenu:(id)sender {
     if (_menuController.popoverVisible) {
         [_menuController dismissPopoverAnimated:YES];
         [_updateTimer setFireDate:[NSDate distantFuture]];
-    }
-    else {
+    } else {
         [self _updateTimer:nil];
         [self _updateStatistics];
         [self updatePurchase];
@@ -249,34 +235,28 @@ static void __DisplayQueueCallBack(void* info)
     }
 }
 
-- (void)_tap:(UITapGestureRecognizer*)recognizer
-{
+- (void) _tap:(UITapGestureRecognizer*)recognizer {
     if (recognizer.state == UIGestureRecognizerStateEnded) {
         DatabaseObject* item = [_gridView itemAtLocation:[recognizer locationInView:_gridView] view:NULL];
         if ([item isKindOfClass:[Comic class]]) {
             if (!((Comic*)item).isDownloading) {
                 [self _presentComic:(Comic*)item];
-            }
-            else {
+            } else {
                 //TODO: ask for cancel
             }
-        }
-        else if ([item isKindOfClass:[Collection class]]) {
+        } else if ([item isKindOfClass:[Collection class]]) {
             [self gridViewDidUpdateScrollingAmount:nil];
             [self _setCurrentCollection:(Collection*)item];
         }
     }
 }
 
-- (void)_updateThumbnailViewForItem:(DatabaseObject*)item
-{
+- (void) _updateThumbnailViewForItem:(DatabaseObject*)item {
     ThumbnailView* view = (ThumbnailView*)[_gridView viewForItem:item];
     if (view && !view.hidden) {
         NSInteger status = [(id)item status];
         [view.noteView removeFromSuperview];
         [view.ribbonView removeFromSuperview];
-        [view.progressBar removeFromSuperview];
-
         if (status > 0) {
             UIImageView* subview = [[UIImageView alloc] initWithImage:_ribbonImage];
             subview.frame = CGRectMake(kRibbonImageX, kRibbonImageY, kRibbonImageWidth, kRibbonImageHeight);
@@ -284,25 +264,23 @@ static void __DisplayQueueCallBack(void* info)
             [subview release];
             view.noteView = nil;
             view.ribbonView = subview;
-        }
-        else if (status < 0) {
+        } else if (status < 0) {
             UIImageView* subview = [[UIImageView alloc] initWithImage:_newImage];
             subview.frame = CGRectMake(kNewImageX, kNewImageY, kNewImageWidth, kNewImageHeight);
             [view addSubview:subview];
             [subview release];
             view.noteView = subview;
             view.ribbonView = nil;
-        }
-        else {
+        } else {
             view.noteView = nil;
             view.ribbonView = nil;
         }
-
+        
         if ([item isKindOfClass:[Comic class]]) {
             Comic* comic = (Comic*)item;
             if (comic.isDownloading) {
                 UIProgressView* progressBar = [[UIProgressView alloc]
-                    initWithFrame:CGRectMake(kProgressBarX, kProgressBarY, kProgressBarWidth, kProgressBarHeight)];
+                                               initWithFrame:CGRectMake(kProgressBarX, kProgressBarY, kProgressBarWidth, kProgressBarHeight)];
                 [progressBar setProgress:comic.progress];
                 [view addSubview:progressBar];
                 [progressBar release];
@@ -315,8 +293,7 @@ static void __DisplayQueueCallBack(void* info)
     }
 }
 
-- (void)_setStatus:(int)status
-{
+- (void) _setStatus:(int)status {
     if (_selectedItem) {
         if ([_selectedItem isKindOfClass:[Comic class]]) {
             [(Comic*)_selectedItem setStatus:status];
@@ -325,64 +302,54 @@ static void __DisplayQueueCallBack(void* info)
             if ([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_SortingMode] == kSortingMode_ByStatus) {
                 [self _reloadCurrentCollection];
             }
-        }
-        else {
+        } else {
             [[LibraryConnection mainConnection] updateStatus:status forComicsInCollection:(Collection*)_selectedItem];
             [[LibraryConnection mainConnection] refetchObject:_selectedItem];
             [self _updateThumbnailViewForItem:_selectedItem];
         }
         [_selectedItem release];
         _selectedItem = nil;
-    }
-    else {
+    } else {
         XLOG_DEBUG_UNREACHABLE();
     }
 }
 
-- (void)_setRead:(id)sender
-{
+- (void) _setRead:(id)sender {
     [self _setStatus:0];
     [[AppDelegate sharedDelegate] logEvent:@"menu.read"];
 }
 
-- (void)_setNew:(id)sender
-{
+- (void) _setNew:(id)sender {
     [self _setStatus:-1];
     [[AppDelegate sharedDelegate] logEvent:@"menu.new"];
 }
 
-- (void)_delete:(id)sender
-{
+- (void) _delete:(id)sender {
     if (_selectedItem) {
         if ([_selectedItem isKindOfClass:[Comic class]]) {
             NSError* error = nil;
             if ([[NSFileManager defaultManager] removeItemAtPath:[[LibraryConnection mainConnection] pathForComic:(Comic*)_selectedItem] error:&error]) {
                 [(AppDelegate*)[AppDelegate sharedInstance] updateLibrary];
-            }
-            else {
+            } else {
                 XLOG_ERROR(@"Failed deleting comic \"%@\": %@", [(Comic*)_selectedItem name], error);
             }
-        }
-        else {
+        } else {
             NSError* error = nil;
             if ([[NSFileManager defaultManager] removeItemAtPath:[[LibraryConnection mainConnection] pathForCollection:(Collection*)_selectedItem] error:&error]) {
                 [(AppDelegate*)[AppDelegate sharedInstance] updateLibrary];
-            }
-            else {
+            } else {
                 XLOG_ERROR(@"Failed deleting comic \"%@\": %@", [(Collection*)_selectedItem name], error);
             }
         }
         [_selectedItem release];
         _selectedItem = nil;
-    }
-    else {
+    } else {
         XLOG_DEBUG_UNREACHABLE();
     }
     [[AppDelegate sharedDelegate] logEvent:@"menu.delete"];
 }
 
-- (void)_press:(UILongPressGestureRecognizer*)recognizer
-{
+- (void) _press:(UILongPressGestureRecognizer*)recognizer {
     if (recognizer.state == UIGestureRecognizerStateBegan) {
         [_selectedItem release];
         _selectedItem = [[_gridView itemAtLocation:[recognizer locationInView:_gridView] view:NULL] retain];
@@ -405,8 +372,7 @@ static void __DisplayQueueCallBack(void* info)
                     [items addObject:item];
                     [item release];
                 }
-            }
-            else {
+            } else {
                 if (status != 0) {
                     UIMenuItem* item = [[UIMenuItem alloc] initWithTitle:NSLocalizedString(@"MARK_ALL_READ", nil) action:@selector(_setRead:)];
                     [items addObject:item];
@@ -432,12 +398,11 @@ static void __DisplayQueueCallBack(void* info)
     }
 }
 
-- (void)viewDidLoad
-{
+- (void) viewDidLoad {
     [super viewDidLoad];
-
-    self.view.backgroundColor = nil; // Can't do this in Interface Builder
-
+    
+    self.view.backgroundColor = nil;  // Can't do this in Interface Builder
+    
     _gridView.contentBackgroundOffset = CGPointMake(0.0, kBackgroundOffset);
     _gridView.contentBackgroundColor = [UIColor colorWithPatternImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Background" ofType:@"png"]]];
     _gridView.delegate = self;
@@ -445,10 +410,10 @@ static void __DisplayQueueCallBack(void* info)
     [_gridView addGestureRecognizer:tapRecognizer];
     [tapRecognizer release];
     UILongPressGestureRecognizer* pressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_press:)];
-    pressRecognizer.minimumPressDuration = 0.3; // Default is 0.5
+    pressRecognizer.minimumPressDuration = 0.3;  // Default is 0.5
     [_gridView addGestureRecognizer:pressRecognizer];
     [pressRecognizer release];
-
+    
     UINavigationItem* item = [_navigationBar.items objectAtIndex:0];
     UIBarButtonItem* rightButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"SETTINGS_BUTTON", nil)
                                                                     style:UIBarButtonItemStyleBordered
@@ -456,43 +421,42 @@ static void __DisplayQueueCallBack(void* info)
                                                                    action:@selector(_toggleMenu:)];
     item.rightBarButtonItem = rightButton;
     [rightButton release];
-
+    
     UIViewController* viewController = [[UIViewController alloc] init];
     viewController.view = _menuView;
     _menuController = [[UIPopoverController alloc] initWithContentViewController:viewController];
     _menuController.delegate = self;
     _menuController.popoverContentSize = _menuView.frame.size;
     [viewController release];
-
+    
     _infoLabel.text = nil;
     _versionLabel.text = [NSString stringWithFormat:NSLocalizedString(@"VERSION_FORMAT", nil),
-                                   [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
+                          [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
     BOOL updating = [[LibraryUpdater sharedUpdater] isUpdating];
     _markReadButton.enabled = !updating;
     _markNewButton.enabled = !updating;
     _updateButton.enabled = !updating;
     _forceUpdateButton.enabled = !updating;
     _dimmingSwitch.on = [(AppDelegate*)[AppDelegate sharedInstance] isScreenDimmed];
-
+    
     if (kCFCoreFoundationVersionNumber < kCFCoreFoundationVersionNumber_iOS_7_0) {
         [_purchaseButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
         [_restoreButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
     }
-
+    
     XLOG_DEBUG_CHECK(_updateTimer == nil);
     _updateTimer = [[NSTimer alloc] initWithFireDate:[NSDate distantFuture] interval:kUpdateTimerInterval target:self selector:@selector(_updateTimer:) userInfo:nil repeats:YES];
     [[NSRunLoop mainRunLoop] addTimer:_updateTimer forMode:NSRunLoopCommonModes];
 }
 
-- (void)viewDidUnload
-{
+- (void) viewDidUnload {
     [super viewDidUnload];
-
+    
     XLOG_DEBUG_CHECK(_updateTimer != nil);
     [_updateTimer invalidate];
     [_updateTimer release];
     _updateTimer = nil;
-
+    
     self.gridView = nil;
     self.navigationBar = nil;
     self.segmentedControl = nil;
@@ -508,51 +472,50 @@ static void __DisplayQueueCallBack(void* info)
     self.dimmingSwitch = nil;
     self.purchaseButton = nil;
     self.restoreButton = nil;
-
+    
     [_menuController release];
     _menuController = nil;
 }
 
-- (void)_reloadCurrentCollection
-{
+- (void) _reloadCurrentCollection {
     XLOG_VERBOSE(@"Reloading current collection");
     NSInteger scrolling = _currentCollection ? _currentCollection.scrolling
-                                             : [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_RootScrolling];
+    : [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_RootScrolling];
     if ((scrolling < 0) || (scrolling == NSNotFound)) {
         scrolling = 0;
     }
-
+    
     NSArray* items = nil;
-    switch ([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_SortingMode]) { // Setting "selectedSegmentIndex" will call the action
-
-    case kSortingMode_ByName: {
-        _segmentedControl.selectedSegmentIndex = 1;
-        items = [[LibraryConnection mainConnection] fetchAllComicsByName];
-        break;
-    }
-
-    case kSortingMode_ByDate: {
-        _segmentedControl.selectedSegmentIndex = 2;
-        items = [[LibraryConnection mainConnection] fetchAllComicsByDate];
-        break;
-    }
-
-    case kSortingMode_ByStatus: {
-        _segmentedControl.selectedSegmentIndex = 3;
-        items = [[LibraryConnection mainConnection] fetchAllComicsByStatus];
-        break;
-    }
-
-    default: { // kSortingMode_ByCollection
-        _segmentedControl.selectedSegmentIndex = 0;
-        if (_currentCollection) {
-            items = [[LibraryConnection mainConnection] fetchComicsInCollection:_currentCollection];
+    switch ([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_SortingMode]) {  // Setting "selectedSegmentIndex" will call the action
+            
+        case kSortingMode_ByName: {
+            _segmentedControl.selectedSegmentIndex = 1;
+            items = [[LibraryConnection mainConnection] fetchAllComicsByName];
+            break;
         }
-        else {
-            items = [[LibraryConnection mainConnection] fetchAllCollectionsByName];
+            
+        case kSortingMode_ByDate: {
+            _segmentedControl.selectedSegmentIndex = 2;
+            items = [[LibraryConnection mainConnection] fetchAllComicsByDate];
+            break;
         }
-        break;
-    }
+            
+        case kSortingMode_ByStatus: {
+            _segmentedControl.selectedSegmentIndex = 3;
+            items = [[LibraryConnection mainConnection] fetchAllComicsByStatus];
+            break;
+        }
+            
+        default: {  // kSortingMode_ByCollection
+            _segmentedControl.selectedSegmentIndex = 0;
+            if (_currentCollection) {
+                items = [[LibraryConnection mainConnection] fetchComicsInCollection:_currentCollection];
+            } else {
+                items = [[LibraryConnection mainConnection] fetchAllCollectionsByName];
+            }
+            break;
+        }
+            
     }
 #if __DISPLAY_THUMBNAILS_IN_BACKGROUND__
     pthread_mutex_lock(&_displayMutex);
@@ -563,14 +526,13 @@ static void __DisplayQueueCallBack(void* info)
     _gridView.scrollingAmount = scrolling;
     _gridView.items = items;
 #if __DISPLAY_THUMBNAILS_IN_BACKGROUND__
-    [self _processDisplayQueue:NO]; // Display immediately
+    [self _processDisplayQueue:NO];  // Display immediately
     pthread_mutex_unlock(&_displayMutex);
     _gridView.extraVisibleRows = 6;
 #endif
 }
 
-- (void)_setCurrentCollection:(Collection*)collection
-{
+- (void) _setCurrentCollection:(Collection*)collection {
     NSMutableArray* barItems = [[NSMutableArray alloc] initWithArray:_navigationBar.items];
     if (barItems.count == 2) {
         [barItems removeObjectAtIndex:1];
@@ -588,7 +550,7 @@ static void __DisplayQueueCallBack(void* info)
     }
     _navigationBar.items = barItems;
     [barItems release];
-
+    
     if (collection != _currentCollection) {
         [_currentCollection release];
         _currentCollection = [collection retain];
@@ -596,15 +558,14 @@ static void __DisplayQueueCallBack(void* info)
     [self _reloadCurrentCollection];
 }
 
-- (void)_presentComic:(Comic*)comic
-{
+- (void) _presentComic:(Comic*)comic {
     ComicViewController* viewController = [[ComicViewController alloc] initWithComic:comic];
     if (viewController) {
         viewController.modalPresentationStyle = UIModalPresentationFullScreen;
         viewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
         [self presentModalViewController:viewController animated:YES];
         [viewController release];
-
+        
         if (comic != _currentComic) {
             [_currentComic release];
             _currentComic = [comic retain];
@@ -612,50 +573,44 @@ static void __DisplayQueueCallBack(void* info)
     }
 }
 
-- (void)dismissModalViewControllerAnimated:(BOOL)animated
-{
+- (void) dismissModalViewControllerAnimated:(BOOL)animated {
     [super dismissModalViewControllerAnimated:animated];
-
+    
     if ([self.modalViewController isKindOfClass:[ComicViewController class]]) {
         [(ComicViewController*)self.modalViewController saveState];
     }
-
+    
     if (([[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_SortingMode] == kSortingMode_ByStatus) && !_gridView.empty) {
         [self _reloadCurrentCollection];
-    }
-    else if (_currentComic) {
-        Comic* comic = [_gridView itemForItem:_currentComic]; // We cannot update "_currentComic" directly as it will not be in the grid items anymore if the view has been reloaded
+    } else if (_currentComic) {
+        Comic* comic = [_gridView itemForItem:_currentComic];  // We cannot update "_currentComic" directly as it will not be in the grid items anymore if the view has been reloaded
         if (comic) {
             [[LibraryConnection mainConnection] refetchObject:comic];
             [self _updateThumbnailViewForItem:comic];
-        }
-        else {
+        } else {
             XLOG_DEBUG_UNREACHABLE();
         }
     }
-
+    
     [_currentComic release];
     _currentComic = nil;
 }
 
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
-{
+- (void) willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
     [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
-
+    
     if (UIInterfaceOrientationIsLandscape(toInterfaceOrientation)) {
         _gridView.contentMargins = UIEdgeInsetsMake(kGridMargin, kGridMargin + kGridMarginExtra_Landscape, kGridMargin, kGridMargin);
         _gridView.itemSpacing = UIEdgeInsetsMake(0.0, 0.0, kItemVerticalSpacing, kItemHorizontalSpacing_Landscape);
-    }
-    else {
+    } else {
         _gridView.contentMargins = UIEdgeInsetsMake(kGridMargin, kGridMargin + kGridMarginExtra_Portrait, kGridMargin, kGridMargin);
         _gridView.itemSpacing = UIEdgeInsetsMake(0.0, 0.0, kItemVerticalSpacing, kItemHorizontalSpacing_Portrait);
     }
 }
 
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
-{
+- (void) didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
     [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
-
+    
     // This code path is only used before iOS 6.0
     if (_launchView && UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
         UIImage* image = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Default-Landscape" ofType:@"png"]];
@@ -664,28 +619,26 @@ static void __DisplayQueueCallBack(void* info)
     }
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
+- (void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-
+    
     if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
         _gridView.contentMargins = UIEdgeInsetsMake(kGridMargin, kGridMargin + kGridMarginExtra_Landscape, kGridMargin, kGridMargin);
         _gridView.itemSpacing = UIEdgeInsetsMake(0.0, 0.0, kItemVerticalSpacing, kItemHorizontalSpacing_Landscape);
-    }
-    else {
+    } else {
         _gridView.contentMargins = UIEdgeInsetsMake(kGridMargin, kGridMargin + kGridMarginExtra_Portrait, kGridMargin, kGridMargin);
         _gridView.itemSpacing = UIEdgeInsetsMake(0.0, 0.0, kItemVerticalSpacing, kItemHorizontalSpacing_Portrait);
     }
-
+    
     if (_gridView.empty) {
         [_gridView layoutSubviews];
         [self _setCurrentCollection:_currentCollection];
     }
-
+    
     if (_launched == NO) {
         _launchView = [[UIImageView alloc] initWithFrame:self.view.bounds];
         _launchView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        NSString* path = [[NSBundle mainBundle] pathForResource:(UIInterfaceOrientationIsLandscape(self.interfaceOrientation) ? @"Default-Landscape" : @"Default-Portrait")ofType:@"png"];
+        NSString* path = [[NSBundle mainBundle] pathForResource:(UIInterfaceOrientationIsLandscape(self.interfaceOrientation) ? @"Default-Landscape" : @"Default-Portrait") ofType:@"png"];
         UIImage* image = [[UIImage alloc] initWithContentsOfFile:path];
         _launchView.image = image;
         [image release];
@@ -694,30 +647,26 @@ static void __DisplayQueueCallBack(void* info)
     }
 }
 
-- (void)_rateNow:(id)argument
-{
+- (void) _rateNow:(id)argument {
     [[AppDelegate sharedDelegate] logEvent:@"rating.now"];
     [[NSUserDefaults standardUserDefaults] setInteger:-1 forKey:kDefaultKey_LaunchCount];
-
+    
     NSString* appURL;
     float version = [[UIDevice currentDevice].systemVersion floatValue];
     if (version >= 7.0 && version < 7.1) {
         appURL = [NSString stringWithFormat:kiOS7AppStoreURLFormat, kAppStoreAppID];
-    }
-    else {
+    } else {
         appURL = [NSString stringWithFormat:kiOSAppStoreURLFormat, kAppStoreAppID];
     }
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:appURL]];
 }
 
-- (void)_rateLater:(id)argument
-{
+- (void) _rateLater:(id)argument {
     [[AppDelegate sharedDelegate] logEvent:@"rating.later"];
     [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:kDefaultKey_LaunchCount];
 }
 
-- (void)_showRatingScreen
-{
+- (void) _showRatingScreen {
     [[AppDelegate sharedDelegate] logEvent:@"rating.prompt"];
     [[AppDelegate sharedDelegate] showAlertWithTitle:NSLocalizedString(@"RATE_ALERT_TITLE", nil)
                                              message:NSLocalizedString(@"RATE_ALERT_MESSAGE", nil)
@@ -730,53 +679,50 @@ static void __DisplayQueueCallBack(void* info)
     [[UIApplication sharedApplication] endIgnoringInteractionEvents];
 }
 
-- (void)_requireUpdate
-{
+- (void) _requireUpdate {
     [self _forceUpdate];
     [[NSUserDefaults standardUserDefaults] setInteger:kLibraryVersion forKey:kDefaultKey_LibraryVersion];
 }
 
-- (void)_viewDidReallyAppear
-{
+- (void) _viewDidReallyAppear {
     BOOL needLibraryUpdate = [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_LibraryVersion] != kLibraryVersion;
     if (needLibraryUpdate) {
         XLOG_VERBOSE(@"Library is outdated at version %i", [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_LibraryVersion]);
         [_currentComic release];
         _currentComic = nil;
     }
-
+    
     if (_currentComic) {
         Comic* comic = [[_currentComic retain] autorelease];
         [_currentComic release];
         _currentComic = nil;
-
+        
         [self _presentComic:comic];
     }
-
+    
     [CATransaction flush];
-
+    
     UIView* launchView = _launchView;
     [UIView animateWithDuration:0.5 animations:^{
-    launchView.alpha = 0.0;
-    self.view.frame = [[UIScreen mainScreen] applicationFrame];
+        launchView.alpha = 0.0;
+        self.view.frame = [[UIScreen mainScreen] applicationFrame];
     } completion:^(BOOL finished) {
-    [launchView removeFromSuperview];
-    [launchView release];
+        [launchView removeFromSuperview];
+        [launchView release];
     }];
     _launchView = nil;
-
+    
     NSInteger count = [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_LaunchCount];
     if (count >= 0) {
-        [[NSUserDefaults standardUserDefaults] setInteger:(count + 1)forKey:kDefaultKey_LaunchCount];
+        [[NSUserDefaults standardUserDefaults] setInteger:(count + 1) forKey:kDefaultKey_LaunchCount];
         if (!needLibraryUpdate && (count + 1 >= kLaunchCountBeforeRating) && !self.modalViewController && [[NetReachability sharedNetReachability] state]) {
             [[UIApplication sharedApplication] beginIgnoringInteractionEvents];
             [self performSelector:@selector(_showRatingScreen) withObject:nil afterDelay:kShowRatingDelay];
-        }
-        else {
+        } else {
             XLOG_VERBOSE(@"Launch count is now %i", [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_LaunchCount]);
         }
     }
-
+    
     if (needLibraryUpdate) {
         [[AppDelegate sharedInstance] showAlertWithTitle:NSLocalizedString(@"REQUIRE_UPDATE_TITLE", nil)
                                                  message:NSLocalizedString(@"REQUIRE_UPDATE_MESSAGE", nil)
@@ -789,42 +735,37 @@ static void __DisplayQueueCallBack(void* info)
     }
 }
 
-- (void)viewDidAppear:(BOOL)animated
-{
+- (void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-
+    
     if (_launchView) {
-        [self performSelector:@selector(_viewDidReallyAppear) withObject:nil afterDelay:0.0]; // Work around interface orientation not already set in -viewDidAppear before iOS 6.0 but instead set after -didRotateFromInterfaceOrientation gets called
+        [self performSelector:@selector(_viewDidReallyAppear) withObject:nil afterDelay:0.0];  // Work around interface orientation not already set in -viewDidAppear before iOS 6.0 but instead set after -didRotateFromInterfaceOrientation gets called
     }
-
+    
     [self becomeFirstResponder];
 }
 
-- (void)_popCollection
-{
+- (void) _popCollection {
     [self gridViewDidUpdateScrollingAmount:nil];
     [self _setCurrentCollection:nil];
 }
 
-- (BOOL)navigationBar:(UINavigationBar*)navigationBar shouldPopItem:(UINavigationItem*)item
-{
+- (BOOL) navigationBar:(UINavigationBar*)navigationBar shouldPopItem:(UINavigationItem*)item {
     [self performSelector:@selector(_popCollection) withObject:nil afterDelay:0.0];
     return NO;
 }
 
-- (void)saveState
-{
+- (void) saveState {
     if ([self.modalViewController isKindOfClass:[ComicViewController class]]) {
         [(ComicViewController*)self.modalViewController saveState];
     }
-
+    
     [self gridViewDidUpdateScrollingAmount:nil];
     [[NSUserDefaults standardUserDefaults] setInteger:_currentCollection.sqlRowID forKey:kDefaultKey_CurrentCollection];
     [[NSUserDefaults standardUserDefaults] setInteger:_currentComic.sqlRowID forKey:kDefaultKey_CurrentComic];
 }
 
-- (void)_forceUpdate
-{
+- (void) _forceUpdate {
     [[AppDelegate sharedDelegate] purgeLogHistory];
     [[LibraryUpdater sharedUpdater] update:YES];
     [self _updateStatistics];
@@ -835,30 +776,26 @@ static void __DisplayQueueCallBack(void* info)
 
 @implementation LibraryViewController (LibraryUpdaterDelegate)
 
-- (void)libraryUpdaterWillStart:(LibraryUpdater*)library
-{
+- (void) libraryUpdaterWillStart:(LibraryUpdater*)library {
     _markReadButton.enabled = NO;
     _markNewButton.enabled = NO;
     _updateButton.enabled = NO;
     _forceUpdateButton.enabled = NO;
 }
 
-- (void)libraryUpdaterDidContinue:(LibraryUpdater*)library progress:(float)progress
-{
+- (void) libraryUpdaterDidContinue:(LibraryUpdater*)library progress:(float)progress {
     if (_menuController.popoverVisible) {
         [self _updateStatistics];
     }
 }
 
-- (void)libraryUpdaterDidFinish:(LibraryUpdater*)library
-{
+- (void) libraryUpdaterDidFinish:(LibraryUpdater*)library {
     if (_currentCollection && ![[LibraryConnection mainConnection] refetchObject:_currentCollection]) {
         [self _setCurrentCollection:nil];
-    }
-    else {
+    } else {
         [self _reloadCurrentCollection];
     }
-
+    
     _markReadButton.enabled = YES;
     _markNewButton.enabled = YES;
     _updateButton.enabled = YES;
@@ -869,14 +806,12 @@ static void __DisplayQueueCallBack(void* info)
 
 @implementation LibraryViewController (GridViewDelegate)
 
-- (UIView*)gridView:(GridView*)gridView viewForItem:(id)item
-{
+- (UIView*) gridView:(GridView*)gridView viewForItem:(id)item {
     ThumbnailView* view = [[ThumbnailView alloc] initWithFrame:CGRectMake(0, 0, kLibraryThumbnailWidth, kLibraryThumbnailHeight)];
     return [view autorelease];
 }
 
-- (void)gridViewDidUpdateScrollingAmount:(GridView*)gridView
-{
+- (void) gridViewDidUpdateScrollingAmount:(GridView*)gridView {
     if (!_gridView.empty) {
         NSInteger scrolling = lroundf(_gridView.scrollingAmount);
         if (_currentCollection) {
@@ -884,8 +819,7 @@ static void __DisplayQueueCallBack(void* info)
                 _currentCollection.scrolling = scrolling;
                 [[LibraryConnection mainConnection] updateObject:_currentCollection];
             }
-        }
-        else {
+        } else {
             [[NSUserDefaults standardUserDefaults] setInteger:scrolling forKey:kDefaultKey_RootScrolling];
         }
     }
@@ -893,8 +827,7 @@ static void __DisplayQueueCallBack(void* info)
 
 #if __DISPLAY_THUMBNAILS_IN_BACKGROUND__
 
-- (void)gridViewWillStartUpdatingViewsVisibility:(GridView*)gridView
-{
+- (void) gridViewWillStartUpdatingViewsVisibility:(GridView*)gridView {
     pthread_mutex_lock(&_displayMutex);
     _showBatch = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
     _hideBatch = CFSetCreateMutable(kCFAllocatorDefault, 0, &kCFTypeSetCallBacks);
@@ -902,8 +835,7 @@ static void __DisplayQueueCallBack(void* info)
 
 #endif
 
-- (void)gridView:(GridView*)gridView willShowView:(UIView*)view forItem:(id)item
-{
+- (void) gridView:(GridView*)gridView willShowView:(UIView*)view forItem:(id)item {
     UIImage* placeholderImage = [item isKindOfClass:[Comic class]] ? _comicImage : _collectionImage;
 #if __DISPLAY_THUMBNAILS_IN_BACKGROUND__
     view.layer.contents = (id)[placeholderImage CGImage];
@@ -926,12 +858,11 @@ static void __DisplayQueueCallBack(void* info)
     if (image) {
         [(ThumbnailView*)view setImage:image];
         [image release];
-    }
-    else {
+    } else {
         [(ThumbnailView*)view setImage:placeholderImage];
     }
 #endif
-
+    
     int status = [item status];
     if (status > 0) {
         UIImageView* subview = [[UIImageView alloc] initWithImage:_ribbonImage];
@@ -939,14 +870,14 @@ static void __DisplayQueueCallBack(void* info)
         [view addSubview:subview];
         [subview release];
         [(ThumbnailView*)view setRibbonView:subview];
-    }
-    else if (status < 0) {
+    } else if (status < 0) {
         UIImageView* subview = [[UIImageView alloc] initWithImage:_newImage];
         subview.frame = CGRectMake(kNewImageX, kNewImageY, kNewImageWidth, kNewImageHeight);
         [view addSubview:subview];
         [subview release];
         [(ThumbnailView*)view setNoteView:subview];
     }
+    
     if ([item isKindOfClass:[Comic class]]) {
         Comic* comic = (Comic*)item;
         if (comic.isDownloading) {
@@ -955,9 +886,9 @@ static void __DisplayQueueCallBack(void* info)
             [image setContentMode:UIViewContentModeScaleAspectFit];
             [view addSubview:image];
             [image release];
-
+            
             UIProgressView* progressBar = [[UIProgressView alloc]
-                initWithFrame:CGRectMake(kProgressBarX, kProgressBarY, kProgressBarWidth, kProgressBarHeight)];
+                                           initWithFrame:CGRectMake(kProgressBarX, kProgressBarY, kProgressBarWidth, kProgressBarHeight)];
             [progressBar setProgress:comic.progress];
             [view addSubview:progressBar];
             [progressBar release];
@@ -969,15 +900,14 @@ static void __DisplayQueueCallBack(void* info)
     }
 }
 
-- (void)gridView:(GridView*)gridView didHideView:(UIView*)view forItem:(id)item
-{
+- (void) gridView:(GridView*)gridView didHideView:(UIView*)view forItem:(id)item {
 #if __DISPLAY_THUMBNAILS_IN_BACKGROUND__
     CFSetAddValue(_hideBatch, view);
     view.layer.contents = NULL;
 #else
     [(ThumbnailView*)view setImage:nil];
 #endif
-
+    
     [[(ThumbnailView*)view noteView] removeFromSuperview];
     [(ThumbnailView*)view setNoteView:nil];
     [[(ThumbnailView*)view ribbonView] removeFromSuperview];
@@ -986,20 +916,17 @@ static void __DisplayQueueCallBack(void* info)
 
 #if __DISPLAY_THUMBNAILS_IN_BACKGROUND__
 
-static void __SetApplierFunction(const void* value, void* context)
-{
+static void __SetApplierFunction(const void* value, void* context) {
     CFDictionaryRemoveValue((CFMutableDictionaryRef)context, value);
 }
 
-static void __ArrayApplierFunction(const void* value, void* context)
-{
+static void __ArrayApplierFunction(const void* value, void* context) {
     CFSetApplyFunction((CFSetRef)context, __SetApplierFunction, (void*)value);
 }
 
-- (void)gridViewDidEndUpdatingViewsVisibility:(GridView*)gridView
-{
+- (void) gridViewDidEndUpdatingViewsVisibility:(GridView*)gridView {
     BOOL signal = NO;
-
+    
     if (CFSetGetCount(_hideBatch)) {
         CFArrayApplyFunction(_displayQueue, CFRangeMake(0, CFArrayGetCount(_displayQueue)), __ArrayApplierFunction, _hideBatch);
     }
@@ -1010,7 +937,7 @@ static void __ArrayApplierFunction(const void* value, void* context)
     }
     CFRelease(_showBatch);
     pthread_mutex_unlock(&_displayMutex);
-
+    
     if (signal) {
         CFRunLoopSourceSignal(_displaySource);
         CFRunLoopWakeUp(_displayRunLoop);
@@ -1023,8 +950,7 @@ static void __ArrayApplierFunction(const void* value, void* context)
 
 @implementation LibraryViewController (IBActions)
 
-- (IBAction)resort:(id)sender
-{
+- (IBAction) resort:(id)sender {
     if (_segmentedControl.selectedSegmentIndex != [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_SortingMode]) {
         [[NSUserDefaults standardUserDefaults] setInteger:_segmentedControl.selectedSegmentIndex forKey:kDefaultKey_SortingMode];
         [self gridViewDidUpdateScrollingAmount:nil];
@@ -1032,13 +958,11 @@ static void __ArrayApplierFunction(const void* value, void* context)
     }
 }
 
-- (IBAction)update:(id)sender
-{
+- (IBAction) update:(id)sender {
     [[LibraryUpdater sharedUpdater] update:NO];
 }
 
-- (IBAction)forceUpdate:(id)sender
-{
+- (IBAction) forceUpdate:(id)sender {
     [[AppDelegate sharedInstance] showAlertWithTitle:NSLocalizedString(@"FORCE_UPDATE_TITLE", nil)
                                              message:NSLocalizedString(@"FORCE_UPDATE_MESSAGE", nil)
                                        confirmButton:NSLocalizedString(@"FORCE_UPDATE_CONTINUE", nil)
@@ -1049,20 +973,17 @@ static void __ArrayApplierFunction(const void* value, void* context)
                                             argument:nil];
 }
 
-- (IBAction)updateServer:(id)sender
-{
+- (IBAction) updateServer:(id)sender {
     [[WebServer sharedWebServer] setType:_serverControl.selectedSegmentIndex];
     [self _updateTimer:nil];
 }
 
-- (void)_markAllRead
-{
+- (void) _markAllRead {
     [[LibraryConnection mainConnection] updateStatusForAllComics:0];
     [self _reloadCurrentCollection];
 }
 
-- (IBAction)markAllRead:(id)sender
-{
+- (IBAction) markAllRead:(id)sender {
     [[AppDelegate sharedInstance] showAlertWithTitle:NSLocalizedString(@"MARK_ALL_READ_TITLE", nil)
                                              message:nil
                                        confirmButton:NSLocalizedString(@"MARK_ALL_READ_CONTINUE", nil)
@@ -1073,14 +994,12 @@ static void __ArrayApplierFunction(const void* value, void* context)
                                             argument:nil];
 }
 
-- (void)_markAllNew
-{
+- (void) _markAllNew {
     [[LibraryConnection mainConnection] updateStatusForAllComics:-1];
     [self _reloadCurrentCollection];
 }
 
-- (IBAction)markAllNew:(id)sender
-{
+- (IBAction) markAllNew:(id)sender {
     [[AppDelegate sharedInstance] showAlertWithTitle:NSLocalizedString(@"MARK_ALL_NEW_TITLE", nil)
                                              message:nil
                                        confirmButton:NSLocalizedString(@"MARK_ALL_NEW_CONTINUE", nil)
@@ -1091,25 +1010,21 @@ static void __ArrayApplierFunction(const void* value, void* context)
                                             argument:nil];
 }
 
-- (IBAction)showLog:(id)sender
-{
+- (IBAction) showLog:(id)sender {
     [_menuController dismissPopoverAnimated:YES];
     [_updateTimer setFireDate:[NSDate distantFuture]];
     [[AppDelegate sharedInstance] showLogViewController];
 }
 
-- (IBAction)toggleDimming:(id)sender
-{
+- (IBAction) toggleDimming:(id)sender {
     [(AppDelegate*)[AppDelegate sharedInstance] setScreenDimmed:_dimmingSwitch.on];
 }
 
-- (IBAction)purchase:(id)sender
-{
+- (IBAction) purchase:(id)sender {
     [(AppDelegate*)[AppDelegate sharedInstance] purchase];
 }
 
-- (IBAction)restore:(id)sender
-{
+- (IBAction) restore:(id)sender {
     [(AppDelegate*)[AppDelegate sharedInstance] restore];
 }
 
@@ -1121,18 +1036,16 @@ static void __ArrayApplierFunction(const void* value, void* context)
     [[DBChooser defaultChooser] openChooserForLinkType:DBChooserLinkTypeDirect
                                     fromViewController:self
                                             completion:^(NSArray* results) {
-    
-             if ([results count]) {
-                 // Process results from Chooser
-                 for (DBChooserResult* link in results) {
-                     //Add item to gridView
-                     [[LibraryConnection mainConnection] downloadFileAtUrl:link.link withFileName:link.name];
-                 }
-             } else {
-                 // User canceled the action
-                 XLOG_INFO(@"User canceled download from Dropbox");
+         if ([results count]) {
+             // Process results from Chooser
+             for (DBChooserResult* link in results) {
+                 //Add item to gridView
+                 [[LibraryConnection mainConnection] downloadFileAtUrl:link.link withFileName:link.name];
              }
-                                            }];
+         } else {
+             // User canceled the action
+             XLOG_INFO(@"User canceled download from Dropbox");
+         }
+    }];
 }
-
 @end
