@@ -4,6 +4,6 @@
 [submodule "GCDWebServer"]
 	path = GCDWebServer
 	url = https://github.com/swisspol/GCDWebServer.git
-[submodule "XLFacility"]		
-	path = XLFacility		
+[submodule "XLFacility"]
+	path = XLFacility
 	url = https://github.com/swisspol/XLFacility.git
