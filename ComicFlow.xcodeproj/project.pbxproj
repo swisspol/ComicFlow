@@ -21,11 +21,9 @@
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765A40DF7441C002DB57D /* CoreGraphics.framework */; };
-		D57A5EFB1AA8837A0049BE4D /* ThumbnailView.m in Sources */ = {isa = PBXBuildFile; fileRef = D57A5EFA1AA8837A0049BE4D /* ThumbnailView.m */; };
-		D57A5EFE1AA88A620049BE4D /* download.png in Resources */ = {isa = PBXBuildFile; fileRef = D57A5EFC1AA88A620049BE4D /* download.png */; };
-		D57A5EFF1AA88A620049BE4D /* download@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D57A5EFD1AA88A620049BE4D /* download@2x.png */; };
-		D5EEC5D91AA75F4600FC3AE7 /* DBChooser.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D5EEC5D71AA75F4600FC3AE7 /* DBChooser.bundle */; };
-		D5EEC5DA1AA75F4600FC3AE7 /* DBChooser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5EEC5D81AA75F4600FC3AE7 /* DBChooser.framework */; };
+		D57A5F041AA9CECE0049BE4D /* DBChooser.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D57A5F021AA9CECE0049BE4D /* DBChooser.bundle */; };
+		D57A5F051AA9CECE0049BE4D /* DBChooser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D57A5F031AA9CECE0049BE4D /* DBChooser.framework */; };
+		D57A5F081AA9CEE60049BE4D /* ThumbnailView.m in Sources */ = {isa = PBXBuildFile; fileRef = D57A5F071AA9CEE60049BE4D /* ThumbnailView.m */; };
 		E20590BE121E294B00A271CC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E20590BD121E294B00A271CC /* libsqlite3.dylib */; };
 		E20590C0121E295000A271CC /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E20590BF121E295000A271CC /* CFNetwork.framework */; };
 		E2059155121E2F3B00A271CC /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E2059154121E2F3B00A271CC /* libz.dylib */; };
@@ -198,12 +196,10 @@
 		2CF616F41293D8A6008FD89E /* ZoomView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZoomView.h; sourceTree = "<group>"; };
 		2CF616F51293D8A6008FD89E /* ZoomView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZoomView.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = "<group>"; };
-		D57A5EF91AA8837A0049BE4D /* ThumbnailView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThumbnailView.h; sourceTree = "<group>"; };
-		D57A5EFA1AA8837A0049BE4D /* ThumbnailView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThumbnailView.m; sourceTree = "<group>"; };
-		D57A5EFC1AA88A620049BE4D /* download.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = download.png; sourceTree = "<group>"; };
-		D57A5EFD1AA88A620049BE4D /* download@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "download@2x.png"; sourceTree = "<group>"; };
-		D5EEC5D71AA75F4600FC3AE7 /* DBChooser.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = DBChooser.bundle; sourceTree = "<group>"; };
-		D5EEC5D81AA75F4600FC3AE7 /* DBChooser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DBChooser.framework; sourceTree = "<group>"; };
+		D57A5F021AA9CECE0049BE4D /* DBChooser.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = DBChooser.bundle; sourceTree = "<group>"; };
+		D57A5F031AA9CECE0049BE4D /* DBChooser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DBChooser.framework; sourceTree = "<group>"; };
+		D57A5F061AA9CEE60049BE4D /* ThumbnailView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThumbnailView.h; sourceTree = "<group>"; };
+		D57A5F071AA9CEE60049BE4D /* ThumbnailView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThumbnailView.m; sourceTree = "<group>"; };
 		E20590BD121E294B00A271CC /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		E20590BF121E295000A271CC /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		E2059154121E2F3B00A271CC /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -510,7 +506,7 @@
 				E20590C0121E295000A271CC /* CFNetwork.framework in Frameworks */,
 				E20593B6121E4E3E00A271CC /* MobileCoreServices.framework in Frameworks */,
 				E205A102121FB0E100A271CC /* QuartzCore.framework in Frameworks */,
-				D5EEC5DA1AA75F4600FC3AE7 /* DBChooser.framework in Frameworks */,
+				D57A5F051AA9CECE0049BE4D /* DBChooser.framework in Frameworks */,
 				E247C19B1293A79D00CEB396 /* CoreText.framework in Frameworks */,
 				E20893E112FA1657001F1D2F /* SystemConfiguration.framework in Frameworks */,
 				E21F01E118EBA01E00051CA8 /* ImageIO.framework in Frameworks */,
@@ -544,8 +540,8 @@
 				E27CFFA7168CA75900021417 /* UnRAR.m */,
 				E22A090118EB5F3200A4FF82 /* WebServer.h */,
 				E22A090218EB5F3200A4FF82 /* WebServer.m */,
-				D57A5EF91AA8837A0049BE4D /* ThumbnailView.h */,
-				D57A5EFA1AA8837A0049BE4D /* ThumbnailView.m */,
+				D57A5F061AA9CEE60049BE4D /* ThumbnailView.h */,
+				D57A5F071AA9CEE60049BE4D /* ThumbnailView.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -561,15 +557,14 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				D5EEC5D61AA75F3900FC3AE7 /* Dropbox */,
 				E209D2111221154300B1077B /* Defaults.h */,
 				E229344C121E285200484F9F /* Info.plist */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
 				32CA4F630368D1EE00C91783 /* Prefix.pch */,
 				080E96DDFE201D6D7F000001 /* Classes */,
-				E2059926121EE21400A271CC /* Resources */,
 				E27CFFAA168CA79700021417 /* Minizip-1.1 */,
 				E27CFFB8168CA7A200021417 /* UnRAR-3.9.10 */,
+				E2059926121EE21400A271CC /* Resources */,
 				E2293169121E260F00484F9F /* Cooliris-ToolKit */,
 				E286901118FC943E003F9EAE /* GCDWebServer */,
 				E27664A518F5C52800A034BA /* GCDWebDAVServer */,
@@ -586,6 +581,8 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				D57A5F021AA9CECE0049BE4D /* DBChooser.bundle */,
+				D57A5F031AA9CECE0049BE4D /* DBChooser.framework */,
 				E21F982318060E3000A9B745 /* Security.framework */,
 				E20893E012FA1657001F1D2F /* SystemConfiguration.framework */,
 				E20593B5121E4E3E00A271CC /* MobileCoreServices.framework */,
@@ -602,15 +599,6 @@
 				E2059154121E2F3B00A271CC /* libz.dylib */,
 			);
 			name = "Frameworks and Libraries";
-			sourceTree = "<group>";
-		};
-		D5EEC5D61AA75F3900FC3AE7 /* Dropbox */ = {
-			isa = PBXGroup;
-			children = (
-				D5EEC5D71AA75F4600FC3AE7 /* DBChooser.bundle */,
-				D5EEC5D81AA75F4600FC3AE7 /* DBChooser.framework */,
-			);
-			name = Dropbox;
 			sourceTree = "<group>";
 		};
 		E2059814121ED28000A271CC /* Resources */ = {
@@ -641,8 +629,6 @@
 		E2059926121EE21400A271CC /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				D57A5EFC1AA88A620049BE4D /* download.png */,
-				D57A5EFD1AA88A620049BE4D /* download@2x.png */,
 				E2E50D3D1892D84F00908424 /* Background.png */,
 				E2E50D3F18930EE000908424 /* Background@2x.png */,
 				E21F01E618EBB06B00051CA8 /* Collection-Background.png */,
@@ -1048,6 +1034,11 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0610;
+				TargetAttributes = {
+					1D6058900D05DD3D006BFB54 = {
+						DevelopmentTeam = 88W3E55T4B;
+					};
+				};
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "ComicFlow" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1086,15 +1077,13 @@
 				E28CF46412237F790076FB21 /* Default-Portrait.png in Resources */,
 				E28CF6E01223A0BC0076FB21 /* Ribbon.png in Resources */,
 				E24036C11891A1880098F028 /* Icon_76x76@2x.png in Resources */,
-				D57A5EFE1AA88A620049BE4D /* download.png in Resources */,
 				E21F01E818EBB06B00051CA8 /* Collection-Background.png in Resources */,
 				E28CF80A1223BFD40076FB21 /* New.png in Resources */,
 				E26703791228D7D0009C4EBB /* NavigationControl-Marker.png in Resources */,
 				E267037A1228D7D0009C4EBB /* NavigationControl-Thumb.png in Resources */,
 				E267037B1228D7D0009C4EBB /* OverlayView-Arrow-Bottom.png in Resources */,
-				D5EEC5D91AA75F4600FC3AE7 /* DBChooser.bundle in Resources */,
+				D57A5F041AA9CECE0049BE4D /* DBChooser.bundle in Resources */,
 				E267037C1228D7D0009C4EBB /* OverlayView-Arrow-Left.png in Resources */,
-				D57A5EFF1AA88A620049BE4D /* download@2x.png in Resources */,
 				E267037D1228D7D0009C4EBB /* OverlayView-Arrow-Right.png in Resources */,
 				E267037E1228D7D0009C4EBB /* OverlayView-Arrow-Top.png in Resources */,
 				E267037F1228D7D0009C4EBB /* OverlayView-Contents.png in Resources */,
@@ -1224,7 +1213,7 @@
 				E286903818FC943E003F9EAE /* GCDWebServerMultiPartFormRequest.m in Sources */,
 				E27C005A168CA7A200021417 /* options.cpp in Sources */,
 				E27C005C168CA7A200021417 /* pathfn.cpp in Sources */,
-				D57A5EFB1AA8837A0049BE4D /* ThumbnailView.m in Sources */,
+				D57A5F081AA9CEE60049BE4D /* ThumbnailView.m in Sources */,
 				E2C73E9519F2090300BEC354 /* ApplicationDelegate.m in Sources */,
 				E27C005F168CA7A200021417 /* rarvm.cpp in Sources */,
 				E27C0061168CA7A200021417 /* rawread.cpp in Sources */,

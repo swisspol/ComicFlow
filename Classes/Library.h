@@ -90,6 +90,7 @@
 - (NSString*) pathForComic:(Comic*)comic;
 - (NSString*) pathForCollection:(Collection*)collection;
 - (void)downloadFileAtUrl:(NSURL*)url withFileName:(NSString*)filename;
+- (void)finishedDownloading:(Comic*)comic;
 @end
 
 @interface LibraryUpdater : NSObject {
