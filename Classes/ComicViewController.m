@@ -74,7 +74,7 @@ typedef enum { kPositionCenter, kPositionLeftEdge, kPositionRightEdge } ContentP
 
 - (id) initWithTarget:(id)target tapAction:(SEL)tapAction swipeLeftAction:(SEL)swipeLeftAction swipeRightAction:(SEL)swipeRightAction {
   if ((self = [super init])) {
-    self.displayMode = kZoomViewDisplayMode_FitVertical;
+    self.displayMode = kZoomViewDisplayMode_FitVertically;
     self.doubleTapZoom = kDoubleTapZoomRatio;
     
     self.alwaysBounceHorizontal = NO;
