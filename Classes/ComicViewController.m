@@ -38,10 +38,10 @@ typedef enum { kPositionCenter, kPositionLeftEdge, kPositionRightEdge } ContentP
 @interface ComicPageView : ZoomView {
 @private
   NSString* _file;
-  bool _contentIsLandscape;
+  BOOL _contentIsLandscape;
 }
 @property(nonatomic, copy) NSString* file;
-@property(nonatomic) bool contentIsLandscape;
+@property(nonatomic) BOOL contentIsLandscape;
 - (id) initWithTarget:(id)target tapAction:(SEL)tapAction swipeLeftAction:(SEL)swipeLeftAction swipeRightAction:(SEL)swipeRightAction;
 - (void) displayImage:(UIImage*)anImage;
 - (void) positionContentAt:(ContentPos)position;
@@ -121,7 +121,7 @@ typedef enum { kPositionCenter, kPositionLeftEdge, kPositionRightEdge } ContentP
   CGFloat delta = (self.contentSize.width - self.bounds.size.width);
 
   // Always center portrait content
-  if ((position == kPositionCenter) || (self.contentIsLandscape == false)) {
+  if ((position == kPositionCenter) || (self.contentIsLandscape == NO)) {
     [self setContentOffset:CGPointMake(delta / 2, 0) animated:NO];
   } else if (position == kPositionRightEdge) {
     [self setContentOffset:CGPointMake(delta, 0) animated:NO];
@@ -374,7 +374,7 @@ typedef enum { kPositionCenter, kPositionLeftEdge, kPositionRightEdge } ContentP
 
     // Adjust the positioning of the page we are about to display
     ComicPageView* pageView = (ComicPageView*)_documentView.selectedPageView;
-    if (pageView.contentIsLandscape == false) {
+    if (pageView.contentIsLandscape == NO) {
       [pageView positionContentAt:kPositionCenter];
     }
 	else if (_previousPageView != nil)
