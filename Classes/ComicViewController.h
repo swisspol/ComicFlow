@@ -35,6 +35,8 @@ typedef enum {
   id _contents;
   DocumentView* _documentView;
   UILabel* _pageLabel;
+  NSUInteger _previousPageIndex;
+  UIView* _previousPageView;
 }
 @property(nonatomic, retain) IBOutlet UINavigationBar* navigationBar;
 @property(nonatomic, retain) IBOutlet NavigationControl* navigationControl;
@@ -42,4 +44,5 @@ typedef enum {
 - (id) initWithComic:(Comic*)comic;
 - (IBAction) selectPage:(id)sender;
 - (void) saveState;
+- (void) toggleNavigation;
 @end

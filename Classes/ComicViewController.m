@@ -30,16 +30,21 @@
 #define kRightZoneRatio 0.8
 #define kDoubleTapZoomRatio 1.5
 
+typedef enum { kPositionCenter, kPositionLeftEdge, kPositionRightEdge } ContentPos;
+
 @interface ComicDocumentView : DocumentView
 @end
 
 @interface ComicPageView : ZoomView {
 @private
   NSString* _file;
+  BOOL _contentIsLandscape;
 }
 @property(nonatomic, copy) NSString* file;
-- (id) initWithTapTarget:(id)target action:(SEL)action;
+@property(nonatomic) BOOL contentIsLandscape;
+- (id) initWithTarget:(id)target tapAction:(SEL)tapAction swipeLeftAction:(SEL)swipeLeftAction swipeRightAction:(SEL)swipeRightAction;
 - (void) displayImage:(UIImage*)anImage;
+- (void) positionContentAt:(ContentPos)position;
 @end
 
 @implementation ComicDocumentView
@@ -50,7 +55,7 @@
   if ([otherGestureRecognizer isKindOfClass:NSClassFromString(@"UIScrollViewPanGestureRecognizer")]) {
     ComicPageView* pageView = (ComicPageView*)self.selectedPageView;
     if (pageView) {
-      if (pageView.zoomScale <= pageView.minimumZoomScale) {
+      if (pageView.zoomScale < pageView.minimumZoomScale) {
         return YES;
       }
     } else {
@@ -65,19 +70,33 @@
 @implementation ComicPageView
 
 @synthesize file=_file;
+@synthesize contentIsLandscape=_contentIsLandscape;
 
-- (id) initWithTapTarget:(id)target action:(SEL)action {
+- (id) initWithTarget:(id)target tapAction:(SEL)tapAction swipeLeftAction:(SEL)swipeLeftAction swipeRightAction:(SEL)swipeRightAction {
   if ((self = [super init])) {
-    self.displayMode = kZoomViewDisplayMode_Fit;
+    self.displayMode = kZoomViewDisplayMode_FitVertically;
     self.doubleTapZoom = kDoubleTapZoomRatio;
     
     self.alwaysBounceHorizontal = NO;
     self.alwaysBounceVertical = NO;
-    
-    UITapGestureRecognizer* recognizer = [[UITapGestureRecognizer alloc] initWithTarget:target action:action];
+    self.bounces = NO;
+
+    UITapGestureRecognizer* recognizer = [[UITapGestureRecognizer alloc] initWithTarget:target action:tapAction];
     [recognizer requireGestureRecognizerToFail:[[self gestureRecognizers] lastObject]];
     [self addGestureRecognizer:recognizer];
     [recognizer release];
+
+    UISwipeGestureRecognizer* swipeLeftRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:target action:swipeLeftAction];
+    swipeLeftRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
+    [swipeLeftRecognizer requireGestureRecognizerToFail:[[self gestureRecognizers] lastObject]];
+    [self addGestureRecognizer:swipeLeftRecognizer];
+    [swipeLeftRecognizer release];
+
+    UISwipeGestureRecognizer* swipeRightRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:target action:swipeRightAction];
+    swipeRightRecognizer.direction = UISwipeGestureRecognizerDirectionRight;
+    [swipeRightRecognizer requireGestureRecognizerToFail:[[self gestureRecognizers] lastObject]];
+    [self addGestureRecognizer:swipeRightRecognizer];
+    [swipeRightRecognizer release];
   }
   return self;
 }
@@ -98,6 +117,19 @@
   [super dealloc];
 }
 
+- (void) positionContentAt:(ContentPos)position {
+  CGFloat delta = (self.contentSize.width - self.bounds.size.width);
+
+  // Always center portrait content
+  if ((position == kPositionCenter) || (self.contentIsLandscape == NO)) {
+    [self setContentOffset:CGPointMake(delta / 2, 0) animated:NO];
+  } else if (position == kPositionRightEdge) {
+    [self setContentOffset:CGPointMake(delta, 0) animated:NO];
+  } else {
+    [self setContentOffset:CGPointMake(0, 0) animated:NO];
+  }
+}
+
 @end
 
 @implementation ComicViewController
@@ -115,6 +147,9 @@
     _comic = [comic retain];
     _path = [[[LibraryConnection mainConnection] pathForComic:_comic] copy];
     
+    _previousPageIndex = -1;
+    _previousPageView = nil;
+
     if ([[NSFileManager defaultManager] fileExistsAtPath:_path]) {
       NSString* extension = [_path pathExtension];
       if (![extension caseInsensitiveCompare:@"pdf"]) {
@@ -139,8 +174,9 @@
       return nil;
     }
     
-    self.wantsFullScreenLayout = YES;
-    
+    self.edgesForExtendedLayout = UIRectEdgeAll;
+    self.extendedLayoutIncludesOpaqueBars = YES;
+
     NSString* type = @"";
     switch (_type) {
       case kComicType_PDF: type = @"PDF"; break;
@@ -215,6 +251,7 @@
   if (imageRef) {
     UIImage* image = [[UIImage alloc] initWithCGImage:imageRef];
     [(ComicPageView*)view displayImage:image];
+    ((ComicPageView*)view).contentIsLandscape = (image.size.width > image.size.height);
     [image release];
     view.backgroundColor = [UIColor blackColor];
     CGImageRelease(imageRef);
@@ -293,18 +330,110 @@
   if (recognizer.state == UIGestureRecognizerStateEnded) {
     CGRect bounds = recognizer.view.bounds;
     CGPoint location = [recognizer locationInView:recognizer.view];
-    // Left margin
-    if (location.x <= bounds.size.width * kLeftZoneRatio) {
-      [_documentView goToPreviousPage:NO];
+    CGFloat xLoc = location.x - bounds.origin.x;
+
+    if (xLoc <= bounds.size.width * kLeftZoneRatio) { // Left margin
+      [_documentView goToPreviousPage:YES];
+	}
+    else if (xLoc >= bounds.size.width * kRightZoneRatio) { // Right margin
+      [_documentView goToNextPage:YES];
     }
-    // Right margin
-    else if (location.x >= bounds.size.width * kRightZoneRatio) {
-      [_documentView goToNextPage:NO];
+    else { // Center
+      [self toggleNavigation];
     }
-    // Center
-    else {
-      _navigationBar.hidden = !_navigationBar.hidden;
-      _navigationControl.hidden = !_navigationControl.hidden;
+  }
+}
+
+- (void) _swipeLeftAction:(UITapGestureRecognizer*)recognizer {
+  if (recognizer.state == UIGestureRecognizerStateEnded) {
+    [_documentView goToNextPage:YES];
+  }
+}
+
+- (void) _swipeRightAction:(UITapGestureRecognizer*)recognizer {
+  if (recognizer.state == UIGestureRecognizerStateEnded) {
+    [_documentView goToPreviousPage:YES];
+  }
+}
+
+- (void) documentViewDidEndSwiping:(DocumentView*)documentView
+{
+}
+
+- (void) documentViewWillChangePage:(DocumentView*)documentView {
+  // Make a note of where we were...
+  _previousPageIndex = _documentView.selectedPageIndex;
+  _previousPageView = _documentView.selectedPageView;
+}
+
+- (void) documentViewDidChangePage:(DocumentView*)documentView {
+  _navigationControl.currentPage = _documentView.selectedPageIndex;
+
+  if (_documentView.pageViews) {
+    [[AppDelegate sharedDelegate] logPageView];
+
+    // Adjust the positioning of the page we are about to display
+    ComicPageView* pageView = (ComicPageView*)_documentView.selectedPageView;
+    if (pageView.contentIsLandscape == NO) {
+      [pageView positionContentAt:kPositionCenter];
+    }
+	else if (_previousPageView != nil)
+	{
+      if (_previousPageIndex < documentView.selectedPageIndex) {
+        // Just moved to a later page
+        [pageView positionContentAt:kPositionLeftEdge];
+      } else {
+        // Just moved to an earlier page
+        [pageView positionContentAt:kPositionRightEdge];
+	  }
+    }
+  }
+}
+
+- (void) documentViewDidDisplayCurrentPage:(DocumentView*)documentView animated:(BOOL)animated {
+  if (_previousPageView != nil)
+  {
+    // Adjust the positioning of the page we just left
+    if (_previousPageIndex < documentView.selectedPageIndex) {
+      // Just moved to a later page
+      [(ComicPageView*)_previousPageView positionContentAt:kPositionRightEdge];
+    } else {
+      // Just moved to an earlier page
+      [(ComicPageView*)_previousPageView positionContentAt:kPositionLeftEdge];
+    }
+
+    // Reset things so we won't mess up if this gets called without a preceding WillChange
+    _previousPageIndex = -1;
+    _previousPageView = nil;
+  }
+}
+
+- (BOOL) shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+  return YES;
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+  // Try to fix the position of the pages before and after the current one
+  NSArray* allViews = _documentView.pageViews;
+  for (ComicPageView* pageView in allViews) {
+    if (pageView.tag < _documentView.selectedPageIndex) {
+      [pageView positionContentAt:kPositionRightEdge];
+    }
+    else if (pageView.tag > _documentView.selectedPageIndex) {
+      [pageView positionContentAt:kPositionLeftEdge];
+    }
+  }
+}
+
+- (void) toggleNavigation {
+  // Make sure we're still active!
+  if (_documentView.pageViews != nil) {
+    if (_navigationBar.hidden == YES) {
+      _navigationBar.hidden = NO;
+      _navigationControl.hidden = NO;
+    } else {
+      _navigationBar.hidden = YES;
+      _navigationControl.hidden = YES;
     }
   }
 }
@@ -316,7 +445,10 @@
   if (_type == kComicType_PDF) {
     NSUInteger count = [(NSNumber*)_contents integerValue];
     for (NSUInteger i = 0; i < count; ++i) {
-      ComicPageView* view = [[ComicPageView alloc] initWithTapTarget:self action:@selector(_tapAction:)];
+      ComicPageView* view = [[ComicPageView alloc] initWithTarget:self
+														tapAction:@selector(_tapAction:)
+												  swipeLeftAction:@selector(_swipeLeftAction:)
+												 swipeRightAction:@selector(_swipeRightAction:)];
       view.tag = i + 1;
       [array addObject:view];
       [view release];
@@ -326,7 +458,10 @@
     NSUInteger index = 0;
     for (NSString* file in [[_contents retrieveFileList] sortedArrayUsingSelector:@selector(localizedStandardCompare:)]) {
       if (IsImageFileExtensionSupported([file pathExtension])) {
-        ComicPageView* view = [[ComicPageView alloc] initWithTapTarget:self action:@selector(_tapAction:)];
+        ComicPageView* view = [[ComicPageView alloc] initWithTarget:self
+														  tapAction:@selector(_tapAction:)
+													swipeLeftAction:@selector(_swipeLeftAction:)
+												   swipeRightAction:@selector(_swipeRightAction:)];
         view.tag = ++index;
         view.file = file;
         [array addObject:view];
@@ -355,18 +490,6 @@
   [super viewDidDisappear:animated];
   
   _documentView.pageViews = nil;
-}
-
-- (BOOL) shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-  return YES;
-}
-
-- (void) documentViewDidChangePage:(DocumentView*)documentView {
-  _navigationControl.currentPage = _documentView.selectedPageIndex;
-  
-  if (_documentView.pageViews) {
-    [[AppDelegate sharedDelegate] logPageView];
-  }
 }
 
 - (UIView*) navigationControlOverlayViewForCurrentPage:(NavigationControl*)control {
