@@ -196,6 +196,16 @@
                         <action selector="restore:" destination="-1" eventType="touchUpInside" id="2uO-vr-6zY"/>
                     </connections>
                 </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="m7q-IC-PLu">
+                    <rect key="frame" x="10" y="294" width="300" height="34"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
+                    <size key="titleShadowOffset" width="0.0" height="1"/>
+                    <state key="normal" title="Dropbox"/>
+                    <connections>
+                        <action selector="connectToDropbox:" destination="-1" eventType="touchUpInside" id="rYl-OE-xUg"/>
+                    </connections>
+                </button>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
         </view>

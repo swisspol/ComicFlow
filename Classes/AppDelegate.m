@@ -24,6 +24,7 @@
 #import "Extensions_Foundation.h"
 #import "Extensions_UIKit.h"
 #import "NetReachability.h"
+#import <DBChooser/DBChooser.h>
 
 #define kUpdateDelay 1.0
 #define kScreenDimmingOpacity 0.5
@@ -293,6 +294,10 @@
 }
 
 - (BOOL) application:(UIApplication*)application openURL:(NSURL*)url sourceApplication:(NSString*)sourceApplication annotation:(id)annotation {
+if ([[DBChooser defaultChooser] handleOpenURL:url]) {
+    // This was a Chooser response and handleOpenURL automatically ran
+    return YES;
+} else {
   XLOG_VERBOSE(@"Opening \"%@\"", url);
   if ([url isFileURL]) {
     NSString* file = [[url path] lastPathComponent];
@@ -306,6 +311,7 @@
       return YES;
     }
   }
+}
   return NO;
 }
 

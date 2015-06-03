@@ -14,6 +14,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #import "Database.h"
+#import "GridView.h"
 
 #define kLibraryExtendedAttribute @"comicflow.identifier"
 #define kLibraryThumbnailWidth 135
@@ -35,7 +36,15 @@
 
 #endif
 
-@interface Comic : DatabaseObject
+@interface Comic : DatabaseObject {
+    NSMutableData* fileData;
+    NSUInteger totalBytes;
+    NSUInteger receivedBytes;
+    NSString* urlToDownload;
+    NSString* dstPath;
+    NSURLConnection* connection;
+    GridView* gridToUpdate;
+}
 @property(nonatomic) DatabaseSQLRowID collection;  // May be 0
 @property(nonatomic, copy) NSString* name;
 #if __STORE_THUMBNAILS_IN_DATABASE__
@@ -45,6 +54,8 @@
 #endif
 @property(nonatomic) NSTimeInterval time;
 @property(nonatomic) int status;  // -1: new, 0: normal, 1+: reading
+@property (nonatomic) BOOL isDownloading;
+@property (nonatomic) CGFloat progress;
 @end
 
 @interface Collection : DatabaseObject
@@ -64,6 +75,7 @@
 @end
 
 @interface LibraryConnection : DatabaseConnection
+@property (retain, nonatomic) NSMutableArray* comicsBeingDownloaded;
 + (NSString*) libraryRootPath;
 + (NSString*) libraryApplicationDataPath;
 + (NSString*) libraryDatabasePath;
@@ -77,6 +89,8 @@
 - (BOOL) updateStatusForAllComics:(int)status;
 - (NSString*) pathForComic:(Comic*)comic;
 - (NSString*) pathForCollection:(Collection*)collection;
+- (void)downloadFileAtUrl:(NSURL*)url withFileName:(NSString*)filename;
+- (void)finishedDownloading:(Comic*)comic;
 @end
 
 @interface LibraryUpdater : NSObject {

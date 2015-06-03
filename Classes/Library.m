@@ -22,6 +22,8 @@
 #import "UnRAR.h"
 #import "Extensions_Foundation.h"
 #import "ImageDecompression.h"
+#import "ThumbnailView.h"
+#import "LibraryViewController.h"
 
 #define kInboxDirectoryName @"Inbox"
 
@@ -95,6 +97,58 @@ typedef enum {
 }
 
 #endif
+
+- (void)connection:(NSURLConnection*)connection didReceiveResponse:(NSURLResponse*)response
+{
+    NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response;
+    NSDictionary* dict = httpResponse.allHeaderFields;
+    NSString* lengthString = [dict valueForKey:@"Content-Length"];
+    NSNumberFormatter* formatter = [[NSNumberFormatter alloc] init];
+    NSNumber* length = [formatter numberFromString:lengthString];
+    totalBytes = length.unsignedIntegerValue;
+    fileData = [[NSMutableData alloc] initWithCapacity:totalBytes];
+}
+
+- (void)connection:(NSURLConnection*)connection didReceiveData:(NSData*)data
+{
+    [fileData appendData:data];
+    receivedBytes += data.length;
+
+    // Actual progress is self.receivedBytes / self.totalBytes
+    self.progress = (CGFloat)receivedBytes / (CGFloat)totalBytes;
+    if (gridToUpdate != nil) {
+        ThumbnailView* view = (ThumbnailView*)[gridToUpdate viewForItem:self];
+        [view.progressBar setProgress:self.progress];
+    }
+}
+
+- (void)connectionDidFinishLoading:(NSURLConnection*)connection
+{
+    NSString* documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+    NSString* filename = [NSString stringWithFormat:@"%@/%@", documentsPath, dstPath];
+
+    if ([fileData writeToFile:filename atomically:NO]) {
+        [[LibraryConnection mainConnection] finishedDownloading:self];
+        [[LibraryUpdater sharedUpdater] update:NO];
+    }
+}
+
+- (void)connection:(NSURLConnection*)connection didFailWithError:(NSError*)error
+{
+    //TODO: handle error
+}
+
+- (void)startDownloading:(NSURL*)url fileName:(NSString*)filename
+{
+    dstPath = filename;
+    //TODO: this is actually ugly and has to be improved
+    gridToUpdate = ((LibraryViewController*)[[LibraryUpdater sharedUpdater] delegate]).gridView;
+
+    NSURLRequest* request = [NSURLRequest requestWithURL:url];
+    connection = [[NSURLConnection alloc] initWithRequest:request
+                                                 delegate:self
+                                         startImmediately:YES];
+}
 
 @end
 
@@ -171,23 +225,29 @@ typedef enum {
         connection = [[LibraryConnection alloc] initWithDatabaseAtPath:[self libraryDatabasePath]];
       }
     }
+    connection.comicsBeingDownloaded = [[NSMutableArray alloc] init];
   }
   return connection;
 }
 
 - (NSArray*) fetchAllComicsByName {
-  NSArray* results = [self fetchObjectsOfClass:[Comic class] withSQLWhereClause:@"1 ORDER BY name ASC" limit:0];
+  NSArray* dbResults = [self fetchObjectsOfClass:[Comic class] withSQLWhereClause:@"1 ORDER BY name ASC" limit:0];
+  NSArray* results = [self.comicsBeingDownloaded arrayByAddingObjectsFromArray:dbResults];
   return [results sortedArrayUsingComparator:^NSComparisonResult(Comic* comic1, Comic* comic2) {
     return [comic1.name localizedStandardCompare:comic2.name];
   }];
 }
 
 - (NSArray*) fetchAllComicsByDate {
-  return [self fetchObjectsOfClass:[Comic class] withSQLWhereClause:@"1 ORDER BY time DESC" limit:0];
+  NSArray* dbResults = [self fetchObjectsOfClass:[Comic class] withSQLWhereClause:@"1 ORDER BY time DESC" limit:0];
+  NSArray* results = [self.comicsBeingDownloaded arrayByAddingObjectsFromArray:dbResults];
+  return results;
 }
 
 - (NSArray*) fetchAllComicsByStatus {
-  return [self fetchObjectsOfClass:[Comic class] withSQLWhereClause:@"1 ORDER BY status>0 DESC, status==-1 DESC, time DESC" limit:0];
+  NSArray* dbResults = [self fetchObjectsOfClass:[Comic class] withSQLWhereClause:@"1 ORDER BY status>0 DESC, status==-1 DESC, time DESC" limit:0];
+  NSArray* results = [self.comicsBeingDownloaded arrayByAddingObjectsFromArray:dbResults];
+  return results;
 }
 
 - (NSArray*) fetchComicsInCollection:(Collection*)collection {
@@ -228,6 +288,27 @@ typedef enum {
   return [path stringByAppendingPathComponent:collection.name];
 }
 
+- (void)downloadFileAtUrl:(NSURL*)url withFileName:(NSString*)filename {
+    //Valid file extensions
+    NSArray* fileExtensions = [NSArray arrayWithObjects:@"pdf", @"zip", @"cbz", @"rar", @"cbr", nil];
+
+    if ([fileExtensions containsObject:[filename pathExtension]]) {
+        Comic* newComic = [[Comic alloc] init];
+
+        newComic.name = filename;
+        newComic.isDownloading = YES;
+        [newComic setProgress:0.0f];
+
+        [newComic startDownloading:url fileName:filename];
+        [self.comicsBeingDownloaded addObject:newComic];
+        [[LibraryUpdater sharedUpdater] update:NO];
+    }
+}
+
+- (void)finishedDownloading:(Comic*)comic {
+    [self.comicsBeingDownloaded removeObject:comic];
+    [[LibraryUpdater sharedUpdater] update:NO];
+}
 @end
 
 @implementation LibraryUpdater

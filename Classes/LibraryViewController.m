@@ -23,6 +23,8 @@
 #import "Extensions_Foundation.h"
 #import "Extensions_UIKit.h"
 #import "NetReachability.h"
+#import <DBChooser/DBChooser.h>
+#import "ThumbnailView.h"
 
 #define kAppStoreAppID @"409290355"
 #define kiOSAppStoreURLFormat @"itms-apps://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%@"
@@ -48,30 +50,15 @@
 #define kRibbonImageWidth 60.0
 #define kRibbonImageHeight 60.0
 
+#define kProgressBarX 12.0
+#define kProgressBarY 160.0
+#define kProgressBarWidth 113.0
+#define kProgressBarHeight 6.0
+
 #define kLaunchCountBeforeRating 10
 #define kShowRatingDelay 1.0
 
 #define kUpdateTimerInterval 1.0
-
-#if __DISPLAY_THUMBNAILS_IN_BACKGROUND__
-@interface ThumbnailView : UIView
-#else
-@interface ThumbnailView : UIImageView
-#endif
-{
-@private
-  UIView* _noteView;
-  UIView* _ribbonView;
-}
-@property(nonatomic, assign) UIView* noteView;
-@property(nonatomic, assign) UIView* ribbonView;
-@end
-
-@implementation ThumbnailView
-
-@synthesize noteView=_noteView, ribbonView=_ribbonView;
-
-@end
 
 @implementation LibraryViewController
 
@@ -252,7 +239,11 @@ static void __DisplayQueueCallBack(void* info) {
   if (recognizer.state == UIGestureRecognizerStateEnded) {
     DatabaseObject* item = [_gridView itemAtLocation:[recognizer locationInView:_gridView] view:NULL];
     if ([item isKindOfClass:[Comic class]]) {
-      [self _presentComic:(Comic*)item];
+      if (!((Comic*)item).isDownloading) {
+        [self _presentComic:(Comic*)item];
+      } else {
+        //TODO: ask for cancel
+      }
     } else if ([item isKindOfClass:[Collection class]]) {
       [self gridViewDidUpdateScrollingAmount:nil];
       [self _setCurrentCollection:(Collection*)item];
@@ -283,6 +274,21 @@ static void __DisplayQueueCallBack(void* info) {
     } else {
       view.noteView = nil;
       view.ribbonView = nil;
+    }
+      
+    if ([item isKindOfClass:[Comic class]]) {
+        Comic* comic = (Comic*)item;
+        if (comic.isDownloading) {
+            UIProgressView* progressBar = [[UIProgressView alloc]
+                                           initWithFrame:CGRectMake(kProgressBarX, kProgressBarY, kProgressBarWidth, kProgressBarHeight)];
+            [progressBar setProgress:comic.progress];
+            [view addSubview:progressBar];
+            [progressBar release];
+            view.progressBar = progressBar;
+        }
+        else {
+            view.progressBar = nil;
+        }
     }
   }
 }
@@ -871,6 +877,27 @@ static void __DisplayQueueCallBack(void* info) {
     [subview release];
     [(ThumbnailView*)view setNoteView:subview];
   }
+    
+  if ([item isKindOfClass:[Comic class]]) {
+    Comic* comic = (Comic*)item;
+    if (comic.isDownloading) {
+      UIImageView* image = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"download"]];
+      image.frame = CGRectMake(24, 40, 90, 90);
+      [image setContentMode:UIViewContentModeScaleAspectFit];
+      [view addSubview:image];
+      [image release];
+
+      UIProgressView* progressBar = [[UIProgressView alloc]
+                                     initWithFrame:CGRectMake(kProgressBarX, kProgressBarY, kProgressBarWidth, kProgressBarHeight)];
+      [progressBar setProgress:comic.progress];
+      [view addSubview:progressBar];
+      [progressBar release];
+      [(ThumbnailView*)view setProgressBar:progressBar];
+    }
+    else {
+      [(ThumbnailView*)view setProgressBar:nil];
+    }
+  }
 }
 
 - (void) gridView:(GridView*)gridView didHideView:(UIView*)view forItem:(id)item {
@@ -999,6 +1026,26 @@ static void __ArrayApplierFunction(const void* value, void* context) {
 
 - (IBAction) restore:(id)sender {
   [(AppDelegate*)[AppDelegate sharedInstance] restore];
+}
+
+- (IBAction)connectToDropbox:(id)sender {
+    NSLog(@"Must show dropbox manager");
+    [self _toggleMenu:[[_navigationBar.items objectAtIndex:0] rightBarButtonItem]];
+
+    [[DBChooser defaultChooser] openChooserForLinkType:DBChooserLinkTypeDirect
+                                    fromViewController:self
+                                            completion:^(NSArray* results) {
+         if ([results count]) {
+             // Process results from Chooser
+             for (DBChooserResult* link in results) {
+                 //Add item to gridView
+                 [[LibraryConnection mainConnection] downloadFileAtUrl:link.link withFileName:link.name];
+             }
+         } else {
+             // User canceled the action
+             XLOG_INFO(@"User canceled download from Dropbox");
+         }
+    }];
 }
 
 @end
