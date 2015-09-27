@@ -116,7 +116,7 @@
 		E27C00BB168CBBC500021417 /* ImageUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = E2059554121E723000A271CC /* ImageUtilities.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		E27C00BD168CBBC500021417 /* NavigationControl.m in Sources */ = {isa = PBXBuildFile; fileRef = E267036D1228D7C0009C4EBB /* NavigationControl.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		E27C00BE168CBBC500021417 /* NetReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = E20893DA12FA163F001F1D2F /* NetReachability.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		E27C00BF168CBBC500021417 /* OverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = E267036F1228D7C0009C4EBB /* OverlayView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		E27C00BF168CBBC500021417 /* OverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = E267036F1228D7C0009C4EBB /* OverlayView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc -Wno-objc-designated-initializers"; }; };
 		E27C00C0168CBBC500021417 /* SmartDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = E229318E121E260F00484F9F /* SmartDescription.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		E27C00C4168CBBC500021417 /* ZoomView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CF616F51293D8A6008FD89E /* ZoomView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		E27CFFA8168CA75900021417 /* MiniZip.m in Sources */ = {isa = PBXBuildFile; fileRef = E27CFFA5168CA75900021417 /* MiniZip.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -1021,7 +1021,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0610;
+				LastUpgradeCheck = 0700;
 				TargetAttributes = {
 					1D6058900D05DD3D006BFB54 = {
 						DevelopmentTeam = 88W3E55T4B;
@@ -1342,6 +1342,7 @@
 					armv7s,
 				);
 				CLANG_ENABLE_OBJC_ARC = YES;
+				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
@@ -1362,6 +1363,7 @@
 					armv7s,
 				);
 				CLANG_ENABLE_OBJC_ARC = YES;
+				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					NDEBUG,
