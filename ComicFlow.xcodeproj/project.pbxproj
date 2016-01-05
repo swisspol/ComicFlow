@@ -1276,12 +1276,12 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(SDKROOT)/usr/include/libxml2",
-					libwebp/include,
+					"libwebp/$(PLATFORM_NAME)/include",
 					Flurry,
 				);
 				INFOPLIST_FILE = Info.plist;
 				LIBRARY_SEARCH_PATHS = (
-					libwebp/lib,
+					"libwebp/$(PLATFORM_NAME)/lib",
 					Flurry,
 				);
 				OTHER_LDFLAGS = (
@@ -1308,12 +1308,12 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(SDKROOT)/usr/include/libxml2",
-					libwebp/include,
+					"libwebp/$(PLATFORM_NAME)/include",
 					Flurry,
 				);
 				INFOPLIST_FILE = Info.plist;
 				LIBRARY_SEARCH_PATHS = (
-					libwebp/lib,
+					"libwebp/$(PLATFORM_NAME)/lib",
 					Flurry,
 				);
 				OTHER_LDFLAGS = (
