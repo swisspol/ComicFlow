@@ -9,22 +9,6 @@
 #import <UIKit/UIKit.h>
 
 /*!
- *  @brief Provides all available methods for defining and reporting Analytics from use
- *  of your app.
- * 
- *  Set of methods that allow developers to capture detailed, aggregate information
- *  regarding the use of their app by end users.
- *  
- *  @note This class provides methods necessary for correct function of FlurryAds.h.
- *  For information on how to use Flurry's Ads SDK to
- *  attract high-quality users and monetize your user base see <a href="http://support.flurry.com/index.php?title=Publishers">Support Center - Publishers</a>.
- *  
- *  @author 2009 - 2013 Flurry, Inc. All Rights Reserved.
- *  @version 4.3.0
- * 
- */
-
-/*!
  *  @brief Enum for setting up log output level.
  *  @since 4.2.0
  *
@@ -36,6 +20,82 @@ typedef enum {
     FlurryLogLevelAll               //Highest level, outputs all log events
 } FlurryLogLevel;
 
+typedef enum {
+    FlurryEventFailed = 0,
+    FlurryEventRecorded,
+    FlurryEventUniqueCountExceeded,
+    FlurryEventParamsCountExceeded,
+    FlurryEventLogCountExceeded,
+    FlurryEventLoggingDelayed,
+    FlurryEventAnalyticsDisabled
+} FlurryEventRecordStatus;
+
+
+/*!
+ *  @brief Enum for logging events that occur within a syndicated app
+ *  @since 6.7.0
+ *
+ */
+
+typedef enum {
+    FlurrySyndicationReblog      = 0,
+    FlurrySyndicationFastReblog  = 1,
+    FlurrySyndicationSourceClick = 2,
+    FlurrySyndicationLike        = 3,
+    FlurrySyndicationShareClick  = 4,
+    FlurrySyndicationPostSend    = 5
+    
+}FlurrySyndicationEvent;
+
+extern NSString* const kSyndicationiOSDeepLink;
+extern NSString* const kSyndicationAndroidDeepLink;
+extern NSString* const kSyndicationWebDeepLink;
+
+
+/*!
+ *  @brief Provides all available delegates for receiving callbacks related to Flurry analytics.
+ *
+ *  Set of methods that allow developers to manage and take actions within
+ *  different phases of App.
+ *
+ *  @note This class serves as a delegate for Flurry. \n
+ *  For additional information on how to use Flurry's Ads SDK to
+ *  attract high-quality users and monetize your user base see <a href="http://wiki.flurry.com/index.php?title=Publisher">Support Center - Publisher</a>.
+ *  @author 2010 - 2014 Flurry, Inc. All Rights Reserved.
+ *  @version 6.3.0
+ *
+ */
+@protocol FlurryDelegate <NSObject>
+
+/*!
+ *  @brief Invoked when analytics session is created
+ *  @since 6.3.0
+ *
+ *  This method informs the app that an analytics session is created.
+ *
+ *  @see Flurry#startSession for details on session.
+ *
+ *  @param info A dictionary of session information: sessionID, apiKey
+ */
+- (void)flurrySessionDidCreateWithInfo:(NSDictionary*)info;
+
+@end
+
+/*!
+ *  @brief Provides all available methods for defining and reporting Analytics from use
+ *  of your app.
+ * 
+ *  Set of methods that allow developers to capture detailed, aggregate information
+ *  regarding the use of their app by end users.
+ *  
+ *  @note This class provides methods necessary for correct function of Flurry.h.
+ *  For information on how to use Flurry's Ads SDK to
+ *  attract high-quality users and monetize your user base see <a href=https://developer.yahoo.com/flurry/docs/howtos">Support Center - Publishers</a>.
+ *  
+ *  @author 2009 - 2013 Flurry, Inc. All Rights Reserved.
+ *  @version 4.3.0
+ * 
+ */
 
 @interface Flurry : NSObject {
 }
@@ -142,19 +202,6 @@ typedef enum {
 + (void)setSessionContinueSeconds:(int)seconds;
 
 /*!
- *  @brief Send data over a secure transport.
- *  @since 3.0
- * 
- *  This is an optional method that sends data over an SSL connection when enabled. The
- *  default value is @c NO.
- * 
- *  @note This method must be called prior to invoking #startSession:.
- * 
- *  @param value @c YES to send data over secure connection.
- */
-+ (void)setSecureTransportEnabled:(BOOL)value;
-
-/*!
  *  @brief Enable automatic collection of crash reports.
  *  @since 4.1
  *
@@ -235,6 +282,58 @@ typedef enum {
 
 
 /*!
+ *  @brief Returns true if a session currently exists and is active.
+ *  @since 6.0.0
+ *
+ * @code
+ *  - (BOOL) application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+ {
+ // Optional Flurry startup methods
+ [Flurry activeSessionExists];
+ // ....
+ }
+ * @endcode
+ *
+ */
++ (BOOL)activeSessionExists;
+
+/*!
+ *  @brief Returns the session ID of the current active session.
+ *  @since 6.3.0
+ *
+ * @code
+ *  - (BOOL) application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+ {
+ // Optional Flurry startup methods
+ [Flurry getSessionID];
+ // ....
+ }
+ * @endcode
+ *
+ 
+ */
++ (NSString*)getSessionID;
+
+
+/*!
+ *  @brief Set Flurry delegate for callback on session creation.
+ *  @since 6.3.0
+ *
+ * @code
+ *  - (BOOL) application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+ {
+ // Optional Flurry startup methods
+ // If self implements protocol, FlurryDelegate
+ [Flurry setDelegate:self];
+ // ....
+ }
+ * @endcode
+ *
+ 
+ */
++ (void)setDelegate:(id<FlurryDelegate>)delegate;
+
+/*!
  *  @brief Pauses a Flurry session left running in background.
  *  @since 4.2.2
  *
@@ -255,6 +354,126 @@ typedef enum {
  */
 + (void)pauseBackgroundSession;
 
+/*!
+ *  @brief Adds an session origin and deep link attached to each session specified by @c sessionOriginName and  @c deepLink.
+ *  @since 6.5.0
+ *
+ *  This method allows you to specify session origin and deep link for each session. This is different than addOrigin which is used for third party
+ *  wrappers after every session start.
+ *
+ *
+ *  @code
+ *  - (void)interestingMethod
+ {
+ // ... after calling startSession
+ [Flurry addSessionOrigin:@"facebuk"];
+ // more code ...
+ }
+ *  @endcode
+ *
+ *  @param sessionOriginName    Name of the origin.
+ *  @param deepLink             Url of the deep Link.
+ */
++ (void)addSessionOrigin:(NSString *)sessionOriginName  withDeepLink:(NSString*)deepLink;
+
+/*!
+ *  @brief Adds an session origin attached to each session specified by @c sessionOriginName.
+ *  @since 6.5.0
+ *
+ *  This method allows you to specify session origin for each session. This is different than addOrigin which is used for third party
+ *  wrappers after every session start.
+ *
+ *
+ *  @code
+ *  - (void)interestingMethod
+ {
+ // ... after calling startSession
+ [Flurry addSessionOrigin:@"facebuk"];
+ // more code ...
+ }
+ *  @endcode
+ *
+ *  @param sessionOriginName    Name of the origin.
+ */
++ (void)addSessionOrigin:(NSString *)sessionOriginName;
+
+/*!
+ *  @brief Adds a custom parameterized session parameters @c parameters.
+ *  @since 6.5.0
+ *
+ *  This method allows you to associate parameters with an session. Parameters
+ *  are valuable as they allow you to store characteristics of an session.
+ *
+ *  @note You should not pass private or confidential information about your origin info in a
+ *  custom origin. \n
+ *  A maximum of 20 parameter names may be associated with any origin. Sending
+ *  over 20 parameter names with a single origin will result in no parameters being logged
+ *  for that origin.
+ *
+ *
+ *  @code
+
+ *  @endcode
+ *
+ *  @param parameters An immutable copy of map containing Name-Value pairs of parameters.
+ */
++ (void)sessionProperties:(NSDictionary *)parameters;
+
+/*!
+ *  @brief Adds an SDK origin specified by @c originName and @c originVersion.
+ *  @since 5.0.0
+ *
+ *  This method allows you to specify origin within your Flurry SDK wrapper. As a general rule
+ *  you should capture all the origin info related to your wrapper for Flurry SDK after every session start.
+ *
+ *  @see #addOrigin:withVersion:withParameters: for details on reporting origin info with parameters. \n
+ *
+ *  @code
+ *  - (void)interestingSDKWrapperLibraryfunction
+ {
+     // ... after calling startSession
+     [Flurry addOrigin:@"Interesting_Wrapper" withVersion:@"1.0.0"];
+     // more code ...
+ }
+ *  @endcode
+ *
+ *  @param originName    Name of the origin.
+ *  @param originVersion Version string of the origin wrapper
+ */
++ (void)addOrigin:(NSString *)originName withVersion:(NSString*)originVersion;
+
+/*!
+ *  @brief Adds a custom parameterized origin specified by @c originName with @c originVersion and @c parameters.
+ *  @since 5.0.0
+ *
+ *  This method overrides #addOrigin to allow you to associate parameters with an origin attribute. Parameters
+ *  are valuable as they allow you to store characteristics of an origin.
+ *
+ *  @note You should not pass private or confidential information about your origin info in a
+ *  custom origin. \n
+ *  A maximum of 9 parameter names may be associated with any origin. Sending
+ *  over 10 parameter names with a single origin will result in no parameters being logged
+ *  for that origin.
+ *
+ *
+ *  @code
+ *  - (void)userPurchasedSomethingCool
+ {
+ NSDictionary *params =
+    [NSDictionary dictionaryWithObjectsAndKeys:@"Origin Info Item", // Parameter Value
+        @"Origin Info Item Key", // Parameter Name
+        nil];
+    // ... after calling startSession
+    [Flurry addOrigin:@"Interesting_Wrapper" withVersion:@"1.0.0"];
+    // more code ...
+ }
+ *  @endcode
+ *
+ *  @param originName    Name of the origin.
+ *  @param originVersion Version string of the origin wrapper
+ *  @param parameters An immutable copy of map containing Name-Value pairs of parameters.
+ */
++ (void)addOrigin:(NSString *)originName withVersion:(NSString*)originVersion withParameters:(NSDictionary *)parameters;
 
 /** @name Event and Error Logging
  *  Methods for reporting custom events and errors during the session. 
@@ -294,8 +513,10 @@ typedef enum {
  * 
  *  @param eventName Name of the event. For maximum effectiveness, we recommend using a naming scheme
  *  that can be easily understood by non-technical people in your business domain.
+ *
+ *  @return enum FlurryEventRecordStatus for the recording status of the logged event.
  */
-+ (void)logEvent:(NSString *)eventName;
++ (FlurryEventRecordStatus)logEvent:(NSString *)eventName;
 
 /*!
  *  @brief Records a custom parameterized event specified by @c eventName with @c parameters.
@@ -337,9 +558,11 @@ typedef enum {
  * 
  *  @param eventName Name of the event. For maximum effectiveness, we recommend using a naming scheme
  *  that can be easily understood by non-technical people in your business domain.
- *  @param parameters A map containing Name-Value pairs of parameters.
+ *  @param parameters An immutable copy of map containing Name-Value pairs of parameters.
+ *
+ *  @return enum FlurryEventRecordStatus for the recording status of the logged event.
  */
-+ (void)logEvent:(NSString *)eventName withParameters:(NSDictionary *)parameters;
++ (FlurryEventRecordStatus)logEvent:(NSString *)eventName withParameters:(NSDictionary *)parameters;
 
 /*!
  *  @brief Records an app exception. Commonly used to catch unhandled exceptions.
@@ -427,9 +650,11 @@ typedef enum {
  * 
  *  @param eventName Name of the event. For maximum effectiveness, we recommend using a naming scheme
  *  that can be easily understood by non-technical people in your business domain.
- *  @param timed Specifies the event will be timed.
+ *  @param timed Specifies the event will be timed..
+ *
+ *  @return enum FlurryEventRecordStatus for the recording status of the logged event.
  */
-+ (void)logEvent:(NSString *)eventName timed:(BOOL)timed;
++ (FlurryEventRecordStatus)logEvent:(NSString *)eventName timed:(BOOL)timed;
 
 /*!
  *  @brief Records a custom parameterized timed event specified by @c eventName with @c parameters.
@@ -473,10 +698,12 @@ typedef enum {
  * 
  *  @param eventName Name of the event. For maximum effectiveness, we recommend using a naming scheme
  *  that can be easily understood by non-technical people in your business domain.
- *  @param parameters A map containing Name-Value pairs of parameters.
- *  @param timed Specifies the event will be timed.
+ *  @param parameters An immutable copy of map containing Name-Value pairs of parameters.
+ *  @param timed Specifies the event will be timed..
+ *
+ *  @return enum FlurryEventRecordStatus for the recording status of the logged event.
  */
-+ (void)logEvent:(NSString *)eventName withParameters:(NSDictionary *)parameters timed:(BOOL)timed;
++ (FlurryEventRecordStatus)logEvent:(NSString *)eventName withParameters:(NSDictionary *)parameters timed:(BOOL)timed;
 
 /*!
  *  @brief Ends a timed event specified by @c eventName and optionally updates parameters with @c parameters.
@@ -521,7 +748,7 @@ typedef enum {
  * 
  *  @param eventName Name of the event. For maximum effectiveness, we recommend using a naming scheme
  *  that can be easily understood by non-technical people in your business domain.
- *  @param parameters A map containing Name-Value pairs of parameters.
+ *  @param parameters An immutable copy of map containing Name-Value pairs of parameters.
  */
 + (void)endTimedEvent:(NSString *)eventName withParameters:(NSDictionary *)parameters;	// non-nil parameters will update the parameters
 
@@ -534,29 +761,54 @@ typedef enum {
 //@{
 
 /*!
- *  @brief Automatically track page views on a @c UINavigationController or @c UITabBarController.
+ *  @deprecated
+ *  @brief see +(void)logAllPageViewsForTarget:(id)target; for details
  *  @since 2.7
+ *  This method does the same as +(void)logAllPageViewsForTarget:(id)target method and is left for backward compatibility
+ */
++ (void)logAllPageViews:(id)target __attribute__ ((deprecated));		
+/*!
+ *  @brief Automatically track page views on a @c UINavigationController or @c UITabBarController.
+ *  @since 4.3
  * 
  *  This method increments the page view count for a session based on traversing a UINavigationController
  *  or UITabBarController. The page view count is only a counter for the number of transitions in your
  *  app. It does not associate a name with the page count. To associate a name with a count of occurences
  *  see #logEvent:.
  * 
- *  @note Please make sure you assign the Tab and Navigation controllers to the view controllers before
- *  passing them to this method.
+ *  @note If you need to release passed target, you should call counterpart method + (void)stopLogPageViewsForTarget:(id)target before;
  *
  *  @see #logPageView for details on explictly incrementing page view count.
  *
  *  @code
  * -(void) trackViewsFromTabBar:(UITabBarController*) tabBar 
  {
- [Flurry logAllPageViews:tabBar];
+ [Flurry logAllPageViewsForTarget:tabBar];
  }
  *  @endcode
  * 
  *  @param target The navigation or tab bar controller.
  */
-+ (void)logAllPageViews:(id)target;		
++ (void)logAllPageViewsForTarget:(id)target;
+
+/*!
+ *  @brief Stops logging page views on previously observed with logAllPageViewsForTarget: @c UINavigationController or @c UITabBarController.
+ *  @since 4.3
+ * 
+ *  Call this method before instance of @c UINavigationController or @c UITabBarController observed with logAllPageViewsForTarget: is released.
+ *
+ *  @code
+ * -(void) dealloc
+ {
+ [Flurry stopLogPageViewsForTarget:_tabBarController];
+ [_tabBarController release];
+ [super dealloc];
+ }
+ *  @endcode
+ * 
+ *  @param target The navigation or tab bar controller.
+ */
++ (void)stopLogPageViewsForTarget:(id)target;
 
 /*!
  *  @brief Explicitly track a page view during a session.
@@ -594,7 +846,7 @@ typedef enum {
  *
  *  @param userID The app id for a user.
  */
-+ (void)setUserID:(NSString *)userID;	
++ (void)setUserID:(NSString *)userID;
 
 /*!
  *  @brief Set your user's age in years.
@@ -732,14 +984,40 @@ typedef enum {
 + (void)setEventLoggingEnabled:(BOOL)value;
 
 /*!
- *  @brief Set device push token.
- *  @since 2.7
+ *  @brief Enables Flurry Pulse
+ *  @since 6.3.0
  *
- *  After the device has successfully registered with APNS, call this method to set the push token received from APNS.
+ *  @note: Please see https://developer.yahoo.com/flurry-pulse/ for more details
  *
+ *  @param value YES to enable event logging, NO to stop custom logging.
  *
  */
-+ (void)setPushToken:(NSString *)pushToken;
++ (void)setPulseEnabled:(BOOL)value;
+
+
+/*!
+ *  @brief Records a syndicated event specified by @c syndicationEvent.
+ *  @since 6.7.0
+ *
+ *  This method is excusively for use by the Tumblr App, calls from others app will be ignored.
+ *
+ *  @code
+ - (void) reblogButtonHandler
+ {
+ [Flurry logEvent:Reblog syndicationID:@"123", parameters:nil];
+ // Perform
+ }
+ *  @endcode
+ *
+ *  @param syndicationEvent syndication event.
+ *  @param syndicationID syndication ID that is associated with the event
+ *  @param parameters use this to pass in syndication parameters such as
+ *         kSyndicationiOSDeepLink, kSyndicationAndroidDeepLink, kSyndicationWebLinkDeepLink
+ *
+ *  @return enum FlurryEventRecordStatus for the recording status of the logged event.
+ */
++ (FlurryEventRecordStatus) logEvent:(FlurrySyndicationEvent) syndicationEvent syndicationID:(NSString*) syndicationID parameters:(NSDictionary*) parameters;
+
 
 
 //@}
