@@ -1276,13 +1276,11 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(SDKROOT)/usr/include/libxml2",
-					"libjpeg-turbo/include",
 					libwebp/include,
 					Flurry,
 				);
 				INFOPLIST_FILE = Info.plist;
 				LIBRARY_SEARCH_PATHS = (
-					"libjpeg-turbo/lib",
 					libwebp/lib,
 					Flurry,
 				);
@@ -1290,7 +1288,6 @@
 					"-framework",
 					Crashlytics,
 					"-Wl,-search_paths_first",
-					"-ljpeg",
 					"-lwebp",
 					"-lFlurry",
 				);
@@ -1311,13 +1308,11 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(SDKROOT)/usr/include/libxml2",
-					"libjpeg-turbo/include",
 					libwebp/include,
 					Flurry,
 				);
 				INFOPLIST_FILE = Info.plist;
 				LIBRARY_SEARCH_PATHS = (
-					"libjpeg-turbo/lib",
 					libwebp/lib,
 					Flurry,
 				);
@@ -1325,7 +1320,6 @@
 					"-framework",
 					Crashlytics,
 					"-Wl,-search_paths_first",
-					"-ljpeg",
 					"-lwebp",
 					"-lFlurry",
 				);
