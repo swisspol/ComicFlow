@@ -192,11 +192,11 @@ static void __DisplayQueueCallBack(void* info) {
     _ribbonImage = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Ribbon" ofType:@"png"]];
     XLOG_CHECK(_ribbonImage);
     
-    DatabaseSQLRowID collectionID = [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_CurrentCollection];
+    DatabaseSQLRowID collectionID = (int)[[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_CurrentCollection];
     if (collectionID) {
       _currentCollection = [[[LibraryConnection mainConnection] fetchObjectOfClass:[Collection class] withSQLRowID:collectionID] retain];
     }
-    DatabaseSQLRowID comicID = [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_CurrentComic];
+    DatabaseSQLRowID comicID = (int)[[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_CurrentComic];
     if (comicID) {
       _currentComic = [[[LibraryConnection mainConnection] fetchObjectOfClass:[Comic class] withSQLRowID:comicID] retain];
     }
@@ -681,7 +681,7 @@ static void __DisplayQueueCallBack(void* info) {
 - (void) _viewDidReallyAppear {
   BOOL needLibraryUpdate = [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_LibraryVersion] != kLibraryVersion;
   if (needLibraryUpdate) {
-    XLOG_VERBOSE(@"Library is outdated at version %i", [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_LibraryVersion]);
+    XLOG_VERBOSE(@"Library is outdated at version %i", (int)[[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_LibraryVersion]);
     [_currentComic release];
     _currentComic = nil;
   }
@@ -713,7 +713,7 @@ static void __DisplayQueueCallBack(void* info) {
       [[UIApplication sharedApplication] beginIgnoringInteractionEvents];
       [self performSelector:@selector(_showRatingScreen) withObject:nil afterDelay:kShowRatingDelay];
     } else {
-      XLOG_VERBOSE(@"Launch count is now %i", [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_LaunchCount]);
+      XLOG_VERBOSE(@"Launch count is now %i", (int)[[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_LaunchCount]);
     }
   }
   
@@ -807,7 +807,7 @@ static void __DisplayQueueCallBack(void* info) {
 
 - (void) gridViewDidUpdateScrollingAmount:(GridView*)gridView {
   if (!_gridView.empty) {
-    NSInteger scrolling = lroundf(_gridView.scrollingAmount);
+    int scrolling = (int)lroundf(_gridView.scrollingAmount);
     if (_currentCollection) {
       if (scrolling != _currentCollection.scrolling) {
         _currentCollection.scrolling = scrolling;
@@ -947,7 +947,7 @@ static void __ArrayApplierFunction(const void* value, void* context) {
 }
 
 - (IBAction) updateServer:(id)sender {
-  [[WebServer sharedWebServer] setType:_serverControl.selectedSegmentIndex];
+  [[WebServer sharedWebServer] setType:(WebServerType)_serverControl.selectedSegmentIndex];
   [self _updateTimer:nil];
 }
 

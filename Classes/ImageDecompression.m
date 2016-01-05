@@ -75,7 +75,7 @@ static CGImageRef _CreateCGImageFromWebPData(NSData* data) {
 #endif
   config.output.is_external_memory = 1;
   config.output.u.RGBA.rgba = buffer;
-  config.output.u.RGBA.stride = rowBytes;
+  config.output.u.RGBA.stride = (int)rowBytes;
   config.output.u.RGBA.size = size;
   status = WebPDecode(data.bytes, data.length, &config);
   if (status != VP8_STATUS_OK) {

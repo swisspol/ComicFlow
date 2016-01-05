@@ -174,7 +174,7 @@
 - (void) saveState {
   NSInteger status = (_documentView.selectedPageIndex < _documentView.pageViews.count - 1 ? _documentView.selectedPageIndex : 0);
   if (status != _comic.status) {
-    _comic.status = status;
+    _comic.status = (int)status;
     [[LibraryConnection mainConnection] updateObject:_comic];
   }
 }

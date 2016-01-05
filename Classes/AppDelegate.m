@@ -92,7 +92,7 @@
 
 // This can be called in response to a purchase request or on app cold launch if there are unfinished transactions still pending
 - (void) paymentQueue:(SKPaymentQueue*)queue updatedTransactions:(NSArray*)transactions {
-  XLOG_VERBOSE(@"%i App Store transactions updated", transactions.count);
+  XLOG_VERBOSE(@"%i App Store transactions updated", (int)transactions.count);
   for (SKPaymentTransaction* transaction in transactions) {
     NSString* productIdentifier = transaction.payment.productIdentifier;
     XLOG_DEBUG_CHECK(productIdentifier);
@@ -151,7 +151,7 @@
 }
 
 - (void) paymentQueue:(SKPaymentQueue*)queue removedTransactions:(NSArray*)transactions {
-  XLOG_VERBOSE(@"%i App Store transactions removed", transactions.count);
+  XLOG_VERBOSE(@"%i App Store transactions removed", (int)transactions.count);
 }
 
 - (void) paymentQueue:(SKPaymentQueue*)queue restoreCompletedTransactionsFailedWithError:(NSError*)error {
@@ -361,7 +361,7 @@
     NSUInteger count = [defaults integerForKey:kDefaultKey_UploadsRemaining];
     count = count - 1;
     if (count > 0) {
-      XLOG_VERBOSE(@"Web Server trial has %i uploads left", count);
+      XLOG_VERBOSE(@"Web Server trial has %i uploads left", (int)count);
       [defaults setInteger:count forKey:kDefaultKey_UploadsRemaining];
     } else {
       [defaults setInteger:kServerMode_Limited forKey:kDefaultKey_ServerMode];

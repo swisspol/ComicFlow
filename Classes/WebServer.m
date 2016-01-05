@@ -64,7 +64,7 @@
   static WebServer* server = nil;
   if (server == nil) {
     server = [[WebServer alloc] init];
-    server.type = [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerType];
+    server.type = (WebServerType)[[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_ServerType];
   }
   return server;
 }

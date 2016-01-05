@@ -494,14 +494,14 @@ typedef enum {
         XLOG_WARNING(@"Skipping comic \"%@\"", name);  // We started processing this comic but never finished - Assume it's corrupted
         return;
       } else {
-        comic = (Comic*)CFDictionaryGetValue(zombieComics, (void*)rowID);
+        comic = (Comic*)CFDictionaryGetValue(zombieComics, (void*)(long)rowID);
       }
     }
   }
   
   // If yes, update comic
   if (comic) {
-    CFDictionaryRemoveValue(zombieComics, (void*)comic.sqlRowID);
+    CFDictionaryRemoveValue(zombieComics, (void*)(long)comic.sqlRowID);
     if ((comic.collection != collection.sqlRowID) || ![comic.name isEqualToString:name]) {
       comic.collection = collection.sqlRowID;
       comic.name = name;
@@ -585,7 +585,7 @@ static void _ZombieCollectionsRemoveFunction(const void* key, const void* value,
 
 static void _ZombieComicsRemoveFunction(const void* key, const void* value, void* context) {
   if (!isnan([(Comic*)value time])) {
-    XLOG_VERBOSE(@"Removed comic \"%@\" (%i)", [(Comic*)value name], (DatabaseSQLRowID)key);
+    XLOG_VERBOSE(@"Removed comic \"%@\" (%i", [(Comic*)value name], (DatabaseSQLRowID)key);
     _ZombieRemoveFunction((LibraryConnection*)context, (DatabaseObject*)value);
   }
 }
@@ -608,11 +608,11 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
   // Build list of all collections and comics currently in library as potential zombies
   CFMutableDictionaryRef zombieCollections = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
   for (Collection* collection in [connection fetchAllObjectsOfClass:[Collection class]]) {
-    CFDictionarySetValue(zombieCollections, (void*)collection.sqlRowID, collection);
+    CFDictionarySetValue(zombieCollections, (void*)(long)collection.sqlRowID, collection);
   }
   CFMutableDictionaryRef zombieComics = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
   for (Comic* comic in [connection fetchAllObjectsOfClass:[Comic class]]) {
-    CFDictionarySetValue(zombieComics, (void*)comic.sqlRowID, comic);
+    CFDictionarySetValue(zombieComics, (void*)(long)comic.sqlRowID, comic);
   }
     
   // Build list of all directories and files in root directory
@@ -679,17 +679,17 @@ static void _ZombieComicsMarkFunction(const void* key, const void* value, void* 
                                                                        forFileAtPath:fullPath];
         if (data.length == sizeof(DatabaseSQLRowID)) {
           DatabaseSQLRowID rowID = *((DatabaseSQLRowID*)data.bytes);
-          collection = (Collection*)CFDictionaryGetValue(zombieCollections, (void*)rowID);
+          collection = (Collection*)CFDictionaryGetValue(zombieCollections, (void*)(long)rowID);
         }
       }
       
       // If yes, update collection
       if (collection) {
-        CFDictionaryRemoveValue(zombieCollections, (void*)collection.sqlRowID);
+        CFDictionaryRemoveValue(zombieCollections, (void*)(long)collection.sqlRowID);
         if (time != collection.time) {
           needsUpdate = YES;
         } else {
-          CFDictionaryApplyFunction(zombieComics, _ZombieComicsMarkFunction, (void*)collection.sqlRowID);
+          CFDictionaryApplyFunction(zombieComics, _ZombieComicsMarkFunction, (void*)(long)collection.sqlRowID);
           if (![collection.name isEqualToString:directory]) {
             collection.name = directory;
             [connection updateObject:collection];
