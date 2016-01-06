@@ -628,16 +628,19 @@ static void __DisplayQueueCallBack(void* info) {
     [_gridView layoutSubviews];
     [self _setCurrentCollection:_currentCollection];
   }
-  
-  if (_launched == NO) {
-    _launchView = [[UIImageView alloc] initWithFrame:self.view.bounds];
-    _launchView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    NSString* path = [[NSBundle mainBundle] pathForResource:(UIInterfaceOrientationIsLandscape(self.interfaceOrientation) ? @"Default-Landscape" : @"Default-Portrait") ofType:@"png"];
-    UIImage* image = [[UIImage alloc] initWithContentsOfFile:path];
-    _launchView.image = image;
-    [image release];
-    [self.view addSubview:_launchView];
-    _launched = YES;
+
+  // Launch screens are used on iOS 8 and later
+  if (kCFCoreFoundationVersionNumber < kCFCoreFoundationVersionNumber_iOS_8_0) {
+    if (_launched == NO) {
+      _launchView = [[UIImageView alloc] initWithFrame:self.view.bounds];
+      _launchView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+      NSString* path = [[NSBundle mainBundle] pathForResource:(UIInterfaceOrientationIsLandscape(self.interfaceOrientation) ? @"Default-Landscape" : @"Default-Portrait") ofType:@"png"];
+      UIImage* image = [[UIImage alloc] initWithContentsOfFile:path];
+      _launchView.image = image;
+      [image release];
+      [self.view addSubview:_launchView];
+      _launched = YES;
+    }
   }
 }
 
@@ -695,16 +698,18 @@ static void __DisplayQueueCallBack(void* info) {
   }
   
   [CATransaction flush];
-  
-  UIView* launchView = _launchView;
-  [UIView animateWithDuration:0.5 animations:^{
-    launchView.alpha = 0.0;
-    self.view.frame = [[UIScreen mainScreen] applicationFrame];
-  } completion:^(BOOL finished) {
-    [launchView removeFromSuperview];
-    [launchView release];
-  }];
-  _launchView = nil;
+
+  if (_launchView) {
+    UIView* launchView = _launchView;
+    [UIView animateWithDuration:0.5 animations:^{
+      launchView.alpha = 0.0;
+      self.view.frame = [[UIScreen mainScreen] applicationFrame];
+    } completion:^(BOOL finished) {
+      [launchView removeFromSuperview];
+      [launchView release];
+    }];
+    _launchView = nil;
+  }
   
   NSInteger count = [[NSUserDefaults standardUserDefaults] integerForKey:kDefaultKey_LaunchCount];
   if (count >= 0) {
