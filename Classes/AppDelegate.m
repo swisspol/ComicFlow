@@ -282,6 +282,8 @@
   _dimmingWindow.backgroundColor = [UIColor blackColor];
   _dimmingWindow.alpha = 0.0;
   _dimmingWindow.hidden = YES;
+  _dimmingWindow.rootViewController = [[UIViewController alloc] init];
+  _dimmingWindow.rootViewController.view.hidden = YES;
   if ([[NSUserDefaults standardUserDefaults] boolForKey:kDefaultKey_ScreenDimmed]) {
     [self setScreenDimmed:YES];
   }
