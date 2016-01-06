@@ -283,7 +283,7 @@ static ApplicationDelegate* _sharedInstance = nil;
     label.opaque = NO;
     label.font = [UIFont boldSystemFontOfSize:(fullScreen ? kSpinnerFullscreenFontSize : kSpinnerFontSize)];
     label.textColor = [UIColor whiteColor];
-    label.textAlignment = UITextAlignmentCenter;
+    label.textAlignment = NSTextAlignmentCenter;
     label.numberOfLines = 0;
     label.text = message;
     [label sizeToFit];

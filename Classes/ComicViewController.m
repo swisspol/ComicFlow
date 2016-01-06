@@ -270,7 +270,7 @@
   _pageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 140, 20)];
   _pageLabel.font = [UIFont boldSystemFontOfSize:18];
   _pageLabel.textColor = [UIColor whiteColor];
-  _pageLabel.textAlignment = UITextAlignmentCenter;
+  _pageLabel.textAlignment = NSTextAlignmentCenter;
   _pageLabel.backgroundColor = nil;
   _pageLabel.opaque = NO;
 }
