@@ -104,6 +104,7 @@
 #else
         [options setObject:[NSNumber numberWithInteger:80] forKey:GCDWebServerOption_Port];
 #endif
+        [options setObject:@"" forKey:GCDWebServerOption_BonjourName];
         NSString* name = [NSString stringWithFormat:NSLocalizedString(@"SERVER_NAME_FORMAT", nil),
                           [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"],
                           [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]];
