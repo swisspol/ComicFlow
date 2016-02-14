@@ -145,6 +145,7 @@
 		E2A73D3D1A0C6C2F0052B750 /* GCDTelnetServer.m in Sources */ = {isa = PBXBuildFile; fileRef = E2A73D391A0C6C2F0052B750 /* GCDTelnetServer.m */; };
 		E2A73D3E1A0C6C2F0052B750 /* NSMutableString+ANSI.m in Sources */ = {isa = PBXBuildFile; fileRef = E2A73D3B1A0C6C2F0052B750 /* NSMutableString+ANSI.m */; };
 		E2B680E516915033001CF037 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2B680E416915033001CF037 /* StoreKit.framework */; };
+		E2B79A671C70FD74009DD383 /* Icon_83.5x83.5@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E2B79A661C70FD74009DD383 /* Icon_83.5x83.5@2x.png */; };
 		E2C73E9519F2090300BEC354 /* ApplicationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C73E9419F2090300BEC354 /* ApplicationDelegate.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		E2CAA9E4122295F800A4D85A /* DocumentView-Shadow-Left.png in Resources */ = {isa = PBXBuildFile; fileRef = E2CAA9E2122295F800A4D85A /* DocumentView-Shadow-Left.png */; };
 		E2CAA9E5122295F800A4D85A /* DocumentView-Shadow-Right.png in Resources */ = {isa = PBXBuildFile; fileRef = E2CAA9E3122295F800A4D85A /* DocumentView-Shadow-Right.png */; };
@@ -431,6 +432,7 @@
 		E2A73D3A1A0C6C2F0052B750 /* NSMutableString+ANSI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableString+ANSI.h"; sourceTree = "<group>"; };
 		E2A73D3B1A0C6C2F0052B750 /* NSMutableString+ANSI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableString+ANSI.m"; sourceTree = "<group>"; };
 		E2B680E416915033001CF037 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		E2B79A661C70FD74009DD383 /* Icon_83.5x83.5@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon_83.5x83.5@2x.png"; sourceTree = "<group>"; };
 		E2BC918E1223FDFA008FB376 /* Extensions_UIKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Extensions_UIKit.h; sourceTree = "<group>"; };
 		E2BC918F1223FDFA008FB376 /* Extensions_UIKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Extensions_UIKit.m; sourceTree = "<group>"; };
 		E2C73E9319F2090300BEC354 /* ApplicationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationDelegate.h; sourceTree = "<group>"; };
@@ -585,6 +587,7 @@
 				E24036BB1891A1880098F028 /* Icon_72x72@2x.png */,
 				E24036BC1891A1880098F028 /* Icon_76x76.png */,
 				E24036BD1891A1880098F028 /* Icon_76x76@2x.png */,
+				E2B79A661C70FD74009DD383 /* Icon_83.5x83.5@2x.png */,
 				E2E50D3818920DEC00908424 /* Localizable.strings */,
 				E2E50D3418920DEC00908424 /* ComicViewController.xib */,
 				E2E50D3618920DEC00908424 /* LibraryViewController.xib */,
@@ -1007,6 +1010,7 @@
 				E2E50D3C18920DEC00908424 /* Localizable.strings in Resources */,
 				E24036C11891A1880098F028 /* Icon_76x76@2x.png in Resources */,
 				E26703791228D7D0009C4EBB /* NavigationControl-Marker.png in Resources */,
+				E2B79A671C70FD74009DD383 /* Icon_83.5x83.5@2x.png in Resources */,
 				E267037A1228D7D0009C4EBB /* NavigationControl-Thumb.png in Resources */,
 				E267037B1228D7D0009C4EBB /* OverlayView-Arrow-Bottom.png in Resources */,
 				E267037C1228D7D0009C4EBB /* OverlayView-Arrow-Left.png in Resources */,
