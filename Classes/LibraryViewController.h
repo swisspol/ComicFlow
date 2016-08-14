@@ -75,6 +75,9 @@
 @property(nonatomic, retain) IBOutlet UISwitch* dimmingSwitch;
 @property(nonatomic, retain) IBOutlet UIButton* purchaseButton;
 @property(nonatomic, retain) IBOutlet UIButton* restoreButton;
+@property(nonatomic, retain) IBOutlet UILabel* dimScreenLabel;
+@property(nonatomic, retain) IBOutlet UIButton* showLogButton;
+@property(nonatomic, retain) IBOutlet UILabel* webServerMenuTitle;
 - (id) initWithWindow:(UIWindow*)window;
 - (void) updatePurchase;
 - (void) saveState;

@@ -395,6 +395,24 @@ static void __DisplayQueueCallBack(void* info) {
 - (void) viewDidLoad {
   [super viewDidLoad];
   
+  self.navigationBar.topItem.title = NSLocalizedString(@"LIBRARY_TITLE", nil);
+  [self.markReadButton setTitle:NSLocalizedString(@"MARK_ALL_READ", nil) forState:UIControlStateNormal];
+  [self.markNewButton setTitle:NSLocalizedString(@"MARK_ALL_NEW", nil) forState:UIControlStateNormal];
+  [self.dimScreenLabel setText:NSLocalizedString(@"DIM_SCREEN", nil)];
+  [self.updateButton setTitle:NSLocalizedString(@"UPDATE_LIBRARY", nil) forState:UIControlStateNormal];
+  [self.forceUpdateButton setTitle:NSLocalizedString(@"FORCE_UPDATE_LIBRARY", nil) forState:UIControlStateNormal];
+  [self.showLogButton setTitle:NSLocalizedString(@"SHOW_LOG", nil) forState:UIControlStateNormal];
+  [self.purchaseButton setTitle:NSLocalizedString(@"PURCHASE_WEB_SERVER", nil) forState:UIControlStateNormal];
+  [self.restoreButton setTitle:NSLocalizedString(@"RESTORE_PURCHASE", nil) forState:UIControlStateNormal];
+  [self.webServerMenuTitle setText:NSLocalizedString(@"CF_WEB_SERVER", nil)];
+  [self.serverControl setTitle:NSLocalizedString(@"WEB_SERVER_TYPE_OFF", nil) forSegmentAtIndex:0];
+  [self.serverControl setTitle:NSLocalizedString(@"WEB_SERVER_TYPE_WEB", nil) forSegmentAtIndex:1];
+  [self.serverControl setTitle:NSLocalizedString(@"WEB_SERVER_TYPE_DAV", nil) forSegmentAtIndex:2];
+  [self.segmentedControl setTitle:NSLocalizedString(@"SORT_BY_SERIES", nil) forSegmentAtIndex:0];
+  [self.segmentedControl setTitle:NSLocalizedString(@"SORT_BY_NAME", nil) forSegmentAtIndex:1];
+  [self.segmentedControl setTitle:NSLocalizedString(@"SORT_BY_DATE", nil) forSegmentAtIndex:2];
+  [self.segmentedControl setTitle:NSLocalizedString(@"SORT_BY_STATE", nil) forSegmentAtIndex:3];
+
   self.view.backgroundColor = nil;  // Can't do this in Interface Builder
   
   _gridView.contentBackgroundOffset = CGPointMake(0.0, kBackgroundOffset);
