@@ -953,7 +953,6 @@
 				1D60588D0D05DD3D006BFB54 /* Resources */,
 				1D60588E0D05DD3D006BFB54 /* Sources */,
 				1D60588F0D05DD3D006BFB54 /* Frameworks */,
-				E2D06E1B18A082CB00A75340 /* Crashlytics */,
 			);
 			buildRules = (
 			);
@@ -1036,23 +1035,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		E2D06E1B18A082CB00A75340 /* Crashlytics */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = Crashlytics;
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ \"$CONFIGURATION\" == \"Debug\" ]; then\n  echo \"Skipping Crashlytics in Debug configuration\"\nelse\n  ./Crashlytics.framework/run \"936a419a4a141683e2eb17db02a13b72ee02b362\"\nfi\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1D60588E0D05DD3D006BFB54 /* Sources */ = {
@@ -1219,8 +1201,6 @@
 					Flurry,
 				);
 				OTHER_LDFLAGS = (
-					"-framework",
-					Crashlytics,
 					"-Wl,-search_paths_first",
 					"-lwebp",
 					"-lFlurry",
@@ -1253,8 +1233,6 @@
 					Flurry,
 				);
 				OTHER_LDFLAGS = (
-					"-framework",
-					Crashlytics,
 					"-Wl,-search_paths_first",
 					"-lwebp",
 					"-lFlurry",
