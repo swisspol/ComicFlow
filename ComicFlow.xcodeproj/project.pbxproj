@@ -1192,18 +1192,13 @@
 				HEADER_SEARCH_PATHS = (
 					"$(SDKROOT)/usr/include/libxml2",
 					"libwebp/$(PLATFORM_NAME)/include",
-					Flurry,
 				);
 				INFOPLIST_FILE = Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-				LIBRARY_SEARCH_PATHS = (
-					"libwebp/$(PLATFORM_NAME)/lib",
-					Flurry,
-				);
+				LIBRARY_SEARCH_PATHS = "libwebp/$(PLATFORM_NAME)/lib";
 				OTHER_LDFLAGS = (
 					"-Wl,-search_paths_first",
 					"-lwebp",
-					"-lFlurry",
 				);
 				PRODUCT_NAME = ComicFlow;
 			};
@@ -1224,18 +1219,13 @@
 				HEADER_SEARCH_PATHS = (
 					"$(SDKROOT)/usr/include/libxml2",
 					"libwebp/$(PLATFORM_NAME)/include",
-					Flurry,
 				);
 				INFOPLIST_FILE = Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-				LIBRARY_SEARCH_PATHS = (
-					"libwebp/$(PLATFORM_NAME)/lib",
-					Flurry,
-				);
+				LIBRARY_SEARCH_PATHS = "libwebp/$(PLATFORM_NAME)/lib";
 				OTHER_LDFLAGS = (
 					"-Wl,-search_paths_first",
 					"-lwebp",
-					"-lFlurry",
 				);
 				PRODUCT_NAME = ComicFlow;
 			};

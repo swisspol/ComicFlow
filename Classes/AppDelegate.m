@@ -14,7 +14,6 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #import <sys/xattr.h>
-#import <Flurry.h>
 
 #import "AppDelegate.h"
 #import "Library.h"
@@ -219,12 +218,6 @@
   XLOG_VERBOSE(@"Documents folder location: %@", [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject]);
 #endif
   
-#if !DEBUG && !TARGET_IPHONE_SIMULATOR
-  // Start Flurry analytics
-  [Flurry setAppVersion:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
-  [Flurry startSession:@"2ZSSCCWQY2Z36J78MTTZ" withOptions:launchOptions];
-#endif
-
   // Prevent backup of Documents directory as it contains only "offline data" (iOS 5.0.1 and later)
   NSString* documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
   u_int8_t value = 1;
@@ -387,16 +380,16 @@
 - (void) logEvent:(NSString*)event withParameterName:(NSString*)name value:(NSString*)value {
   if (name && value) {
     XLOG_VERBOSE(@"<EVENT> %@ ('%@' = '%@')", event, name, value);
-    [Flurry logEvent:event withParameters:[NSDictionary dictionaryWithObject:value forKey:name]];
+    // TODO
   } else {
     XLOG_VERBOSE(@"<EVENT> %@", event);
-    [Flurry logEvent:event];
+    // TODO
   }
 }
 
 - (void) logPageView {
   XLOG_VERBOSE(@"<PAGE VIEW>");
-  [Flurry logPageView];
+  // TODO
 }
 
 @end
