@@ -3,6 +3,34 @@
     {
       "orientation" : "portrait",
       "idiom" : "ipad",
+      "filename" : "Default-Portrait-3.png",
+      "extent" : "full-screen",
+      "scale" : "1x"
+    },
+    {
+      "orientation" : "landscape",
+      "idiom" : "ipad",
+      "filename" : "Default-Landscape-3.png",
+      "extent" : "full-screen",
+      "scale" : "1x"
+    },
+    {
+      "orientation" : "portrait",
+      "idiom" : "ipad",
+      "filename" : "Default-Portrait@2x-3.png",
+      "extent" : "full-screen",
+      "scale" : "2x"
+    },
+    {
+      "orientation" : "landscape",
+      "idiom" : "ipad",
+      "filename" : "Default-Landscape@2x-3.png",
+      "extent" : "full-screen",
+      "scale" : "2x"
+    },
+    {
+      "orientation" : "portrait",
+      "idiom" : "ipad",
       "filename" : "Default-Portrait-1.png",
       "extent" : "full-screen",
       "minimum-system-version" : "7.0",
@@ -30,30 +58,6 @@
       "filename" : "Default-Landscape@2x-1.png",
       "extent" : "full-screen",
       "minimum-system-version" : "7.0",
-      "scale" : "2x"
-    },
-    {
-      "orientation" : "portrait",
-      "idiom" : "ipad",
-      "extent" : "to-status-bar",
-      "scale" : "1x"
-    },
-    {
-      "orientation" : "landscape",
-      "idiom" : "ipad",
-      "extent" : "to-status-bar",
-      "scale" : "1x"
-    },
-    {
-      "orientation" : "portrait",
-      "idiom" : "ipad",
-      "extent" : "to-status-bar",
-      "scale" : "2x"
-    },
-    {
-      "orientation" : "landscape",
-      "idiom" : "ipad",
-      "extent" : "to-status-bar",
       "scale" : "2x"
     }
   ],
