@@ -197,6 +197,8 @@
 }
 
 - (void) awakeFromNib {
+  [super awakeFromNib];
+
   // Initialize library
   XLOG_CHECK([LibraryConnection mainConnection]);
 }
