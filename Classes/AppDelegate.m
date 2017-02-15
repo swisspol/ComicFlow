@@ -22,6 +22,7 @@
 #import "Extensions_Foundation.h"
 #import "Extensions_UIKit.h"
 #import "NetReachability.h"
+#import "XLFacilityMacros.h"
 
 #define kUpdateDelay 1.0
 #define kScreenDimmingOpacity 0.5
