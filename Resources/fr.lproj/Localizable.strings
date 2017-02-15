@@ -1,0 +1,94 @@
+"SETTINGS_BUTTON" = "Paramètres";
+
+"INFO_FORMAT" = "BDs: %i | Séries: %i | Base données: %.0f MO";
+"VERSION_FORMAT" = "ComicFlow Version %@";
+
+"ADDRESS_UNAVAILABLE" = "Activez le serveur web ComicFlow afin d'importer vos BDs de votre ordinateur par WiFi";
+"ADDRESS_WEBSITE_IP" = "Sur votre ordinateur, allez à l'adresse web suivante:\n%@";
+"ADDRESS_WEBSITE_BONJOUR" = "Sur votre ordinateur, allez à l'adresse web suivante:\n%@\n(ou %@)";
+"ADDRESS_WEBDAV_IP" = "Sur votre ordinateur, allez à l'adresse WebDAV suivante:\n%@";
+"ADDRESS_WEBDAV_BONJOUR" = "Sur votre ordinateur, allez à l'adresse WebDAV suivante:\n%@\n(ou %@)";
+
+"SPINNER_MESSAGE" = "Patientez…";
+
+"LOG_TITLE" = "Log de l'appli";
+
+"MARK_READ" = "Marquer lu";
+"MARK_NEW" = "Marquer nouveau";
+"DELETE" = "Effacer";
+"MARK_ALL_READ" = "Marquer tout lu";
+"MARK_ALL_NEW" = "Marquer tout nouveau";
+"DELETE_ALL" = "Effacer tous";
+"DIM_SCREEN" = "Assombrir l'écran";
+"UPDATE_LIBRARY" = "Mise à jour bibliothèque";
+"FORCE_UPDATE_LIBRARY" = "Re-créer bilbiothèque";
+"SHOW_LOG" = "Afficher log";
+"PURCHASE_WEB_SERVER" = "Acheter serveur web illimité";
+"RESTORE_PURCHASE" = "Restaurer l'achat";
+"CF_WEB_SERVER" = "Serveur Web ComicFlow";
+"WEB_SERVER_TYPE_OFF" = "Éteint";
+"WEB_SERVER_TYPE_WEB" = "Site web";
+"WEB_SERVER_TYPE_DAV" = "WebDAV";
+"SORT_BY_SERIES" = "Par séries";
+"SORT_BY_NAME" = "Par nom";
+"SORT_BY_DATE" = "Par date";
+"SORT_BY_STATE" = "Par état";
+
+"LIBRARY_TITLE" = "Bibliothèque";
+
+"LABEL_FORMAT" = "Page %i de %i";
+
+"REQUIRE_UPDATE_TITLE" = "La librarie doit être re-créée";
+"REQUIRE_UPDATE_MESSAGE" = "Toutes les BDs et les séries seront ré-importés afin de mettre à jour l'application, et vos signets seront perdus.";
+"REQUIRE_UPDATE_CANCEL" = "Me rappeler plus tard";
+"REQUIRE_UPDATE_CONTINUE" = "Re-créer";
+
+"FORCE_UPDATE_TITLE" = "Êtes-vous sûr ?";
+"FORCE_UPDATE_MESSAGE" = "Recreating the library will clear all bookmarks and re-import all comics and series.";
+"FORCE_UPDATE_CANCEL" = "Annuler";
+"FORCE_UPDATE_CONTINUE" = "Continuer";
+
+"MARK_ALL_READ_TITLE" = "Êtes-vous sûr de vouloir marquer 'lues' toutes les BDs ?";
+"MARK_ALL_READ_CANCEL" = "Annuler";
+"MARK_ALL_READ_CONTINUE" = "Continuer";
+
+"MARK_ALL_NEW_TITLE" = "Êtes-vous sûr de vouloir marquer 'nouvelles' toutes les BDs ?";
+"MARK_ALL_NEW_CANCEL" = "Annuler";
+"MARK_ALL_NEW_CONTINUE" = "Continuer";
+
+"INBOX_ALERT_TITLE" = "File Added To Library";
+"INBOX_ALERT_MESSAGE" = "The file \"%@\" will be visible in the library after it has finished updating.";
+"INBOX_ALERT_BUTTON" = "Continuer";
+
+"RATE_ALERT_TITLE" = "Vous aimez ComicFlow ?";
+"RATE_ALERT_MESSAGE" = "Merci de noter l'appli sur le App Store.";
+"RATE_ALERT_CONFIRM" = "Noter maintenant";
+"RATE_ALERT_CANCEL" = "Me rappeler plus tard";
+
+"PURCHASE_SPINNER" = "Connexion au App Store\nPatientez…";
+
+"OFFLINE_ALERT_TITLE" = "Pas de connexion Internet !";
+"OFFLINE_ALERT_MESSAGE" = "Vous devez être connecté à Internet pour faire un achat. Veuillez vous connecter à votre réseau WiFi et réessayer.";
+"OFFLINE_ALERT_BUTTON" = "OK";
+
+"DISABLED_ALERT_TITLE" = "Achats non autorisés !";
+"DISABLED_ALERT_MESSAGE" = "Ce périphérique ne permet pas les achats intégrés. Veuillez vérifier les blocages dans l'appli Paramètres.";
+"DISABLED_ALERT_BUTTON" = "OK";
+
+"BUSY_ALERT_TITLE" = "Achat en cours !";
+"BUSY_ALERT_MESSAGE" = "Il y a déjà un achat en cours de traitement. Veuillez essayer à nouveau plus tard.";
+"BUSY_ALERT_BUTTON" = "OK";
+
+"FAILED_ALERT_TITLE" = "Achat annulé !";
+"FAILED_ALERT_MESSAGE" = "Une erreur s'est produite lors de l'achat. Veuillez ré-essayer.";
+"FAILED_ALERT_BUTTON" = "OK";
+
+"COMPLETE_ALERT_TITLE" = "Merci pour votre achat !";
+"COMPLETE_ALERT_MESSAGE" = "Vous avez maintenant un accès illimité au serveur web ComicFlow.";
+"COMPLETE_ALERT_BUTTON" = "OK";
+
+"SERVER_NAME_FORMAT" = "Serveur web ComicFlow %@ (%@)";
+"SERVER_TITLE" = "Serveur web ComicFlow";
+"SERVER_CONTENT" = "<div class=\"alert alert-success alert-dismissable\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button><strong>Vous êtes connecté à l'appli ComicFlow sur votre iPad.</strong> Glissez vos fichiers de BDs (%@) dans cette fenêtre, ou utilisez le bouton \"Télécharger fichiers&hellip;\", pour importer vos BDs dans ComicFlow. Créez des dossiers dans la racine, et importez vos BDs dans ces dossiers pour créer des séries. (Les sous-dossiers ne sont pas supportés.)<br/>Vous devez laisser l'appli ouverte sur votre iPad pendant le téléchargement.</div>";
+"SERVER_LIMITED_CONTENT" = "<div class=\"alert alert-danger alert-dismissable\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button><strong>L'importation de BDs en utilisant le serveur web ComicFlow est limité à %i fichiers, après quoi vous recevrez une erreur &quot;Forbidden&quot;.</strong> Appuyez le bouton &quot;Acheter&quot; dans les paramètres de l'appli pour enlever cette limite. Vous verrez le prix et vous devrez confirmer l'achat avant que l'achat soit complété.</div>";
+"SERVER_FOOTER_FORMAT" = "%@ &mdash; ComicFlow Version %@";

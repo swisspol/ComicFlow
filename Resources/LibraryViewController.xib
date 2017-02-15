@@ -8,6 +8,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="LibraryViewController">
             <connections>
                 <outlet property="addressLabel" destination="57" id="68"/>
+                <outlet property="dimScreenLabel" destination="92" id="CjV-Gj-Go4"/>
                 <outlet property="dimmingSwitch" destination="91" id="95"/>
                 <outlet property="forceUpdateButton" destination="35" id="40"/>
                 <outlet property="gridView" destination="4" id="46"/>
@@ -20,6 +21,7 @@
                 <outlet property="restoreButton" destination="AYB-gv-6fg" id="Nlw-HH-Y6A"/>
                 <outlet property="segmentedControl" destination="47" id="50"/>
                 <outlet property="serverControl" destination="v60-4g-1Qb" id="Mmk-HZ-0t6"/>
+                <outlet property="showLogButton" destination="76" id="cV1-lA-cm7"/>
                 <outlet property="updateButton" destination="28" id="39"/>
                 <outlet property="versionLabel" destination="72" id="73"/>
                 <outlet property="view" destination="2" id="3"/>

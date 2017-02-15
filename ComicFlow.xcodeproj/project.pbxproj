@@ -20,6 +20,8 @@
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
+		263DFFE51D609E7F00B0C697 /* ComicViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 263DFFE31D609E7F00B0C697 /* ComicViewController.xib */; };
+		263DFFE61D609E7F00B0C697 /* LibraryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 263DFFE41D609E7F00B0C697 /* LibraryViewController.xib */; };
 		288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765A40DF7441C002DB57D /* CoreGraphics.framework */; };
 		E20590BE121E294B00A271CC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E20590BD121E294B00A271CC /* libsqlite3.dylib */; };
 		E20590C0121E295000A271CC /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E20590BF121E295000A271CC /* CFNetwork.framework */; };
@@ -149,8 +151,6 @@
 		E2C73E9519F2090300BEC354 /* ApplicationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C73E9419F2090300BEC354 /* ApplicationDelegate.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		E2CAA9E4122295F800A4D85A /* DocumentView-Shadow-Left.png in Resources */ = {isa = PBXBuildFile; fileRef = E2CAA9E2122295F800A4D85A /* DocumentView-Shadow-Left.png */; };
 		E2CAA9E5122295F800A4D85A /* DocumentView-Shadow-Right.png in Resources */ = {isa = PBXBuildFile; fileRef = E2CAA9E3122295F800A4D85A /* DocumentView-Shadow-Right.png */; };
-		E2E50D3A18920DEC00908424 /* ComicViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2E50D3418920DEC00908424 /* ComicViewController.xib */; };
-		E2E50D3B18920DEC00908424 /* LibraryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2E50D3618920DEC00908424 /* LibraryViewController.xib */; };
 		E2E50D3C18920DEC00908424 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = E2E50D3818920DEC00908424 /* Localizable.strings */; };
 		E2F8960D1C3C944300FC8891 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2F8960C1C3C944300FC8891 /* LaunchScreen.xib */; };
 		E2F896171C3C997000FC8891 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E2F896161C3C997000FC8891 /* Images.xcassets */; };
@@ -171,6 +171,9 @@
 		1D3623250D0F684500981E51 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AppDelegate.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		1D6058910D05DD3D006BFB54 /* ComicFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ComicFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		263DFFE01D6091D700B0C697 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		263DFFE31D609E7F00B0C697 /* ComicViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ComicViewController.xib; sourceTree = "<group>"; };
+		263DFFE41D609E7F00B0C697 /* LibraryViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LibraryViewController.xib; sourceTree = "<group>"; };
 		288765A40DF7441C002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		2CF616F41293D8A6008FD89E /* ZoomView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZoomView.h; sourceTree = "<group>"; };
@@ -443,9 +446,7 @@
 		E2CAA9E3122295F800A4D85A /* DocumentView-Shadow-Right.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DocumentView-Shadow-Right.png"; sourceTree = "<group>"; };
 		E2CAA9EB1222961400A4D85A /* BasicAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BasicAnimation.h; sourceTree = "<group>"; };
 		E2CAA9EC1222961400A4D85A /* BasicAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BasicAnimation.m; sourceTree = "<group>"; };
-		E2E50D3518920DEC00908424 /* eng */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = eng; path = eng.lproj/ComicViewController.xib; sourceTree = "<group>"; };
-		E2E50D3718920DEC00908424 /* eng */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = eng; path = eng.lproj/LibraryViewController.xib; sourceTree = "<group>"; };
-		E2E50D3918920DEC00908424 /* eng */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = eng; path = eng.lproj/Localizable.strings; sourceTree = "<group>"; };
+		E2E50D3918920DEC00908424 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		E2F8960C1C3C944300FC8891 /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
 		E2F896161C3C997000FC8891 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		E2FE180A128ADD67005B17EC /* Database.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Database.h; sourceTree = "<group>"; };
@@ -589,8 +590,8 @@
 				E24036BD1891A1880098F028 /* Icon_76x76@2x.png */,
 				E2B79A661C70FD74009DD383 /* Icon_83.5x83.5@2x.png */,
 				E2E50D3818920DEC00908424 /* Localizable.strings */,
-				E2E50D3418920DEC00908424 /* ComicViewController.xib */,
-				E2E50D3618920DEC00908424 /* LibraryViewController.xib */,
+				263DFFE31D609E7F00B0C697 /* ComicViewController.xib */,
+				263DFFE41D609E7F00B0C697 /* LibraryViewController.xib */,
 				E2059928121EE21400A271CC /* MainWindow.xib */,
 				E2F8960C1C3C944300FC8891 /* LaunchScreen.xib */,
 				E2F896161C3C997000FC8891 /* Images.xcassets */,
@@ -978,14 +979,11 @@
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "ComicFlow" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
-				English,
-				Japanese,
-				French,
-				German,
-				eng,
+				en,
+				fr,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
 			projectDirPath = "";
@@ -1018,7 +1016,6 @@
 				E267037F1228D7D0009C4EBB /* OverlayView-Contents.png in Resources */,
 				E2F896171C3C997000FC8891 /* Images.xcassets in Resources */,
 				E2F8960D1C3C944300FC8891 /* LaunchScreen.xib in Resources */,
-				E2E50D3A18920DEC00908424 /* ComicViewController.xib in Resources */,
 				1B236502154FABBA00A13B0D /* DocumentView-Shadow-Left@2x.png in Resources */,
 				1B236503154FABBA00A13B0D /* DocumentView-Shadow-Right@2x.png in Resources */,
 				1B236504154FABBA00A13B0D /* NavigationControl-Marker@2x.png in Resources */,
@@ -1027,7 +1024,8 @@
 				1B236507154FABBA00A13B0D /* OverlayView-Arrow-Left@2x.png in Resources */,
 				E24036BF1891A1880098F028 /* Icon_72x72@2x.png in Resources */,
 				1B236508154FABBA00A13B0D /* OverlayView-Arrow-Right@2x.png in Resources */,
-				E2E50D3B18920DEC00908424 /* LibraryViewController.xib in Resources */,
+				263DFFE51D609E7F00B0C697 /* ComicViewController.xib in Resources */,
+				263DFFE61D609E7F00B0C697 /* LibraryViewController.xib in Resources */,
 				1B236509154FABBA00A13B0D /* OverlayView-Arrow-Top@2x.png in Resources */,
 				1B23650A154FABBA00A13B0D /* OverlayView-Contents@2x.png in Resources */,
 				E22A08FF18EB5E6700A4FF82 /* GCDWebUploader.bundle in Resources */,
@@ -1150,26 +1148,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		E2E50D3418920DEC00908424 /* ComicViewController.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				E2E50D3518920DEC00908424 /* eng */,
-			);
-			name = ComicViewController.xib;
-			sourceTree = "<group>";
-		};
-		E2E50D3618920DEC00908424 /* LibraryViewController.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				E2E50D3718920DEC00908424 /* eng */,
-			);
-			name = LibraryViewController.xib;
-			sourceTree = "<group>";
-		};
 		E2E50D3818920DEC00908424 /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				E2E50D3918920DEC00908424 /* eng */,
+				E2E50D3918920DEC00908424 /* en */,
+				263DFFE01D6091D700B0C697 /* fr */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";

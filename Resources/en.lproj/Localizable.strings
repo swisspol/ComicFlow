@@ -19,6 +19,22 @@
 "MARK_ALL_READ" = "Mark All Read";
 "MARK_ALL_NEW" = "Mark All New";
 "DELETE_ALL" = "Delete All";
+"DIM_SCREEN" = "Dim Screen";
+"UPDATE_LIBRARY" = "Update Library";
+"FORCE_UPDATE_LIBRARY" = "Recreate Library";
+"SHOW_LOG" = "Show Log";
+"PURCHASE_WEB_SERVER" = "Purchase Unlimited Web Server";
+"RESTORE_PURCHASE" = "Restore Previous Purchase";
+"CF_WEB_SERVER" = "ComicFlow Web Server";
+"WEB_SERVER_TYPE_OFF" = "Off";
+"WEB_SERVER_TYPE_WEB" = "Website";
+"WEB_SERVER_TYPE_DAV" = "WebDAV";
+"SORT_BY_SERIES" = "By Series";
+"SORT_BY_NAME" = "By Name";
+"SORT_BY_DATE" = "By Date";
+"SORT_BY_STATE" = "By State";
+
+"LIBRARY_TITLE" = "Library";
 
 "LABEL_FORMAT" = "Page %i of %i";
 
