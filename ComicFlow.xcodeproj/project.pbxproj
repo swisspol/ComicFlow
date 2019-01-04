@@ -1221,7 +1221,7 @@
 					"libwebp/$(PLATFORM_NAME)/include",
 				);
 				INFOPLIST_FILE = Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LIBRARY_SEARCH_PATHS = "libwebp/$(PLATFORM_NAME)/lib";
 				OTHER_LDFLAGS = (
 					"-Wl,-search_paths_first",
